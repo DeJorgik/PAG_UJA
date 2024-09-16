@@ -3,6 +3,13 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+//PRÁCTICA 1: CALLBACK PARA CAMBIAR COLOR DE FONDO
+int mode = 0; //Modo, rojo, verde, azul ó alpha
+float bg_color[4] = {0.0f,0.0f,0.0f,1.0f}; //valor
+
+//funcionamiento: mientras tocas una tecla y scrolleas cambias el valor
+//asociado a dicha tecla
+
 //FUNCIONES MIAS QUE LUEGO SE VAN A USAR EN EL BUCLE DE EJECUCIÓN
 //ESTO ES COMO EN GRAFICAS DE TERCERO, SON FUNCIONES QUE DEFINO YO
 //QUE LUEGO SE AÑADEN PARA SER EJECUTADAS CUANDO SEA NECESARIO
@@ -54,10 +61,24 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height){
  * @param mods
  */
 void key_callback(GLFWwindow *window, int key, int action, int mods){
+
     if (key==GLFW_KEY_ESCAPE && action==GLFW_PRESS){ //cuando la tecla escape hace la acción presionar
         glfwSetWindowShouldClose(window, GLFW_TRUE);//se cierra a vetana
+        // Change background color to random values
     }
-    std::cout<<"KEY CALLBACK CALLED"<<std::endl;
+
+    //Elige el modo según la última tecla que toca
+    switch (key) {
+        case GLFW_KEY_R:
+            mode=0;
+            break;
+        case GLFW_KEY_G:
+            mode=1;
+            break;
+        case GLFW_KEY_B:
+            mode=2;
+            break;
+    }
 }
 
 /**
@@ -80,6 +101,16 @@ void mouse_callback(GLFWwindow *window, int button, int action, int mods){
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset){
     std::cout << "SCROLL CALLBACK X POS: " << xoffset
               << "  Y POS: " << yoffset << std::endl;
+    //PRACTICA 1
+    //Depende de la tecla pulsada cambia un valor u otro
+
+    if (mode!=-1){
+        bg_color[mode]+=yoffset; //suma el yoffset actual para que sea gradual
+        if(bg_color[mode]<0){
+            bg_color[mode]=0.0f; //Para que no sea inferior a 0
+        }
+    }
+
 }
 
 //MAIN
@@ -171,7 +202,6 @@ int main()
     //GLCLEARCOLOR PONE EL "COLOR DE FONDO" DE LA VENTANA
     // - Establecemos un gris medio como color con el que se borrará el frame buffer.
     // No tiene por qué ejecutarse en cada paso por el ciclo de eventos.
-    glClearColor ( 0.6, 0.6, 0.6, 1.0 );
 
     //PONER PROFUNDIDAD
     // - Le decimos a OpenGL que tenga en cuenta la profundidad a la hora de dibujar.
@@ -186,7 +216,13 @@ int main()
     // botón de cerrar la ventana (la X).
     while ( !glfwWindowShouldClose ( window ) )
     {
-    glfwPollEvents ();
+        //PRACTICA 1
+        //Se pone aqui pq se tiene que actualizar constantemente
+        glClearColor(bg_color[0],bg_color[1],bg_color[2],bg_color[3]);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        glfwSwapBuffers(window); //swap buffer
+        glfwPollEvents ();
     }
 
     //TERMINAR Y LIBERAR RECURSOS (IGUAL QUE LO DE ANTES)
