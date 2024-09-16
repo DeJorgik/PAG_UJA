@@ -1,0 +1,285 @@
+"C:\Program Files\JetBrains\CLion 2023.3.3\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=C:/Program Files/JetBrains/CLion 2023.3.3/bin/ninja/win/x64/ninja.exe" -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=conan_provider.cmake -G Ninja -S C:\Users\dejor\CLionProjects\PAG_1 -B C:\Users\dejor\CLionProjects\PAG_1\cmake-build-debug
+-- CMake-Conan: first find_package() found. Installing dependencies with Conan
+-- CMake-Conan: Checking if a default profile exists
+C:\Users\dejor\.conan2\profiles\default
+-- CMake-Conan: cmake_system_name=Windows
+-- CMake-Conan: cmake_system_processor=x86_64
+-- CMake-Conan: CMake compiler=GNU
+-- CMake-Conan: CMake compiler version=13.1.0
+-- CMake-Conan: [settings] compiler=gcc
+-- CMake-Conan: [settings] compiler.version=13
+-- Performing Test _conan_is_gnu_libstdcxx
+-- Performing Test _conan_is_gnu_libstdcxx - Success
+-- Performing Test _conan_gnu_libstdcxx_is_cxx11_abi
+-- Performing Test _conan_gnu_libstdcxx_is_cxx11_abi - Success
+-- CMake-Conan: Creating profile C:/Users/dejor/CLionProjects/PAG_1/cmake-build-debug/conan_host_profile
+-- CMake-Conan: Profile: 
+[settings]
+arch=x86_64
+os=Windows
+compiler=gcc
+compiler.version=13
+compiler.cppstd=17
+compiler.libcxx=libstdc++11
+build_type=Debug
+[conf]
+tools.cmake.cmaketoolchain:generator=Ninja
+tools.build:compiler_executables={"c":"C:/Program Files/JetBrains/CLion 2023.3.3/bin/mingw/bin/gcc.exe","cpp":"C:/Program Files/JetBrains/CLion 2023.3.3/bin/mingw/bin/g++.exe","rc":"C:/Program Files/JetBrains/CLion 2023.3.3/bin/mingw/bin/windres.exe"}
+
+-- CMake-Conan: Installing single configuration Debug
+-- CMake-Conan: conan install C:/Users/dejor/CLionProjects/PAG_1 -of=C:/Users/dejor/CLionProjects/PAG_1/cmake-build-debug/conan --profile:host=default;--profile:host=C:/Users/dejor/CLionProjects/PAG_1/cmake-build-debug/conan_host_profile;--profile:build=default;--build=missing
+
+======== Input profiles ========
+Profile host:
+[settings]
+arch=x86_64
+build_type=Debug
+compiler=gcc
+compiler.cppstd=17
+compiler.libcxx=libstdc++11
+compiler.version=13
+os=Windows
+[conf]
+tools.cmake.cmaketoolchain:generator=Ninja
+tools.build:compiler_executables={'c': 'C:/Program Files/JetBrains/CLion 2023.3.3/bin/mingw/bin/gcc.exe', 'cpp': 'C:/Program Files/JetBrains/CLion 2023.3.3/bin/mingw/bin/g++.exe', 'rc': 'C:/Program Files/JetBrains/CLion 2023.3.3/bin/mingw/bin/windres.exe'}
+
+Profile build:
+[settings]
+arch=x86_64
+build_type=Release
+compiler=gcc
+compiler.cppstd=gnu17
+compiler.libcxx=libstdc++11
+compiler.version=11
+os=Windows
+
+
+======== Computing dependency graph ========
+glad/0.1.36: Not found in local cache, looking in remotes...
+glad/0.1.36: Checking remote: conancenter
+glad/0.1.36: Downloaded recipe revision c926453afdd9d5f72cc4ee6a8fff7d73
+glfw/3.3.8: Not found in local cache, looking in remotes...
+glfw/3.3.8: Checking remote: conancenter
+glfw/3.3.8: Downloaded recipe revision eaa2d6de4e064b2c92ad7fc4ac255141
+Graph root
+    conanfile.py: C:/Users/dejor/CLionProjects/PAG_1\conanfile.py
+Requirements
+    glad/0.1.36#c926453afdd9d5f72cc4ee6a8fff7d73 - Downloaded (conancenter)
+    glfw/3.3.8#eaa2d6de4e064b2c92ad7fc4ac255141 - Downloaded (conancenter)
+    opengl/system#b29589c04d6df84c110d6acb066ab653 - Cache
+
+======== Computing necessary packages ========
+Requirements
+    glad/0.1.36#c926453afdd9d5f72cc4ee6a8fff7d73:4288fece81e0215a1bc8330481c6aa713dbdb219 - Build
+    glfw/3.3.8#eaa2d6de4e064b2c92ad7fc4ac255141:8017d78d70cd810fbc93ef6c919368c5a0f66568 - Build
+    opengl/system#b29589c04d6df84c110d6acb066ab653:da39a3ee5e6b4b0d3255bfef95601890afd80709#0ba8627bd47edc3a501e8f0eb9a79e5e - Cache
+
+======== Installing packages ========
+glad/0.1.36: Sources downloaded from 'conancenter'
+glad/0.1.36: Calling source() in C:\Users\dejor\.conan2\p\gladd65d3aaae5edd\s\src
+
+-------- Installing package glad/0.1.36 (1 of 3) --------
+glad/0.1.36: Building from source
+glad/0.1.36: Package glad/0.1.36:4288fece81e0215a1bc8330481c6aa713dbdb219
+glad/0.1.36: Copying sources to build folder
+glad/0.1.36: Building your package in C:\Users\dejor\.conan2\p\b\glad6e21d932f6660\b
+glad/0.1.36: Calling generate()
+glad/0.1.36: Generators folder: C:\Users\dejor\.conan2\p\b\glad6e21d932f6660\b\build\Debug\generators
+glad/0.1.36: CMakeToolchain generated: conan_toolchain.cmake
+glad/0.1.36: CMakeToolchain generated: CMakePresets.json
+glad/0.1.36: CMakeToolchain generated: ..\..\..\src\CMakeUserPresets.json
+glad/0.1.36: Generating aggregated env files
+glad/0.1.36: Generated aggregated env files: ['conanbuild.bat', 'conanrun.bat']
+glad/0.1.36: Calling build()
+glad/0.1.36: Apply patch (file): patches/0003-CMake-handle-all-specs.patch
+glad/0.1.36: Running CMake.configure()
+glad/0.1.36: RUN: cmake -G "Ninja" -DCMAKE_TOOLCHAIN_FILE="C:/Users/dejor/.conan2/p/b/glad6e21d932f6660/b/build/Debug/generators/conan_toolchain.cmake" -DCMAKE_INSTALL_PREFIX="C:/Users/dejor/.conan2/p/b/glad6e21d932f6660/p" -DCMAKE_POLICY_DEFAULT_CMP0091="NEW" -DCMAKE_BUILD_TYPE="Debug" "C:\Users\dejor\.conan2\p\b\glad6e21d932f6660\b\src"
+CMake Deprecation Warning at CMakeLists.txt:1 (cmake_minimum_required):
+  Compatibility with CMake < 3.5 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value or use a ...<max> suffix to tell
+  CMake that the project does not need compatibility with older versions.
+
+
+-- Using Conan toolchain: C:/Users/dejor/.conan2/p/b/glad6e21d932f6660/b/build/Debug/generators/conan_toolchain.cmake
+-- Conan toolchain: Setting BUILD_SHARED_LIBS = OFF
+-- The C compiler identification is GNU 13.1.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files/JetBrains/CLion 2023.3.3/bin/mingw/bin/gcc.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Found Python: C:/Program Files/WindowsApps/PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0/python3.11.exe (found version "3.11.9") found components: Interpreter 
+CMake Warning (dev) at CMakeLists.txt:194 (set):
+  Cannot set "GLAD_LIBRARIES": current scope has no parent.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+CMake Warning (dev) at CMakeLists.txt:195 (set):
+  Cannot set "GLAD_INCLUDE_DIRS": current scope has no parent.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Configuring done (5.7s)
+-- Generating done (0.0s)
+-- Build files have been written to: C:/Users/dejor/.conan2/p/b/glad6e21d932f6660/b/build/Debug
+
+glad/0.1.36: Running CMake.build()
+glad/0.1.36: RUN: cmake --build "C:\Users\dejor\.conan2\p\b\glad6e21d932f6660\b\build\Debug" -- -j8
+[1/3] Generating GLAD
+[09/13/2024 17:58:49][INFO	][glad   	]: downloading latest 'gl' specification
+[09/13/2024 17:58:49][INFO	][glad.opener	]: opening: 'https://raw.githubusercontent.com/KhronosGroup/OpenGL-Registry/main/xml/gl.xml'
+[09/13/2024 17:58:50][INFO	][glad   	]: generating 'gl' bindings: {'gl': Version(major=3, minor=3)}
+[09/13/2024 17:58:50][INFO	][glad.opener	]: saving: 'https://raw.githubusercontent.com/KhronosGroup/EGL-Registry/main/api/KHR/khrplatform.h' to 'C:\Users\dejor\.conan2\p\b\glad6e21d932f6660\b\build\Debug\include\KHR\khrplatform.h'
+[09/13/2024 17:58:50][INFO	][glad   	]: generating 'gl' bindings - done
+[2/3] Building C object CMakeFiles/glad.dir/src/glad.c.obj
+[3/3] Linking C static library libglad.a
+
+glad/0.1.36: Package '4288fece81e0215a1bc8330481c6aa713dbdb219' built
+glad/0.1.36: Build folder C:\Users\dejor\.conan2\p\b\glad6e21d932f6660\b\build\Debug
+glad/0.1.36: Generating the package
+glad/0.1.36: Packaging in folder C:\Users\dejor\.conan2\p\b\glad6e21d932f6660\p
+glad/0.1.36: Calling package()
+glad/0.1.36: Running CMake.install()
+glad/0.1.36: RUN: cmake --install "C:\Users\dejor\.conan2\p\b\glad6e21d932f6660\b\build\Debug" --prefix "C:/Users/dejor/.conan2/p/b/glad6e21d932f6660/p"
+-- Install configuration: "Debug"
+-- Installing: C:/Users/dejor/.conan2/p/b/glad6e21d932f6660/p/lib/libglad.a
+-- Installing: C:/Users/dejor/.conan2/p/b/glad6e21d932f6660/p/include/glad/glad.h
+-- Installing: C:/Users/dejor/.conan2/p/b/glad6e21d932f6660/p/include/KHR/khrplatform.h
+-- Installing: C:/Users/dejor/.conan2/p/b/glad6e21d932f6660/p/lib/cmake/glad/gladConfig.cmake
+-- Installing: C:/Users/dejor/.conan2/p/b/glad6e21d932f6660/p/lib/cmake/glad/gladConfigVersion.cmake
+-- Installing: C:/Users/dejor/.conan2/p/b/glad6e21d932f6660/p/lib/cmake/glad/gladTargets.cmake
+-- Installing: C:/Users/dejor/.conan2/p/b/glad6e21d932f6660/p/lib/cmake/glad/gladTargets-debug.cmake
+
+glad/0.1.36: package(): Packaged 2 '.h' files: glad.h, khrplatform.h
+glad/0.1.36: package(): Packaged 1 '.a' file: libglad.a
+glad/0.1.36: package(): Packaged 1 file: LICENSE
+glad/0.1.36: Created package revision 07adf4ce2a49760147ecda2e5586a5f9
+glad/0.1.36: Package '4288fece81e0215a1bc8330481c6aa713dbdb219' created
+glad/0.1.36: Full package reference: glad/0.1.36#c926453afdd9d5f72cc4ee6a8fff7d73:4288fece81e0215a1bc8330481c6aa713dbdb219#07adf4ce2a49760147ecda2e5586a5f9
+glad/0.1.36: Package folder C:\Users\dejor\.conan2\p\b\glad6e21d932f6660\p
+opengl/system: Already installed! (2 of 3)
+glfw/3.3.8: Sources downloaded from 'conancenter'
+glfw/3.3.8: Calling source() in C:\Users\dejor\.conan2\p\glfw6135ac12b7ca2\s\src
+glfw/3.3.8: Unzipping 7.1MB, this can take a while
+
+
+-------- Installing package glfw/3.3.8 (3 of 3) --------
+glfw/3.3.8: Building from source
+glfw/3.3.8: Package glfw/3.3.8:8017d78d70cd810fbc93ef6c919368c5a0f66568
+glfw/3.3.8: Copying sources to build folder
+glfw/3.3.8: Building your package in C:\Users\dejor\.conan2\p\b\glfw4fbfd8acc38b5\b
+glfw/3.3.8: Calling generate()
+glfw/3.3.8: Generators folder: C:\Users\dejor\.conan2\p\b\glfw4fbfd8acc38b5\b\build\Debug\generators
+glfw/3.3.8: CMakeToolchain generated: conan_toolchain.cmake
+glfw/3.3.8: CMakeToolchain generated: CMakePresets.json
+glfw/3.3.8: CMakeToolchain generated: ..\..\..\src\CMakeUserPresets.json
+glfw/3.3.8: Generating aggregated env files
+glfw/3.3.8: Generated aggregated env files: ['conanbuild.bat', 'conanrun.bat']
+glfw/3.3.8: Calling build()
+glfw/3.3.8: Apply patch (official): Remove dependency on extra-cmake-modules to fix generation of Wayland Protocols
+glfw/3.3.8: Running CMake.configure()
+glfw/3.3.8: RUN: cmake -G "Ninja" -DCMAKE_TOOLCHAIN_FILE="C:/Users/dejor/.conan2/p/b/glfw4fbfd8acc38b5/b/build/Debug/generators/conan_toolchain.cmake" -DCMAKE_INSTALL_PREFIX="C:/Users/dejor/.conan2/p/b/glfw4fbfd8acc38b5/p" -DGLFW_BUILD_DOCS="OFF" -DGLFW_BUILD_EXAMPLES="OFF" -DGLFW_BUILD_TESTS="OFF" -DGLFW_INSTALL="ON" -DGLFW_USE_WAYLAND="OFF" -DCMAKE_POLICY_DEFAULT_CMP0091="NEW" -DCMAKE_BUILD_TYPE="Debug" "C:\Users\dejor\.conan2\p\b\glfw4fbfd8acc38b5\b\src"
+-- Using Conan toolchain: C:/Users/dejor/.conan2/p/b/glfw4fbfd8acc38b5/b/build/Debug/generators/conan_toolchain.cmake
+-- Conan toolchain: Setting BUILD_SHARED_LIBS = OFF
+-- The C compiler identification is GNU 13.1.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files/JetBrains/CLion 2023.3.3/bin/mingw/bin/gcc.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE  
+-- Looking for dinput.h
+-- Looking for dinput.h - found
+-- Looking for xinput.h
+-- Looking for xinput.h - found
+-- Performing Test _GLFW_HAS_DEP
+-- Performing Test _GLFW_HAS_DEP - Success
+-- Performing Test _GLFW_HAS_ASLR
+-- Performing Test _GLFW_HAS_ASLR - Success
+-- Performing Test _GLFW_HAS_64ASLR
+-- Performing Test _GLFW_HAS_64ASLR - Success
+-- Using Win32 for window creation
+-- Configuring done (4.5s)
+-- Generating done (0.0s)
+CMake Warning:
+  Manually-specified variables were not used by the project:
+
+    CMAKE_POLICY_DEFAULT_CMP0091
+
+
+-- Build files have been written to: C:/Users/dejor/.conan2/p/b/glfw4fbfd8acc38b5/b/build/Debug
+
+glfw/3.3.8: Running CMake.build()
+glfw/3.3.8: RUN: cmake --build "C:\Users\dejor\.conan2\p\b\glfw4fbfd8acc38b5\b\build\Debug" -- -j8
+[1/16] Building C object src/CMakeFiles/glfw.dir/win32_init.c.obj
+[2/16] Building C object src/CMakeFiles/glfw.dir/monitor.c.obj
+[3/16] Building C object src/CMakeFiles/glfw.dir/context.c.obj
+[4/16] Building C object src/CMakeFiles/glfw.dir/init.c.obj
+[5/16] Building C object src/CMakeFiles/glfw.dir/vulkan.c.obj
+[6/16] Building C object src/CMakeFiles/glfw.dir/win32_joystick.c.obj
+[7/16] Building C object src/CMakeFiles/glfw.dir/window.c.obj
+[8/16] Building C object src/CMakeFiles/glfw.dir/input.c.obj
+[9/16] Building C object src/CMakeFiles/glfw.dir/win32_thread.c.obj
+[10/16] Building C object src/CMakeFiles/glfw.dir/win32_time.c.obj
+[11/16] Building C object src/CMakeFiles/glfw.dir/osmesa_context.c.obj
+[12/16] Building C object src/CMakeFiles/glfw.dir/wgl_context.c.obj
+[13/16] Building C object src/CMakeFiles/glfw.dir/win32_monitor.c.obj
+[14/16] Building C object src/CMakeFiles/glfw.dir/egl_context.c.obj
+[15/16] Building C object src/CMakeFiles/glfw.dir/win32_window.c.obj
+[16/16] Linking C static library src\libglfw3.a
+
+glfw/3.3.8: Package '8017d78d70cd810fbc93ef6c919368c5a0f66568' built
+glfw/3.3.8: Build folder C:\Users\dejor\.conan2\p\b\glfw4fbfd8acc38b5\b\build\Debug
+glfw/3.3.8: Generating the package
+glfw/3.3.8: Packaging in folder C:\Users\dejor\.conan2\p\b\glfw4fbfd8acc38b5\p
+glfw/3.3.8: Calling package()
+glfw/3.3.8: Running CMake.install()
+glfw/3.3.8: RUN: cmake --install "C:\Users\dejor\.conan2\p\b\glfw4fbfd8acc38b5\b\build\Debug" --prefix "C:/Users/dejor/.conan2/p/b/glfw4fbfd8acc38b5/p"
+-- Install configuration: "Debug"
+-- Installing: C:/Users/dejor/.conan2/p/b/glfw4fbfd8acc38b5/p/lib/libglfw3.a
+-- Installing: C:/Users/dejor/.conan2/p/b/glfw4fbfd8acc38b5/p/include/GLFW
+-- Installing: C:/Users/dejor/.conan2/p/b/glfw4fbfd8acc38b5/p/include/GLFW/glfw3.h
+-- Installing: C:/Users/dejor/.conan2/p/b/glfw4fbfd8acc38b5/p/include/GLFW/glfw3native.h
+-- Installing: C:/Users/dejor/.conan2/p/b/glfw4fbfd8acc38b5/p/lib/cmake/glfw3/glfw3Config.cmake
+-- Installing: C:/Users/dejor/.conan2/p/b/glfw4fbfd8acc38b5/p/lib/cmake/glfw3/glfw3ConfigVersion.cmake
+-- Installing: C:/Users/dejor/.conan2/p/b/glfw4fbfd8acc38b5/p/lib/cmake/glfw3/glfw3Targets.cmake
+-- Installing: C:/Users/dejor/.conan2/p/b/glfw4fbfd8acc38b5/p/lib/cmake/glfw3/glfw3Targets-debug.cmake
+-- Installing: C:/Users/dejor/.conan2/p/b/glfw4fbfd8acc38b5/p/lib/pkgconfig/glfw3.pc
+
+glfw/3.3.8: package(): Packaged 2 '.h' files: glfw3.h, glfw3native.h
+glfw/3.3.8: package(): Packaged 1 '.a' file: libglfw3.a
+glfw/3.3.8: package(): Packaged 1 '.cmake' file: conan-official-glfw-targets.cmake
+glfw/3.3.8: package(): Packaged 1 '.md' file: LICENSE.md
+glfw/3.3.8: Created package revision 73c62fae1027c7773553af860f92e704
+glfw/3.3.8: Package '8017d78d70cd810fbc93ef6c919368c5a0f66568' created
+glfw/3.3.8: Full package reference: glfw/3.3.8#eaa2d6de4e064b2c92ad7fc4ac255141:8017d78d70cd810fbc93ef6c919368c5a0f66568#73c62fae1027c7773553af860f92e704
+glfw/3.3.8: Package folder C:\Users\dejor\.conan2\p\b\glfw4fbfd8acc38b5\p
+WARN: deprecated: Usage of deprecated Conan 1.X features that will be removed in Conan 2.X:
+WARN: deprecated:     'cpp_info.filenames' used in: glfw/3.3.8, opengl/system
+WARN: deprecated:     'cpp_info.names' used in: glfw/3.3.8
+WARN: deprecated:     'cpp_info.build_modules' used in: glfw/3.3.8
+
+======== Finalizing install (deploy, generators) ========
+conanfile.py: Writing generators to C:\Users\dejor\CLionProjects\PAG_1\cmake-build-debug\conan\build\Debug\generators
+conanfile.py: Generator 'CMakeDeps' calling 'generate()'
+conanfile.py: Calling generate()
+conanfile.py: Generators folder: C:\Users\dejor\CLionProjects\PAG_1\cmake-build-debug\conan\build\Debug\generators
+conanfile.py: CMakeToolchain generated: conan_toolchain.cmake
+conanfile.py: Preset 'conan-debug' added to CMakePresets.json. Invoke it manually using 'cmake --preset conan-debug' if using CMake>=3.23
+conanfile.py: If your CMake version is not compatible with CMakePresets (<3.23) call cmake like: 'cmake <path> -G Ninja -DCMAKE_TOOLCHAIN_FILE=C:\Users\dejor\CLionProjects\PAG_1\cmake-build-debug\conan\build\Debug\generators\conan_toolchain.cmake -DCMAKE_POLICY_DEFAULT_CMP0091=NEW -DCMAKE_BUILD_TYPE=Debug'
+conanfile.py: CMakeToolchain generated: CMakePresets.json
+conanfile.py: Generating aggregated env files
+conanfile.py: Generated aggregated env files: ['conanbuild.bat', 'conanrun.bat']
+Install finished successfully
+-- CMake-Conan: CONAN_GENERATORS_FOLDER=C:/Users/dejor/CLionProjects/PAG_1/cmake-build-debug/conan/build/Debug/generators
+-- CMake-Conan: CONANFILE=C:/Users/dejor/CLionProjects/PAG_1/conanfile.py
+-- Conan: Target declared 'glfw'
+-- CMake-Conan: find_package(opengl_system) found, 'conan install' already ran
+-- Conan: Target declared 'opengl::opengl'
+-- CMake-Conan: find_package(glad) found, 'conan install' already ran
+-- Conan: Target declared 'glad::glad'
+-- Configuring done (37.5s)
+-- Generating done (0.0s)
+-- Build files have been written to: C:/Users/dejor/CLionProjects/PAG_1/cmake-build-debug
