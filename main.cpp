@@ -111,6 +111,9 @@ void scroll_callback(GLFWwindow *window, double xoffset, double yoffset){
         }
     }
 
+    //Se pone aqui porquw no tiene que actualizarse constantemente
+    glClearColor(bg_color[0],bg_color[1],bg_color[2],bg_color[3]);
+
 }
 
 //MAIN
@@ -217,8 +220,6 @@ int main()
     while ( !glfwWindowShouldClose ( window ) )
     {
         //PRACTICA 1
-        //Se pone aqui pq se tiene que actualizar constantemente
-        glClearColor(bg_color[0],bg_color[1],bg_color[2],bg_color[3]);
         glClear(GL_COLOR_BUFFER_BIT);
 
         glfwSwapBuffers(window); //swap buffer
