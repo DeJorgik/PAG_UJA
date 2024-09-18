@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(PAG_1 main.cpp
         Renderer.cpp
         Renderer.h
+        Model.cpp
+        Model.h
 )
 
 find_package(glfw3)
