@@ -56,6 +56,13 @@ build CMakeFiles/PAG_1.dir/main.cpp.obj: CXX_COMPILER__PAG_1_unscanned_Debug C$:
   OBJECT_DIR = CMakeFiles\PAG_1.dir
   OBJECT_FILE_DIR = CMakeFiles\PAG_1.dir
 
+build CMakeFiles/PAG_1.dir/Renderer.cpp.obj: CXX_COMPILER__PAG_1_unscanned_Debug C$:/Users/dejor/CLionProjects/PAG_1/Renderer.cpp || cmake_object_order_depends_target_PAG_1
+  DEP_FILE = CMakeFiles\PAG_1.dir\Renderer.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  INCLUDES = -isystem C:/Users/dejor/.conan2/p/b/glad6e21d932f6660/p/include -isystem C:/Users/dejor/.conan2/p/b/glfw4fbfd8acc38b5/p/include
+  OBJECT_DIR = CMakeFiles\PAG_1.dir
+  OBJECT_FILE_DIR = CMakeFiles\PAG_1.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target PAG_1
@@ -64,7 +71,7 @@ build CMakeFiles/PAG_1.dir/main.cpp.obj: CXX_COMPILER__PAG_1_unscanned_Debug C$:
 #############################################
 # Link the executable PAG_1.exe
 
-build PAG_1.exe: CXX_EXECUTABLE_LINKER__PAG_1_Debug CMakeFiles/PAG_1.dir/main.cpp.obj | C$:/Users/dejor/.conan2/p/b/glad6e21d932f6660/p/lib/libglad.a C$:/Users/dejor/.conan2/p/b/glfw4fbfd8acc38b5/p/lib/libglfw3.a
+build PAG_1.exe: CXX_EXECUTABLE_LINKER__PAG_1_Debug CMakeFiles/PAG_1.dir/main.cpp.obj CMakeFiles/PAG_1.dir/Renderer.cpp.obj | C$:/Users/dejor/.conan2/p/b/glad6e21d932f6660/p/lib/libglad.a C$:/Users/dejor/.conan2/p/b/glfw4fbfd8acc38b5/p/lib/libglfw3.a
   FLAGS = -g
   LINK_LIBRARIES = C:/Users/dejor/.conan2/p/b/glad6e21d932f6660/p/lib/libglad.a  C:/Users/dejor/.conan2/p/b/glfw4fbfd8acc38b5/p/lib/libglfw3.a  -lgdi32  -lopengl32  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   LINK_PATH = -LC:/Users/dejor/.conan2/p/b/glad6e21d932f6660/p/lib   -LC:/Users/dejor/.conan2/p/b/glfw4fbfd8acc38b5/p/lib

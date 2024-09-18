@@ -69,7 +69,7 @@ glad/0.1.36: Already installed! (1 of 3)
 opengl/system: Already installed! (2 of 3)
 glfw/3.3.8: Already installed! (3 of 3)
 WARN: deprecated: Usage of deprecated Conan 1.X features that will be removed in Conan 2.X:
-WARN: deprecated:     'cpp_info.filenames' used in: opengl/system, glfw/3.3.8
+WARN: deprecated:     'cpp_info.filenames' used in: glfw/3.3.8, opengl/system
 WARN: deprecated:     'cpp_info.names' used in: glfw/3.3.8
 WARN: deprecated:     'cpp_info.build_modules' used in: glfw/3.3.8
 
@@ -92,6 +92,6 @@ Install finished successfully
 -- Conan: Target declared 'opengl::opengl'
 -- CMake-Conan: find_package(glad) found, 'conan install' already ran
 -- Conan: Target declared 'glad::glad'
--- Configuring done (4.8s)
+-- Configuring done (3.2s)
 -- Generating done (0.0s)
 -- Build files have been written to: C:/Users/dejor/CLionProjects/PAG_1/cmake-build-debug
