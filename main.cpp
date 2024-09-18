@@ -221,7 +221,6 @@ int main()
     {
         //PRACTICA 1
         glClear(GL_COLOR_BUFFER_BIT);
-
         glfwSwapBuffers(window); //swap buffer
         glfwPollEvents ();
     }
