@@ -6,8 +6,7 @@
 #include "Renderer.h"
 
 //PRÁCTICA 1: CALLBACK PARA CAMBIAR COLOR DE FONDO
-int mode = 0; //Modo, rojo, verde, azul ó alpha
-float bg_color[4] = {0.0f,0.0f,0.0f,1.0f}; //valor
+int mode = -1; //Modo, rojo, verde, azul ó alpha
 
 //funcionamiento: mientras tocas una tecla y scrolleas cambias el valor
 //asociado a dicha tecla
@@ -27,7 +26,7 @@ void error_callback(int errno, const char* desc){
  * @param window
  */
 void window_refresh_callback(GLFWwindow *window){
-    glClear ( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); //borrar buffers
+    PAG::Renderer::getInstance().windowRefresh(); //refrescar pantalla
     glfwSwapBuffers(window); //Ultima orden en el callback
     std::cout << "REFRESH CALLBACK CALLED" << std::endl;
 }
@@ -41,8 +40,7 @@ void window_refresh_callback(GLFWwindow *window){
  * @param height
  */
 void framebuffer_size_callback(GLFWwindow *window, int width, int height){
-    glViewport(0,0,width,height); //pone desde donde va hasta donde va
-                                        //en este caso el viewport equivale a toda la ventana
+    PAG::Renderer::getInstance().viewportResize(width,height);
     std::cout << "RESIZE CALLBACK CALLED" << std::endl;
 }
 
@@ -98,14 +96,8 @@ void scroll_callback(GLFWwindow *window, double xoffset, double yoffset){
     //PRACTICA 1
     //Depende de la tecla pulsada cambia un valor u otro
     if (mode!=-1){
-        bg_color[mode]+=yoffset; //Suma el yoffset actual para que sea gradual
-        if(bg_color[mode]<0){
-            bg_color[mode]=0.0f; //Para que no sea inferior a 0
-        } else if(bg_color[mode]>1){
-            bg_color[mode]=1.0f; // Para que no sea superior a 1
-        }
-        glClearColor(bg_color[0],bg_color[1],bg_color[2],bg_color[3]); //Cambiar color de fondo
-        window_refresh_callback(window); //Refrescar vetana para que se vea el cambio
+        PAG::Renderer::getInstance().addBgColor(mode,yoffset);//Suma el yoffset actual para que sea gradual
+        glfwSwapBuffers(window);
     }
 }
 
@@ -114,7 +106,6 @@ int main()
 { std::cout << "Starting Application PAG - Prueba 01" << std::endl;
 
     //INICIALIZACIÓN GLFW
-
     glfwSetErrorCallback((GLFWerrorfun) error_callback);//Callback de errores
 
     if ( glfwInit () != GLFW_TRUE ) //Inicializar GLFW
@@ -159,6 +150,12 @@ int main()
     glfwSetKeyCallback(window, (GLFWkeyfun) key_callback);
     glfwSetMouseButtonCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
+
+    //Mostrar contexto ya definido
+    std::cout << glGetString ( GL_RENDERER ) << std::endl
+              << glGetString ( GL_VENDOR ) << std::endl
+              << glGetString ( GL_VERSION ) << std::endl
+              << glGetString ( GL_SHADING_LANGUAGE_VERSION ) << std::endl;
 
     PAG::Renderer::getInstance().rendererInit(); //inicializar opengl
 

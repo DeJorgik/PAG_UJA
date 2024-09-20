@@ -17,7 +17,7 @@ namespace PAG {
     private:
         static Renderer* rederer_instance; //Instancia del Singleton
         Renderer(); //Constructor
-        GLfloat bg_color[]; //Color de fondo 0 R, 1 G, 2 B, 3Alpha
+        GLfloat bg_color[3]; //Color de fondo 0 R, 1 G, 2 B, 3Alpha
     public:
         virtual ~Renderer ();
         static Renderer& getInstance ();
@@ -30,6 +30,7 @@ namespace PAG {
 
         float getBgColor(int color_id);
         void setBgColor(int color_id,float value);
+        void addBgColor(int color_id,double value);
     };
 
 } // PAG
