@@ -3,6 +3,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "Renderer.h"
+
 //PRÁCTICA 1: CALLBACK PARA CAMBIAR COLOR DE FONDO
 int mode = 0; //Modo, rojo, verde, azul ó alpha
 float bg_color[4] = {0.0f,0.0f,0.0f,1.0f}; //valor
@@ -151,12 +153,6 @@ int main()
 
     //PREPARACIÓN
 
-    //Mostrar contexto ya definido
-    std::cout << glGetString ( GL_RENDERER ) << std::endl
-            << glGetString ( GL_VENDOR ) << std::endl
-            << glGetString ( GL_VERSION ) << std::endl
-            << glGetString ( GL_SHADING_LANGUAGE_VERSION ) << std::endl;
-
     //Asignar los callbacks ya definidos
     glfwSetWindowRefreshCallback(window,window_refresh_callback);
     glfwSetFramebufferSizeCallback(window,framebuffer_size_callback);
@@ -164,7 +160,7 @@ int main()
     glfwSetMouseButtonCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
 
-    glEnable ( GL_DEPTH_TEST ); //Tener en cuenta la profundidad
+    PAG::Renderer::getInstance().rendererInit(); //inicializar opengl
 
     //CICLO DE EVENTOS
 
