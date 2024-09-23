@@ -162,18 +162,51 @@ int main()
     PAG::Renderer::getInstance().rendererInit(); //inicializar opengl
 
     //PRACTICA 2: Inicializar IMGUI
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags = ImGuiConfigFlags_NavEnableKeyboard;
 
+    ImGui_ImplGlfw_InitForOpenGL(window,true); //Inicializar para opengl
+    ImGui_ImplOpenGL3_Init();
 
     //CICLO DE EVENTOS
 
     while ( !glfwWindowShouldClose ( window ) ) //Repetir hasta que se cierre la ventana
     {
+        //Llamadas de la interfaz de usuario
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        //Dibujar interfaz
+
+        if ( ImGui::Begin ( "Mensajes" ) )
+        { // La ventana está desplegada
+            ImGui::SetWindowFontScale ( 1.0f ); // Escalamos el texto si fuera necesario
+        // Pintamos los controles
+        }
+        // Si la ventana no está desplegada, Begin devuelve false
+        ImGui::End ();
+
+        //Dibujar escena
+
+
+        //Renderizar interfaz
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         glfwPollEvents (); //Despachar pila de eventos
     }
 
     //TERMINAR APLICACIÓN
 
     std::cout << "Finishing application pag prueba" << std::endl;
+
+    //Terminar imgui
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext ();
+
     glfwDestroyWindow ( window ); //Destruir ventana
     window = nullptr; //Poner puntero a nulo
     glfwTerminate (); //Liberar recursos de GLFW
