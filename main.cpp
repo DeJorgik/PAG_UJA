@@ -1,15 +1,17 @@
 #include <iostream>
 // IMPORTANTE: El include de GLAD debe estar siempre ANTES de el de GLFW
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
+//#include "imgui/imgui_impl_opengl3_loader.h"
 
-#include "Renderer.h"
+#include "Utilities/Renderer.h"
 
-//PRÁCTICA 1: CALLBACK PARA CAMBIAR COLOR DE FONDO
-int mode = -1; //Modo, rojo, verde, azul ó alpha
-
-//funcionamiento: mientras tocas una tecla y scrolleas cambias el valor
-//asociado a dicha tecla
+//PRÁCTICA 1: variable global del modo de cambiar de fondo
+int mode = -1; //Modo, rojo, verde, azul
 
 /**
  * Función que muestra por pantalla los errores que ocurren
@@ -103,7 +105,7 @@ void scroll_callback(GLFWwindow *window, double xoffset, double yoffset){
 
 //MAIN
 int main()
-{ std::cout << "Starting Application PAG - Prueba 01" << std::endl;
+{ std::cout << "Starting Application PAG - Prueba 02" << std::endl;
 
     //INICIALIZACIÓN GLFW
     glfwSetErrorCallback((GLFWerrorfun) error_callback);//Callback de errores
@@ -158,6 +160,9 @@ int main()
               << glGetString ( GL_SHADING_LANGUAGE_VERSION ) << std::endl;
 
     PAG::Renderer::getInstance().rendererInit(); //inicializar opengl
+
+    //PRACTICA 2: Inicializar IMGUI
+
 
     //CICLO DE EVENTOS
 
