@@ -38,11 +38,14 @@ namespace PAG {
 
     void Renderer::updateBgColor() {
         glClearColor(bg_color[0],bg_color[1],bg_color[2],1.0f);
-        windowRefresh();
     }
 
     float Renderer::getBgColor(int color_id) {
         return bg_color[color_id];
+    }
+
+    GLfloat *Renderer::getBgColor() {
+        return bg_color;
     }
 
     void Renderer::setBgColor(int color_id, float value) {

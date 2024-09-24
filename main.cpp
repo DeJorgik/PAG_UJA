@@ -1,12 +1,14 @@
-#include <iostream>
 // IMPORTANTE: El include de GLAD debe estar siempre ANTES de el de GLFW
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 //#include "imgui/imgui_impl_opengl3_loader.h"
+
+#include <iostream>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 
 #include "Utilities/Renderer.h"
 
@@ -28,7 +30,7 @@ void error_callback(int errno, const char* desc){
  * @param window
  */
 void window_refresh_callback(GLFWwindow *window){
-    PAG::Renderer::getInstance().windowRefresh(); //refrescar pantalla
+    //PAG::Renderer::getInstance().windowRefresh(); //refrescar pantalla
     glfwSwapBuffers(window); //Ultima orden en el callback
     std::cout << "REFRESH CALLBACK CALLED" << std::endl;
 }
@@ -165,7 +167,7 @@ int main()
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags = ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 
     ImGui_ImplGlfw_InitForOpenGL(window,true); //Inicializar para opengl
     ImGui_ImplOpenGL3_Init();
@@ -174,28 +176,42 @@ int main()
 
     while ( !glfwWindowShouldClose ( window ) ) //Repetir hasta que se cierre la ventana
     {
+        PAG::Renderer::getInstance().windowRefresh(); //Refrescar ventana constantemente
+
         //Llamadas de la interfaz de usuario
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
         //Dibujar interfaz
 
-        if ( ImGui::Begin ( "Mensajes" ) )
-        { // La ventana está desplegada
+        //Posición de la ventana
+        ImGui::SetNextWindowPos(ImVec2 (10, 10), ImGuiCond_Once );
+        if ( ImGui::Begin ( "Mensajes" )){
             ImGui::SetWindowFontScale ( 1.0f ); // Escalamos el texto si fuera necesario
-        // Pintamos los controles
+            ImGui::Text("Prueba");
+
         }
+
         // Si la ventana no está desplegada, Begin devuelve false
         ImGui::End ();
 
-        //Dibujar escena
+        ImGui::SetNextWindowPos ( ImVec2 (200, 10), ImGuiCond_Once );
+        if (ImGui::Begin("Fondo")){
+            ImGui::SetWindowFontScale ( 1.0f );
+            //Le paso un puntero al color picker
+            ImGui::ColorPicker3("Actual",PAG::Renderer::getInstance().getBgColor(),ImGuiColorEditFlags_PickerHueWheel);
+            PAG::Renderer::getInstance().updateBgColor(); //Cambia el color del fondo (ver si se puede hacer con callbacks)
+        }
+        ImGui::End();
 
+        //Dibujar escena
 
         //Renderizar interfaz
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-        glfwPollEvents (); //Despachar pila de eventos
+        glfwSwapBuffers(window);
+        glfwPollEvents(); //Despachar pila de eventos
     }
 
     //TERMINAR APLICACIÓN

@@ -29,6 +29,7 @@ namespace PAG {
         void updateBgColor();
 
         float getBgColor(int color_id);
+        GLfloat* getBgColor();
         void setBgColor(int color_id,float value);
         void addBgColor(int color_id,double value);
     };
