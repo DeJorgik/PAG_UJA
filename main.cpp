@@ -6,14 +6,16 @@
 //#include "imgui/imgui_impl_opengl3_loader.h"
 
 #include <iostream>
+#include <sstream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
 
 #include "Utilities/Renderer.h"
 
 //PRÁCTICA 1: variable global del modo de cambiar de fondo
 int mode = -1; //Modo, rojo, verde, azul
+//PRÁCTICA 2 buffer con el texto que aparecerá por patalla
+std::stringstream buffer;
 
 /**
  * Función que muestra por pantalla los errores que ocurren
@@ -22,7 +24,7 @@ int mode = -1; //Modo, rojo, verde, azul
  */
 void error_callback(int errno, const char* desc){
     std::string aux(desc);
-    std::cout << "GLFW ERROR NUMBER: "<< errno << ":" << aux << std::endl;
+   buffer << "GLFW ERROR NUMBER: "<< errno << ":" << aux << std::endl;
 }
 
 /**
@@ -32,7 +34,7 @@ void error_callback(int errno, const char* desc){
 void window_refresh_callback(GLFWwindow *window){
     //PAG::Renderer::getInstance().windowRefresh(); //refrescar pantalla
     glfwSwapBuffers(window); //Ultima orden en el callback
-    std::cout << "REFRESH CALLBACK CALLED" << std::endl;
+    buffer << "REFRESH CALLBACK CALLED" << std::endl;
 }
 
 /**
@@ -45,7 +47,7 @@ void window_refresh_callback(GLFWwindow *window){
  */
 void framebuffer_size_callback(GLFWwindow *window, int width, int height){
     PAG::Renderer::getInstance().viewportResize(width,height);
-    std::cout << "RESIZE CALLBACK CALLED" << std::endl;
+    buffer << "RESIZE CALLBACK CALLED" << std::endl;
 }
 
 /**
@@ -85,7 +87,7 @@ void key_callback(GLFWwindow *window, int key, int action, int mods){
  * @param mods
  */
 void mouse_callback(GLFWwindow *window, int button, int action, int mods){
-    std::cout<<"MOUSE CALLBACK BUTTON: "<<button<<" ACTION: "<< action << std::endl;
+    buffer<<"MOUSE CALLBACK BUTTON: "<<button<<" ACTION: "<< action << std::endl;
 }
 
 /**
@@ -95,7 +97,7 @@ void mouse_callback(GLFWwindow *window, int button, int action, int mods){
  * @param yoffset
  */
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset){
-    std::cout << "SCROLL CALLBACK X POS: " << xoffset
+    buffer << "SCROLL CALLBACK X POS: " << xoffset
               << "  Y POS: " << yoffset << std::endl;
     //PRACTICA 1
     //Depende de la tecla pulsada cambia un valor u otro
@@ -188,8 +190,11 @@ int main()
         ImGui::SetNextWindowPos(ImVec2 (10, 10), ImGuiCond_Once );
         if ( ImGui::Begin ( "Mensajes" )){
             ImGui::SetWindowFontScale ( 1.0f ); // Escalamos el texto si fuera necesario
-            ImGui::Text("Prueba");
-
+            ImGui::TextUnformatted(buffer.str().c_str()); //texto es salida del buffer
+            //resetear si llega al maximo
+            if(buffer.str().size()==buffer.str().max_size()){
+                buffer.str(std::string());
+            }
         }
 
         // Si la ventana no está desplegada, Begin devuelve false
