@@ -1,9 +1,5 @@
 // IMPORTANTE: El include de GLAD debe estar siempre ANTES de el de GLFW
 
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_glfw.h"
-#include "imgui/imgui_impl_opengl3.h"
-//#include "imgui/imgui_impl_opengl3_loader.h"
 
 #include <iostream>
 #include <sstream>
@@ -11,6 +7,7 @@
 #include <GLFW/glfw3.h>
 
 #include "Utilities/Renderer.h"
+#include "Utilities/GUI.h"
 
 //PRÁCTICA 1: variable global del modo de cambiar de fondo
 int mode = -1; //Modo, rojo, verde, azul
@@ -166,13 +163,7 @@ int main()
     PAG::Renderer::getInstance().rendererInit(); //inicializar opengl
 
     //PRACTICA 2: Inicializar IMGUI
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-
-    ImGui_ImplGlfw_InitForOpenGL(window,true); //Inicializar para opengl
-    ImGui_ImplOpenGL3_Init();
+    PAG::GUI::getInstance().guiInit(window);
 
     //CICLO DE EVENTOS
 
@@ -180,40 +171,20 @@ int main()
     {
         PAG::Renderer::getInstance().windowRefresh(); //Refrescar ventana constantemente
 
-        //Llamadas de la interfaz de usuario
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+        PAG::GUI::getInstance().newFrame();//Llamadas de la interfaz de usuario
+
         //Dibujar interfaz
-
-        //Posición de la ventana
-        ImGui::SetNextWindowPos(ImVec2 (10, 10), ImGuiCond_Once );
-        if ( ImGui::Begin ( "Mensajes" )){
-            ImGui::SetWindowFontScale ( 1.0f ); // Escalamos el texto si fuera necesario
-            ImGui::TextUnformatted(buffer.str().c_str()); //texto es salida del buffer
-            //resetear si llega al maximo
-            if(buffer.str().size()==buffer.str().max_size()){
-                buffer.str(std::string());
-            }
+        PAG::GUI::getInstance().drawMessage(10,10,1.0f,"Mensajes",buffer.str().c_str());
+        if(buffer.str().size()==buffer.str().max_size()){
+            buffer.str(std::string());
         }
 
-        // Si la ventana no está desplegada, Begin devuelve false
-        ImGui::End ();
-
-        ImGui::SetNextWindowPos ( ImVec2 (200, 10), ImGuiCond_Once );
-        if (ImGui::Begin("Fondo")){
-            ImGui::SetWindowFontScale ( 1.0f );
-            //Le paso un puntero al color picker
-            ImGui::ColorPicker3("Actual",PAG::Renderer::getInstance().getBgColor(),ImGuiColorEditFlags_PickerHueWheel);
-            PAG::Renderer::getInstance().updateBgColor(); //Cambia el color del fondo (ver si se puede hacer con callbacks)
-        }
-        ImGui::End();
+        PAG::GUI::getInstance().drawColorWheel(200,10,1.0f,PAG::Renderer::getInstance().getBgColor(),"Fondo","Actual");
+        PAG::Renderer::getInstance().updateBgColor();
 
         //Dibujar escena
 
-        //Renderizar interfaz
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        PAG::GUI::getInstance().render();//Renderizar interfaz
 
         glfwSwapBuffers(window);
         glfwPollEvents(); //Despachar pila de eventos
@@ -224,9 +195,7 @@ int main()
     std::cout << "Finishing application pag prueba" << std::endl;
 
     //Terminar imgui
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext ();
+    PAG::GUI::getInstance().shutDown();
 
     glfwDestroyWindow ( window ); //Destruir ventana
     window = nullptr; //Poner puntero a nulo

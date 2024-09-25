@@ -5,10 +5,24 @@
 #ifndef PAG_1_GUI_H
 #define PAG_1_GUI_H
 
+#include <GLFW/glfw3.h>
+
 namespace PAG {
 
     class GUI {
+    private:
+        static GUI* gui_instance;
+        GUI();
+    public:
+        virtual ~GUI();
+        static GUI& getInstance();
+        void guiInit(GLFWwindow* window);
+        void shutDown();
+        void newFrame();
+        void render();
 
+        void drawMessage(float posX,float posY,float fontScale,const char *title,const char *text);
+        void drawColorWheel(float posX,float posY,float fontScale,float *col,const char *title,const char *text);
     };
 
 } // PAG

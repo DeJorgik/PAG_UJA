@@ -13,7 +13,6 @@
 namespace PAG {
 
     class Renderer {
-
     private:
         static Renderer* rederer_instance; //Instancia del Singleton
         Renderer(); //Constructor
@@ -21,13 +20,10 @@ namespace PAG {
     public:
         virtual ~Renderer ();
         static Renderer& getInstance ();
-
         void rendererInit();
-
         void windowRefresh();
         void viewportResize(int width, int height);
         void updateBgColor();
-
         float getBgColor(int color_id);
         GLfloat* getBgColor();
         void setBgColor(int color_id,float value);
