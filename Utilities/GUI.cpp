@@ -63,7 +63,7 @@ namespace PAG {
     }
 
     void GUI::drawColorWheel(float posX,float posY,float fontScale,float *col,const char *title,const char *text) {
-        ImGui::SetNextWindowPos ( ImVec2 (posX, posX), ImGuiCond_Once );
+        ImGui::SetNextWindowPos ( ImVec2 (posX, posY), ImGuiCond_Once );
         if (ImGui::Begin(title)){
             ImGui::SetWindowFontScale ( fontScale );
             ImGui::ColorPicker3(text,col,ImGuiColorEditFlags_PickerHueWheel);

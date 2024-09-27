@@ -179,7 +179,7 @@ int main()
             buffer.str(std::string());
         }
 
-        PAG::GUI::getInstance().drawColorWheel(200,10,1.0f,PAG::Renderer::getInstance().getBgColor(),"Fondo","Actual");
+        PAG::GUI::getInstance().drawColorWheel(500,10,1.0f,PAG::Renderer::getInstance().getBgColor(),"Fondo","Actual");
         PAG::Renderer::getInstance().updateBgColor();
 
         //Dibujar escena
