@@ -5,6 +5,9 @@
 #include <sstream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 #include "Utilities/Renderer.h"
 #include "Utilities/GUI.h"
@@ -155,7 +158,7 @@ int main()
     glfwSetScrollCallback(window, scroll_callback);
 
     //Mostrar contexto ya definido
-    std::cout << glGetString ( GL_RENDERER ) << std::endl
+    buffer << glGetString ( GL_RENDERER ) << std::endl
               << glGetString ( GL_VENDOR ) << std::endl
               << glGetString ( GL_VERSION ) << std::endl
               << glGetString ( GL_SHADING_LANGUAGE_VERSION ) << std::endl;
@@ -163,7 +166,9 @@ int main()
     PAG::Renderer::getInstance().rendererInit(); //inicializar opengl
 
     //PRACTICA 2: Inicializar IMGUI
-    PAG::GUI::getInstance().guiInit(window);
+    PAG::GUI::getInstance().guiInit();
+    ImGui_ImplGlfw_InitForOpenGL(window,true); //Preguntar si es asi o no???
+    ImGui_ImplOpenGL3_Init();
 
     //CICLO DE EVENTOS
 

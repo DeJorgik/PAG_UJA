@@ -5,8 +5,6 @@
 #ifndef PAG_1_GUI_H
 #define PAG_1_GUI_H
 
-#include <GLFW/glfw3.h>
-
 namespace PAG {
 
     class GUI {
@@ -16,7 +14,7 @@ namespace PAG {
     public:
         virtual ~GUI();
         static GUI& getInstance();
-        void guiInit(GLFWwindow* window);
+        void guiInit();
         void shutDown();
         void newFrame();
         void render();

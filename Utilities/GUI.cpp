@@ -27,13 +27,11 @@ namespace PAG {
         return *gui_instance;
     }
 
-    void GUI::guiInit(GLFWwindow* window) {
+    void GUI::guiInit() {
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-        ImGui_ImplGlfw_InitForOpenGL(window,true);
-        ImGui_ImplOpenGL3_Init();
     }
 
     void GUI::shutDown() {
