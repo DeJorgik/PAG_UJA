@@ -5,15 +5,12 @@
 #include <sstream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "imgui/imgui.h"
-#include "imgui/imgui_impl_glfw.h"
-#include "imgui/imgui_impl_opengl3.h"
 
 #include "Utilities/Renderer.h"
 #include "Utilities/GUI.h"
 
 //PRÁCTICA 1: variable global del modo de cambiar de fondo
-int mode = -1; //Modo, rojo, verde, azul
+//int mode = -1; //Modo, rojo, verde, azul
 //PRÁCTICA 2 buffer con el texto que aparecerá por patalla
 std::stringstream buffer;
 
@@ -32,7 +29,8 @@ void error_callback(int errno, const char* desc){
  * @param window
  */
 void window_refresh_callback(GLFWwindow *window){
-    //PAG::Renderer::getInstance().windowRefresh(); //refrescar pantalla
+    PAG::Renderer::getInstance().windowRefresh(); //refrescar pantalla
+    PAG::GUI::getInstance().render();//Renderizar interfaz
     glfwSwapBuffers(window); //Ultima orden en el callback
     buffer << "REFRESH CALLBACK CALLED" << std::endl;
 }
@@ -63,6 +61,7 @@ void key_callback(GLFWwindow *window, int key, int action, int mods){
     }
     //PRACTICA 1
     //Elige el modo según la última tecla que toca
+    /*
     switch (key) {
         case GLFW_KEY_R:
             mode=0;
@@ -76,7 +75,7 @@ void key_callback(GLFWwindow *window, int key, int action, int mods){
         default:
             mode=-1;
             break;
-    }
+    }*/
 }
 
 /**
@@ -101,10 +100,10 @@ void scroll_callback(GLFWwindow *window, double xoffset, double yoffset){
               << "  Y POS: " << yoffset << std::endl;
     //PRACTICA 1
     //Depende de la tecla pulsada cambia un valor u otro
-    if (mode!=-1){
+    /*if (mode!=-1){
         PAG::Renderer::getInstance().addBgColor(mode,yoffset);//Suma el yoffset actual para que sea gradual
         glfwSwapBuffers(window);
-    }
+    }*/
 }
 
 //MAIN
@@ -166,16 +165,23 @@ int main()
     PAG::Renderer::getInstance().rendererInit(); //inicializar opengl
 
     //PRACTICA 2: Inicializar IMGUI
-    PAG::GUI::getInstance().guiInit();
-    ImGui_ImplGlfw_InitForOpenGL(window,true); //Preguntar si es asi o no???
-    ImGui_ImplOpenGL3_Init();
+    PAG::GUI::getInstance().guiInit(window);
+
+    //Crear shader program y cargar modelo
+
+    try{
+        PAG::Renderer::getInstance().createShaderProgram();
+    }
+    catch (const std::exception& e){ //capturar excepción en caso de error
+        buffer << e.what() << std::endl;
+    }
+
+    PAG::Renderer::getInstance().createModel();
 
     //CICLO DE EVENTOS
-
     while ( !glfwWindowShouldClose ( window ) ) //Repetir hasta que se cierre la ventana
     {
         PAG::Renderer::getInstance().windowRefresh(); //Refrescar ventana constantemente
-
         PAG::GUI::getInstance().newFrame();//Llamadas de la interfaz de usuario
 
         //Dibujar interfaz
@@ -190,7 +196,6 @@ int main()
         //Dibujar escena
 
         PAG::GUI::getInstance().render();//Renderizar interfaz
-
         glfwSwapBuffers(window);
         glfwPollEvents(); //Despachar pila de eventos
     }

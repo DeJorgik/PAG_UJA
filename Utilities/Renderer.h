@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
 
 //Clase que encapsula el dibujado de la pantalla
 //todas las funciones de opengl están aquí
@@ -16,7 +15,16 @@ namespace PAG {
     private:
         static Renderer* rederer_instance; //Instancia del Singleton
         Renderer(); //Constructor
-        GLfloat bg_color[3]; //Color de fondo 0 R, 1 G, 2 B, 3Alpha
+        float bg_color[3]; //Color de fondo 0 R, 1 G, 2 B, 3Alpha
+
+        //PRACTICA 3, IDENTIFICADORES
+        GLuint idVs = 0; //Identificador vertex shader
+        GLuint idFs = 0; //Identificador fragment shader
+        GLuint idSP = 0; //Identificador shader program
+        GLuint idVAO = 0; //Identificador del vertex array object
+        GLuint idVBO = 0; //Identificador del vertex buffer object
+        GLuint idIBO = 0; //Identificador del index buffer object
+
     public:
         virtual ~Renderer ();
         static Renderer& getInstance ();
@@ -28,6 +36,13 @@ namespace PAG {
         GLfloat* getBgColor();
         void setBgColor(int color_id,float value);
         void addBgColor(int color_id,double value);
+
+        //PRÁCICA 3:
+        void createShaderProgram();
+        void createModel();
+    private:
+        void shaderCompileErrorExceptionLaucher(GLuint shaderId);
+        void shaderProgramCompileErrorExceptionLauncher(GLuint shaderProgramId);
     };
 
 } // PAG
