@@ -22,7 +22,8 @@ namespace PAG {
         GLuint idFs = 0; //Identificador fragment shader
         GLuint idSP = 0; //Identificador shader program
         GLuint idVAO = 0; //Identificador del vertex array object
-        GLuint idVBO = 0; //Identificador del vertex buffer object
+        GLuint idVBO_pos = 0; //Identificador del vertex buffer object
+        GLuint idVBO_color = 0;
         GLuint idIBO = 0; //Identificador del index buffer object
 
     public:
@@ -43,6 +44,7 @@ namespace PAG {
     private:
         void shaderCompileErrorExceptionLaucher(GLuint shaderId);
         void shaderProgramCompileErrorExceptionLauncher(GLuint shaderProgramId);
+        std::string loadShader(std::string shaderLocation);
     };
 
 } // PAG

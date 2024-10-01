@@ -1,5 +1,7 @@
 #include "Renderer.h"
 #include <stdexcept>
+#include <fstream>
+#include <sstream>
 
 namespace PAG {
 
@@ -18,7 +20,8 @@ namespace PAG {
         if (idFs!=0){glDeleteShader(idFs);}
         if (idSP!=0){glDeleteShader(idSP);}
         if (idVAO!=0){glDeleteShader(idVAO);}
-        if (idVBO!=0){glDeleteShader(idVBO);}
+        if (idVBO_pos!=0){glDeleteShader(idVBO_pos);}
+        if (idVBO_color!=0){glDeleteShader(idVBO_color);}
         if (idIBO!=0){glDeleteShader(idIBO);}
     }
 
@@ -80,19 +83,9 @@ namespace PAG {
     }
 
     void Renderer::createShaderProgram() {
-        //Código de los shaders
-        std::string vertexShader =
-                "#version 410\n"
-                "layout (location = 0) in vec3 posicion;\n"
-                "void main ()\n"
-                "{ gl_Position = vec4 ( posicion, 1 );\n"
-                "}\n";
-        std::string fragmentShader =
-                "#version 410\n"
-                "out vec4 colorFragmento;\n"
-                "void main ()\n"
-                "{ colorFragmento = vec4 ( 1.0, .4, .2, 1.0 );\n"
-                "}\n";
+        //Cargar shaders
+        std::string vertexShader = loadShader("../Shaders/pag03vertexShader");
+        std::string fragmentShader = loadShader("../Shaders/pag03fragmentShader");
 
         //Vertex Shader
         idVs = glCreateShader ( GL_VERTEX_SHADER );
@@ -133,19 +126,29 @@ namespace PAG {
                               .5,-.5,0,
                               .0,.5,0};
         GLuint indices[] = {0,1,2};
+        GLfloat colors[] = {1,0,0,
+                            0,1,0,
+                            0,0,1};
 
         //Generar VAO
         glGenVertexArrays (1,&idVAO);
         glBindVertexArray(idVAO);
 
         //Generar VBO (en este caso VBO de posicion)
-        glGenBuffers(1,&idVBO);
-        glBindBuffer(GL_ARRAY_BUFFER,idVBO);
+        glGenBuffers(1,&idVBO_pos);
+        glBindBuffer(GL_ARRAY_BUFFER,idVBO_pos);
         glBufferData(GL_ARRAY_BUFFER,9*sizeof(GLfloat),vertices,GL_STATIC_DRAW); //OJO: se pone 9 porque el tamaño del vector de vertices es 9
         glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),nullptr); //Solo para vbo
+        glEnableVertexAttribArray(0);
+
+        //VBO color
+        glGenBuffers(1,&idVBO_color);
+        glBindBuffer(GL_ARRAY_BUFFER,idVBO_color);
+        glBufferData(GL_ARRAY_BUFFER,9*sizeof(GLfloat),colors,GL_STATIC_DRAW); //OJO: se pone 9 porque el tamaño del vector de vertices es 9
+        glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),nullptr); //Solo para vbo
+        glEnableVertexAttribArray(1);
 
         //Generar IBO
-        glEnableVertexAttribArray(0);
         glGenBuffers(1,&idIBO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,idIBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER,3*sizeof(GLfloat),indices,GL_STATIC_DRAW); //OJO: se pone 9 porque el tamaño del vector de vertices es 9
@@ -193,5 +196,21 @@ namespace PAG {
             }
             throw std::runtime_error(errorMsg);
         }
+    }
+
+    /**
+     * funcion que carga un shader
+     */
+    std::string Renderer::loadShader(std::string shaderLocation) {
+        std::ifstream shaderFile;
+        shaderFile.open (shaderLocation+".glsl");//no hace falta pooner el formato
+        if (!shaderFile.is_open()){ //excepción en caso de error
+            throw std::runtime_error("ERROR: "+shaderLocation+".glsl cannot be loaded.");
+        }
+        std::stringstream streamShader;
+        streamShader << shaderFile.rdbuf();
+        std::string shaderCode = streamShader.str();
+        shaderFile.close();
+        return shaderCode;
     }
 } // PAG
