@@ -129,12 +129,21 @@ namespace PAG {
         GLfloat colors[] = {1,0,0,
                             0,1,0,
                             0,0,1};
+        GLfloat verticesAndColors[] = {-.5,-.5,0,
+                                       1,0,0,
+                                       .5,-.5,0,
+                                       0,1,0,
+                                       .0,.5,0,
+                                       0,0,1};
 
         //Generar VAO
         glGenVertexArrays (1,&idVAO);
         glBindVertexArray(idVAO);
 
-        //Generar VBO (en este caso VBO de posicion)
+        //Generar VBO)
+        //Versión no entrelazada
+
+        //VBO posición
         glGenBuffers(1,&idVBO_pos);
         glBindBuffer(GL_ARRAY_BUFFER,idVBO_pos);
         glBufferData(GL_ARRAY_BUFFER,9*sizeof(GLfloat),vertices,GL_STATIC_DRAW); //OJO: se pone 9 porque el tamaño del vector de vertices es 9
@@ -144,9 +153,21 @@ namespace PAG {
         //VBO color
         glGenBuffers(1,&idVBO_color);
         glBindBuffer(GL_ARRAY_BUFFER,idVBO_color);
-        glBufferData(GL_ARRAY_BUFFER,9*sizeof(GLfloat),colors,GL_STATIC_DRAW); //OJO: se pone 9 porque el tamaño del vector de vertices es 9
-        glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),nullptr); //Solo para vbo
+        glBufferData(GL_ARRAY_BUFFER,9*sizeof(GLfloat),colors,GL_STATIC_DRAW);
+        glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),nullptr);
         glEnableVertexAttribArray(1);
+
+
+        //Versión entrelazada
+        /*
+        glGenBuffers(1,&idVBO);
+        glBindBuffer(GL_ARRAY_BUFFER,idVBO);
+        glBufferData(GL_ARRAY_BUFFER,sizeof(verticesAndColors),verticesAndColors,GL_STATIC_DRAW);
+        glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,6*sizeof(GLfloat),(void*)0);
+        glEnableVertexAttribArray(0); // atributo posición
+        glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,6*sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
+        glEnableVertexAttribArray(1); // atributo color
+*/
 
         //Generar IBO
         glGenBuffers(1,&idIBO);

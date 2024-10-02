@@ -24,6 +24,7 @@ namespace PAG {
         GLuint idVAO = 0; //Identificador del vertex array object
         GLuint idVBO_pos = 0; //Identificador del vertex buffer object
         GLuint idVBO_color = 0;
+        GLuint idVBO = 0;
         GLuint idIBO = 0; //Identificador del index buffer object
 
     public:
