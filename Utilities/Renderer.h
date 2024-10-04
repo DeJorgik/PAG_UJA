@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <glad/glad.h>
+#include "ShaderProgram.h"
 
 //Clase que encapsula el dibujado de la pantalla
 //todas las funciones de opengl están aquí
@@ -16,17 +17,14 @@ namespace PAG {
         static Renderer* rederer_instance; //Instancia del Singleton
         Renderer(); //Constructor
         float bg_color[3]; //Color de fondo 0 R, 1 G, 2 B, 3Alpha
-
         //PRACTICA 3, IDENTIFICADORES
-        GLuint idVs = 0; //Identificador vertex shader
-        GLuint idFs = 0; //Identificador fragment shader
-        GLuint idSP = 0; //Identificador shader program
         GLuint idVAO = 0; //Identificador del vertex array object
         GLuint idVBO_pos = 0; //Identificador del vertex buffer object
         GLuint idVBO_color = 0;
         GLuint idVBO = 0;
         GLuint idIBO = 0; //Identificador del index buffer object
-
+        //PRÁCTICA 4, ShaderProgram
+        ShaderProgram* shaderProgram;
     public:
         virtual ~Renderer ();
         static Renderer& getInstance ();
@@ -38,14 +36,8 @@ namespace PAG {
         GLfloat* getBgColor();
         void setBgColor(int color_id,float value);
         void addBgColor(int color_id,double value);
-
-        //PRÁCICA 3:
-        void createShaderProgram();
+        void createShaderProgram(std::string shaderProgramName);
         void createModel();
-    private:
-        void shaderCompileErrorExceptionLaucher(GLuint shaderId);
-        void shaderProgramCompileErrorExceptionLauncher(GLuint shaderProgramId);
-        std::string loadShader(std::string shaderLocation);
     };
 
 } // PAG

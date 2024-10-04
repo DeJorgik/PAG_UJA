@@ -13,6 +13,10 @@ add_executable(PAG_1 main.cpp
         Utilities/GUI.cpp
         Utilities/GUI.h
         ${IMGUI}
+        Utilities/ShaderProgram.cpp
+        Utilities/ShaderProgram.h
+        Utilities/ShaderObject.cpp
+        Utilities/ShaderObject.h
 )
 
 find_package(glfw3)

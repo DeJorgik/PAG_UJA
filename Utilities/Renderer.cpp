@@ -15,14 +15,10 @@ namespace PAG {
     }
 
     Renderer::~Renderer() {
-        //Borrar shaders
-        if (idVs!=0){glDeleteShader(idVs);}
-        if (idFs!=0){glDeleteShader(idFs);}
-        if (idSP!=0){glDeleteShader(idSP);}
-        if (idVAO!=0){glDeleteShader(idVAO);}
         if (idVBO_pos!=0){glDeleteShader(idVBO_pos);}
         if (idVBO_color!=0){glDeleteShader(idVBO_color);}
         if (idIBO!=0){glDeleteShader(idIBO);}
+        delete &shaderProgram; //destruir shader program
     }
 
     Renderer &Renderer::getInstance() {
@@ -42,7 +38,7 @@ namespace PAG {
     void Renderer::windowRefresh() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-        glUseProgram(idSP); //usar el shader program creado
+        glUseProgram(shaderProgram->getIdSp()); //usar el shader program creado
         glBindVertexArray(idVAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,idIBO);
         glDrawElements(GL_TRIANGLES,3,GL_UNSIGNED_INT,nullptr); //dibujar elementos
@@ -80,44 +76,6 @@ namespace PAG {
             bg_color[color_id] = 1.0f;
         }
         updateBgColor();
-    }
-
-    void Renderer::createShaderProgram() {
-        //Cargar shaders
-        std::string vertexShader = loadShader("../Shaders/pag03vertexShader");
-        std::string fragmentShader = loadShader("../Shaders/pag03fragmentShader");
-
-        //Vertex Shader
-        idVs = glCreateShader ( GL_VERTEX_SHADER );
-        //Comprobación de errores al crear
-        if (idVs==0){
-            throw std::runtime_error("ERROR: Vertex Shader was not created.");
-        }
-        const GLchar* vertexShaderCode = vertexShader.c_str ();
-        glShaderSource ( idVs, 1, &vertexShaderCode, nullptr );
-        glCompileShader ( idVs);
-        //Comprobación de errores al compilar
-        shaderCompileErrorExceptionLaucher(idVs);
-
-        //Fragment Shader
-        idFs = glCreateShader ( GL_FRAGMENT_SHADER );
-        if (idFs==0){
-            throw std::runtime_error("ERROR: Fragment Shader was not created.");
-        }
-        const GLchar* fragmentShaderCode = fragmentShader.c_str ();
-        glShaderSource ( idFs, 1, &fragmentShaderCode, nullptr );
-        glCompileShader ( idFs );
-        shaderCompileErrorExceptionLaucher(idFs);
-
-        //Shader program
-        idSP = glCreateProgram ();
-        if (idSP==0){
-            throw std::runtime_error("ERROR: Shader Program was not created.");
-        }
-        glAttachShader ( idSP, idVs );
-        glAttachShader ( idSP, idFs );
-        glLinkProgram ( idSP );
-        shaderProgramCompileErrorExceptionLauncher(idSP);
     }
 
     void Renderer::createModel() {
@@ -176,62 +134,13 @@ namespace PAG {
     }
 
     /**
-     * Función que lanza excepciones cuando hay errores en la compilación de los shaders
+     * Crea un shader program
+     * @param shaderProgramName
      */
-    void Renderer::shaderCompileErrorExceptionLaucher(GLuint shaderId) {
-        GLint vertexShaderCompileResult;
-        glGetShaderiv( shaderId ,GL_COMPILE_STATUS,&vertexShaderCompileResult);
-        if(vertexShaderCompileResult==GL_FALSE){
-            std::string errorMsg;
-            GLint msgSize = 0;
-            glGetShaderiv(shaderId,GL_INFO_LOG_LENGTH,&msgSize);
-            if(msgSize>0){
-                auto* errorMsgFormatted = new GLchar[msgSize];
-                GLint writtenData=0;
-                glGetShaderInfoLog(shaderId,msgSize,&writtenData,errorMsgFormatted);
-                errorMsg.assign(errorMsgFormatted);
-                delete[] errorMsgFormatted;
-                errorMsgFormatted = nullptr;
-            }
-            throw std::runtime_error(errorMsg);
-        }
+    void Renderer::createShaderProgram(std::string shaderProgramName) {
+        //delete &shaderProgram; //Destruye el anterior
+        shaderProgram = new ShaderProgram(); //crea uno nuevo
+        shaderProgram->createShaderProgram(shaderProgramName);
     }
 
-    /**
-     * lo mismo pero cuando hay errores cuando se enlaza el programa
-     */
-    void Renderer::shaderProgramCompileErrorExceptionLauncher(GLuint shaderProgramId) {
-        GLint shaderProgramLinkResult;
-        glGetShaderiv( shaderProgramId ,GL_LINK_STATUS,&shaderProgramLinkResult);
-        if(shaderProgramLinkResult==GL_FALSE){
-            std::string errorMsg;
-            GLint msgSize = 0;
-            glGetShaderiv(shaderProgramId,GL_INFO_LOG_LENGTH,&msgSize);
-            if(msgSize>0){
-                auto* errorMsgFormatted = new GLchar[msgSize];
-                GLint writtenData=0;
-                glGetShaderInfoLog(shaderProgramId,msgSize,&writtenData,errorMsgFormatted);
-                errorMsg.assign(errorMsgFormatted);
-                delete[] errorMsgFormatted;
-                errorMsgFormatted = nullptr;
-            }
-            throw std::runtime_error(errorMsg);
-        }
-    }
-
-    /**
-     * funcion que carga un shader
-     */
-    std::string Renderer::loadShader(std::string shaderLocation) {
-        std::ifstream shaderFile;
-        shaderFile.open (shaderLocation+".glsl");//no hace falta pooner el formato
-        if (!shaderFile.is_open()){ //excepción en caso de error
-            throw std::runtime_error("ERROR: "+shaderLocation+".glsl cannot be loaded.");
-        }
-        std::stringstream streamShader;
-        streamShader << shaderFile.rdbuf();
-        std::string shaderCode = streamShader.str();
-        shaderFile.close();
-        return shaderCode;
-    }
 } // PAG

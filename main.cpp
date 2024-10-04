@@ -8,6 +8,7 @@
 
 #include "Utilities/Renderer.h"
 #include "Utilities/GUI.h"
+#include "Utilities/ShaderProgram.h"
 
 //PRÁCTICA 1: variable global del modo de cambiar de fondo
 //int mode = -1; //Modo, rojo, verde, azul
@@ -168,9 +169,8 @@ int main()
     PAG::GUI::getInstance().guiInit(window);
 
     //Crear shader program y cargar modelo
-
     try{
-        PAG::Renderer::getInstance().createShaderProgram();
+        PAG::Renderer::getInstance().createShaderProgram("pag03");
     }
     catch (const std::exception& e){ //capturar excepción en caso de error
         buffer << e.what() << std::endl;
