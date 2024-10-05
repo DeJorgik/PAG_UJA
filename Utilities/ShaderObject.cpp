@@ -67,9 +67,9 @@ namespace PAG{
      * @param shaderId
      */
     void ShaderObject::shaderCompileErrorExceptionLaucher(GLuint shaderId) {
-        GLint vertexShaderCompileResult;
-        glGetShaderiv( shaderId ,GL_COMPILE_STATUS,&vertexShaderCompileResult);
-        if(vertexShaderCompileResult==GL_FALSE){
+        GLint shaderCompileResult = 0;
+        glGetShaderiv( shaderId ,GL_COMPILE_STATUS,&shaderCompileResult);
+        if(shaderCompileResult==GL_FALSE){
             std::string errorMsg;
             GLint msgSize = 0;
             glGetShaderiv(shaderId,GL_INFO_LOG_LENGTH,&msgSize);

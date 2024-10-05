@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include "GUI.h"
 #include <stdexcept>
 #include <fstream>
 #include <sstream>
@@ -38,6 +39,18 @@ namespace PAG {
     void Renderer::windowRefresh() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+        //Crear nuevo shader si le han dado a load
+        if(GUI::getInstance().isShaderLoadButtonPressed()){
+            if(GUI::getInstance().getShaderLoadInputText()!=""){
+                delete shaderProgram; //borrar anterior
+                shaderProgram = nullptr;
+                try{
+                    createShaderProgram(GUI::getInstance().getShaderLoadInputText());
+                }catch (const std::exception& e){ //capturar excepción en caso de error
+                    //buffer << e.what() << std::endl;
+                }
+            }
+        }
         glUseProgram(shaderProgram->getIdSp()); //usar el shader program creado
         glBindVertexArray(idVAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,idIBO);

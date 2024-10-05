@@ -181,6 +181,8 @@ int main()
     //CICLO DE EVENTOS
     while ( !glfwWindowShouldClose ( window ) ) //Repetir hasta que se cierre la ventana
     {
+        //Crear nuevo shader si
+
         PAG::Renderer::getInstance().windowRefresh(); //Refrescar ventana constantemente
         PAG::GUI::getInstance().newFrame();//Llamadas de la interfaz de usuario
 
@@ -192,6 +194,8 @@ int main()
 
         PAG::GUI::getInstance().drawColorWheel(500,10,1.0f,PAG::Renderer::getInstance().getBgColor(),"Fondo","Actual");
         PAG::Renderer::getInstance().updateBgColor();
+
+        PAG::GUI::getInstance().drawShaderLoadWindow(10,450,1.0f,"Shader load");
 
         //Dibujar escena
 

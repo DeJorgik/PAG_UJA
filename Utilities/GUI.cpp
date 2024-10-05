@@ -2,18 +2,22 @@
 // Created by DeJorgiK on 20/09/2024.
 //
 
+#include <string>
 #include "GUI.h"
 
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_glfw.h"
 #include "../imgui/imgui_impl_opengl3.h"
+#include <stdlib.h>
+#include "../imgui/imgui_stdlib.h"
 
 namespace PAG {
 
     PAG::GUI* PAG::GUI::gui_instance = nullptr;
 
     GUI::GUI() {
-
+        shaderLoadButtonPressed = false;
+        shaderLoadInputText = "";
     }
 
     GUI::~GUI() {
@@ -69,6 +73,24 @@ namespace PAG {
             ImGui::ColorPicker3(text,col,ImGuiColorEditFlags_PickerHueWheel);
         }
         ImGui::End();
+    }
+
+    void GUI::drawShaderLoadWindow(float posX, float posY, float fontScale, const char *title) {
+        ImGui::SetNextWindowPos ( ImVec2 (posX, posY), ImGuiCond_Once );
+        if (ImGui::Begin(title)){
+            ImGui::SetWindowFontScale ( fontScale );
+            ImGui::InputText ( "##", &shaderLoadInputText, ImGuiInputTextFlags_AutoSelectAll );
+            shaderLoadButtonPressed = ImGui::Button("Load");
+        }
+        ImGui::End();
+    }
+
+    bool GUI::isShaderLoadButtonPressed() const {
+        return shaderLoadButtonPressed; //devuelve cuado el botón esta presionado para cargar un nuevo shader
+    }
+
+    const std::string &GUI::getShaderLoadInputText() const {
+        return shaderLoadInputText;
     }
 
 } // PAG

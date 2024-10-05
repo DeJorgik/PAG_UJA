@@ -14,9 +14,9 @@ namespace PAG {
 
     //Destruir los shaders que cuelgan
     ShaderProgram::~ShaderProgram() {
+        delete vertexShader;
+        delete fragmentShader;
         if (idSP!=0){glDeleteShader(idSP);}
-        delete &vertexShader;
-        delete &fragmentShader;
     }
 
     void ShaderProgram::createShaderProgram(std::string shaderProgramName) {
@@ -37,7 +37,7 @@ namespace PAG {
     }
 
     void ShaderProgram::shaderProgramCompileErrorExceptionLauncher(GLuint shaderProgramId) {
-        GLint shaderProgramLinkResult;
+        GLint shaderProgramLinkResult = 0;
         glGetShaderiv( shaderProgramId ,GL_LINK_STATUS,&shaderProgramLinkResult);
         if(shaderProgramLinkResult==GL_FALSE){
             std::string errorMsg;
