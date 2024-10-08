@@ -8,7 +8,6 @@
 #include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_glfw.h"
 #include "../imgui/imgui_impl_opengl3.h"
-#include <stdlib.h>
 #include "../imgui/imgui_stdlib.h"
 
 namespace PAG {
@@ -91,6 +90,19 @@ namespace PAG {
 
     const std::string &GUI::getShaderLoadInputText() const {
         return shaderLoadInputText;
+    }
+
+    void GUI::messageBufferAdd(std::string text) {
+        messageBuffer<<text<<std::endl;
+        //Si se pasa del tamaño maximo se reinicia
+        if(messageBuffer.str().size()==messageBuffer.str().max_size()){
+            messageBuffer.str(std::string());
+        }
+
+    }
+
+    std::string GUI::getMessageBufferText() {
+        return messageBuffer.str();
     }
 
 } // PAG

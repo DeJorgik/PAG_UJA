@@ -47,7 +47,7 @@ namespace PAG {
                 try{
                     createShaderProgram(GUI::getInstance().getShaderLoadInputText());
                 }catch (const std::exception& e){ //capturar excepción en caso de error
-                    //buffer << e.what() << std::endl;
+                    GUI::getInstance().messageBufferAdd(e.what());
                 }
             }
         }

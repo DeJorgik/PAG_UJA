@@ -16,6 +16,8 @@ namespace PAG {
     ShaderProgram::~ShaderProgram() {
         delete vertexShader;
         delete fragmentShader;
+        vertexShader= nullptr;
+        fragmentShader= nullptr;
         if (idSP!=0){glDeleteShader(idSP);}
     }
 

@@ -6,6 +6,7 @@
 #define PAG_1_GUI_H
 
 #include <GLFW/glfw3.h>
+#include <sstream>
 
 namespace PAG {
 
@@ -15,6 +16,7 @@ namespace PAG {
         GUI();
         bool shaderLoadButtonPressed; //dice si el botón está pulsado o no
         std::string shaderLoadInputText; //Texto con el nombre del shader
+        std::stringstream messageBuffer; //Buffer de los mensajes que salen por pantalla
     public:
         virtual ~GUI();
         static GUI& getInstance();
@@ -27,6 +29,8 @@ namespace PAG {
         void drawShaderLoadWindow(float posX,float posY,float fontScale,const char *title);
         bool isShaderLoadButtonPressed() const;
         const std::string &getShaderLoadInputText() const;
+        void messageBufferAdd(std::string text);
+        std::string getMessageBufferText();
     };
 } // PAG
 

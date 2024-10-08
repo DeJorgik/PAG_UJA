@@ -8,12 +8,10 @@
 
 #include "Utilities/Renderer.h"
 #include "Utilities/GUI.h"
-#include "Utilities/ShaderProgram.h"
 
 //PRÁCTICA 1: variable global del modo de cambiar de fondo
 //int mode = -1; //Modo, rojo, verde, azul
 //PRÁCTICA 2 buffer con el texto que aparecerá por patalla
-std::stringstream buffer;
 
 /**
  * Función que muestra por pantalla los errores que ocurren
@@ -22,7 +20,8 @@ std::stringstream buffer;
  */
 void error_callback(int errno, const char* desc){
     std::string aux(desc);
-   buffer << "GLFW ERROR NUMBER: "<< errno << ":" << aux << std::endl;
+   PAG::GUI::getInstance().messageBufferAdd("GLFW ERROR NUMBER: " + errno);
+   PAG::GUI::getInstance().messageBufferAdd("Description:" + aux);
 }
 
 /**
@@ -33,7 +32,8 @@ void window_refresh_callback(GLFWwindow *window){
     PAG::Renderer::getInstance().windowRefresh(); //refrescar pantalla
     PAG::GUI::getInstance().render();//Renderizar interfaz
     glfwSwapBuffers(window); //Ultima orden en el callback
-    buffer << "REFRESH CALLBACK CALLED" << std::endl;
+    /*
+    PAG::GUI::getInstance().messageBufferAdd("REFRESH CALLBACK CALLED");*/
 }
 
 /**
@@ -46,7 +46,8 @@ void window_refresh_callback(GLFWwindow *window){
  */
 void framebuffer_size_callback(GLFWwindow *window, int width, int height){
     PAG::Renderer::getInstance().viewportResize(width,height);
-    buffer << "RESIZE CALLBACK CALLED" << std::endl;
+    /*
+    PAG::GUI::getInstance().messageBufferAdd("RESIZE CALLBACK CALLED");*/
 }
 
 /**
@@ -87,7 +88,8 @@ void key_callback(GLFWwindow *window, int key, int action, int mods){
  * @param mods
  */
 void mouse_callback(GLFWwindow *window, int button, int action, int mods){
-    buffer<<"MOUSE CALLBACK BUTTON: "<<button<<" ACTION: "<< action << std::endl;
+    /*
+    buffer<<"MOUSE CALLBACK BUTTON: "<<button<<" ACTION: "<< action << std::endl;*/
 }
 
 /**
@@ -97,6 +99,7 @@ void mouse_callback(GLFWwindow *window, int button, int action, int mods){
  * @param yoffset
  */
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset){
+    /*
     buffer << "SCROLL CALLBACK X POS: " << xoffset
               << "  Y POS: " << yoffset << std::endl;
     //PRACTICA 1
@@ -158,10 +161,10 @@ int main()
     glfwSetScrollCallback(window, scroll_callback);
 
     //Mostrar contexto ya definido
-    buffer << glGetString ( GL_RENDERER ) << std::endl
-              << glGetString ( GL_VENDOR ) << std::endl
-              << glGetString ( GL_VERSION ) << std::endl
-              << glGetString ( GL_SHADING_LANGUAGE_VERSION ) << std::endl;
+    PAG::GUI::getInstance().messageBufferAdd(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
+    PAG::GUI::getInstance().messageBufferAdd(reinterpret_cast<const char *>(glGetString(GL_VENDOR)));
+    PAG::GUI::getInstance().messageBufferAdd(reinterpret_cast<const char *>(glGetString(GL_VERSION)));
+    PAG::GUI::getInstance().messageBufferAdd(reinterpret_cast<const char *>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
 
     PAG::Renderer::getInstance().rendererInit(); //inicializar opengl
 
@@ -173,7 +176,7 @@ int main()
         PAG::Renderer::getInstance().createShaderProgram("pag03");
     }
     catch (const std::exception& e){ //capturar excepción en caso de error
-        buffer << e.what() << std::endl;
+        PAG::GUI::getInstance().messageBufferAdd( e.what());
     }
 
     PAG::Renderer::getInstance().createModel();
@@ -187,10 +190,7 @@ int main()
         PAG::GUI::getInstance().newFrame();//Llamadas de la interfaz de usuario
 
         //Dibujar interfaz
-        PAG::GUI::getInstance().drawMessage(10,10,1.0f,"Mensajes",buffer.str().c_str());
-        if(buffer.str().size()==buffer.str().max_size()){
-            buffer.str(std::string());
-        }
+        PAG::GUI::getInstance().drawMessage(10,10,1.0f,"Mensajes",PAG::GUI::getInstance().getMessageBufferText().c_str());
 
         PAG::GUI::getInstance().drawColorWheel(500,10,1.0f,PAG::Renderer::getInstance().getBgColor(),"Fondo","Actual");
         PAG::Renderer::getInstance().updateBgColor();

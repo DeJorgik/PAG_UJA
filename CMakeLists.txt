@@ -8,8 +8,6 @@ file( GLOB IMGUI imgui/*cpp)
 add_executable(PAG_1 main.cpp
         Utilities/Renderer.cpp
         Utilities/Renderer.h
-        Model.cpp
-        Model.h
         Utilities/GUI.cpp
         Utilities/GUI.h
         ${IMGUI}
