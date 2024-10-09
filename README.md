@@ -29,4 +29,39 @@ Se debe a que al redimensionar la ventana no estamos teniendo en cuenta el *aspe
 
 ## PRÁCTICA 4:
 
-OJO: HACER UML PA PRACTICA 4
+Para el desacoplamiento de los shaders se utilizan dos nuevas clases: **PAG::ShaderProgram** y **ShaderObject.** PAG::ShaderProgram encapsula las funciones necesarias para crear y enlazar un shader program. Cuenta con las funciones definidas en la práctica de error para el lanzamiento de excepciones en caso de errores. Además cuenta con dos punteros a dos objetos **ShaderObject** que corresponden al vertex shader y el fragment shader del programa. PAG::ShaderObject encapsula las funciones necesarias para crear un shader, ya sea un vertex shader o un fragment shader. Para hacer esta distinción se utiliza un tipo enumerado **shaderType** cuyos valores son **VERTEX** y **FRAGMENT.**
+
+### Generar Shader Program
+
+Para poder generar un shader program, la clase PAG::Renderer cuenta con un puntero a un objeto tipo PAG::ShaderProgram el cual instancia cada vez que se quiere crear un nuevo shader program. Después PAG::Renderer llama a la función createShaderProgram de este objeto, pasándole como atributo un string con la parte común de los archivos de los shaders, en este caso si los archivos son "pag03-vs.glsl" y "pag03-fs.glsl" sólo se le pasa la cadena "pag03".
+Entonces la clase PAG::ShaderProgram instancia dos shader programs, uno con el valor **VERTEX** en el atributo *type* y el otro con el valor **FRAGMENT**. Según el tipo de shader, cada ShaderObject crea su shader cargando su código glsl correspondiente utilizando la cadena de texto común ya proporcionada. Cuando ambos shaders están creados, PAG::Shader program recibe los ids de estos utilizando la función *getId* de PAG::Shader Object y enlaza el shader program.
+Finalmente, PAG::Renderer recibe el id del shader program mediante la función *getIdSp* para utilizarlo en la aplicación.
+
+### Cargar Shader Program mediante interfaz
+
+La clase PAG::GUI contiene una función *drawShaderLoadWindow* que genera una ventana con una entrada de texto y un botón. PAG::Renderer recibe el estado del botón llamando a la función *isShaderLoadButtonPressed* de PAG::GUI, cuando el botón se presiona, recibe el texto de la entrada con la función *getShaderLoadInputText* de PAG::GUI. Si el texto no es vacío, PAG::Renderer destruye la instancia del shader program, el cual destruye sus dos shader objects. Después, crea un nuevo shader program utilizando el texto de entrada como la parte común de los shaders tal y como se explica en el apartado anterior. 
+
+### UML
+
+````plantuml
+class OpenGL
+class ImGui
+class PAG::Renderer{
+PAG::ShaderProgram* shaderProgram
+}
+class PAG::GUI
+class PAG::ShaderProgram{
+PAG::ShaderObject* vertexShader
+PAG::ShaderObject* fragmentShader
+}
+class PAG::ShaderObject
+
+PAG::Renderer-->PAG::ShaderProgram:instancia
+PAG::Renderer-->OpenGL:llama
+PAG::Renderer->PAG::GUI:llama
+PAG::GUI-->ImGui:llama
+PAG::ShaderProgram-->PAG::ShaderObject:instancia
+PAG::ShaderProgram->OpenGL:utiliza
+PAG::ShaderObject->OpenGL:utiliza
+
+````

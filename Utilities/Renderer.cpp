@@ -49,6 +49,8 @@ namespace PAG {
                 }catch (const std::exception& e){ //capturar excepción en caso de error
                     GUI::getInstance().messageBufferAdd(e.what());
                 }
+            } else{
+                GUI::getInstance().messageBufferAdd("ERROR: No shader selected.");
             }
         }
         glUseProgram(shaderProgram->getIdSp()); //usar el shader program creado
