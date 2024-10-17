@@ -17,6 +17,8 @@ namespace PAG {
     GUI::GUI() {
         shaderLoadButtonPressed = false;
         shaderLoadInputText = "";
+        cameraControlSelectedItem = 0;
+        cameraZoomValue = 60.f;
     }
 
     GUI::~GUI() {
@@ -84,6 +86,30 @@ namespace PAG {
         ImGui::End();
     }
 
+    void GUI::drawCameraControls(float posX, float posY, float fontScale, const char *title) {
+        ImGui::SetNextWindowPos ( ImVec2 (posX, posY), ImGuiCond_Once );
+        if (ImGui::Begin(title)){
+            ImGui::SetWindowFontScale ( fontScale );
+            const char* items[] = {"Zoom", "Pan", "etc"};
+            ImGui::Combo("Controls", &cameraControlSelectedItem, items, 3);
+
+            switch (cameraControlSelectedItem) {
+                case 0:
+                    cameraMovement = PAG::cameraMovementType::ZOOM;
+                    ImGui::SliderFloat("Zoom",&cameraZoomValue,1.f,120.f);
+                    break;
+                case 1:
+                    // Handle case 1
+                    break;
+                    // ... add more cases as needed
+                default:
+                    // Handle default case (if necessary)
+                    break;
+            }
+        }
+        ImGui::End();
+    }
+
     bool GUI::isShaderLoadButtonPressed() const {
         return shaderLoadButtonPressed; //devuelve cuado el botón esta presionado para cargar un nuevo shader
     }
@@ -103,6 +129,14 @@ namespace PAG {
 
     std::string GUI::getMessageBufferText() {
         return messageBuffer.str();
+    }
+
+    cameraMovementType GUI::getCameraMovement() const {
+        return cameraMovement;
+    }
+
+    float GUI::getCameraZoomValue() const {
+        return cameraZoomValue;
     }
 
 } // PAG

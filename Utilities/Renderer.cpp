@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <fstream>
 #include <sstream>
+#include <glm/gtc/type_ptr.hpp> // value_ptr
 
 namespace PAG {
 
@@ -10,9 +11,13 @@ namespace PAG {
 
     Renderer::Renderer() {
         //inicializa el fondo a gris
-        bg_color[0] = 0.5f;
-        bg_color[1] = 0.5f;
-        bg_color[2] = 0.5f;
+        bg_color.x = 0.5f;
+        bg_color.y = 0.5f;
+        bg_color.z = 0.5f;
+        //Inicializa la camara
+        //TODO poner bien
+        camera = new Camera(glm::vec3(5,5,5),glm::vec3(0,0,0),glm::vec3(0,1,0),
+                            60.f,0.5f,100.f,viewportWidth/viewportHeight);
     }
 
     Renderer::~Renderer() {
@@ -20,6 +25,7 @@ namespace PAG {
         if (idVBO_color!=0){glDeleteShader(idVBO_color);}
         if (idIBO!=0){glDeleteShader(idIBO);}
         delete &shaderProgram; //destruir shader program
+        delete &camera;
     }
 
     Renderer &Renderer::getInstance() {
@@ -53,9 +59,28 @@ namespace PAG {
                 GUI::getInstance().messageBufferAdd("ERROR: No shader selected.");
             }
         }
+        //Actualizar Cámara
+        //Según el modo de movimiento se actualiza una cosa u otra
+        switch (GUI::getInstance().getCameraMovement()) {
+            case PAG::cameraMovementType::ZOOM:
+                camera->updateZoom(GUI::getInstance().getCameraZoomValue());
+                break;
+            case PAG::cameraMovementType::PAN:
+                break;
+            case PAG::cameraMovementType::TILT:
+                break;
+            case PAG::cameraMovementType::DOLLY:
+                break;
+            case PAG::cameraMovementType::CRANE:
+                break;
+            case PAG::cameraMovementType::ORBIT:
+                break;
+        }
+
         glUseProgram(shaderProgram->getIdSp()); //usar el shader program creado
         glBindVertexArray(idVAO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,idIBO);
+        setUniformMVP(); //aplicar cámara
         glDrawElements(GL_TRIANGLES,3,GL_UNSIGNED_INT,nullptr); //dibujar elementos
     }
 
@@ -71,8 +96,8 @@ namespace PAG {
         return bg_color[color_id];
     }
 
-    GLfloat *Renderer::getBgColor() {
-        return bg_color;
+    glm::vec3* Renderer::getBgColor() {
+        return &bg_color;
     }
 
     void Renderer::setBgColor(int color_id, float value) {
@@ -156,6 +181,44 @@ namespace PAG {
         //delete &shaderProgram; //Destruye el anterior
         shaderProgram = new ShaderProgram(); //crea uno nuevo
         shaderProgram->createShaderProgram(shaderProgramName);
+    }
+
+    bool Renderer::operator==(const Renderer &rhs) const {
+        return camera == rhs.camera;
+    }
+
+    bool Renderer::operator!=(const Renderer &rhs) const {
+        return !(rhs == *this);
+    }
+
+    /**
+     * Función para capturar el tamaño del viewport
+     * @param width
+     * @param height
+     */
+    void Renderer::getViewportSizes(int width, int height) {
+        viewportWidth = width;
+        viewportHeight = height;
+        PAG::GUI::getInstance().messageBufferAdd("Viewport dimensions updated. Width: "+std::to_string(width)+" Height: "+std::to_string(height));
+        camera->updateAspectRatio(width,height);//actualizar aspect ratio de la camara;
+    }
+
+    void Renderer::setUniformMVP()
+    {
+        GLint mvpLoc = glGetUniformLocation(shaderProgram->getIdSp(), "mModelViewProj");
+        glm::mat4 p = camera->calculateProjectionMatrix();
+                /*
+        glm::mat4 ViewTranslate = glm::translate(
+                glm::mat4(1.0f), Translate);
+        glm::mat4 ViewRotateX = glm::rotate(
+                ViewTranslate, Rotate.y, glm::vec3(-1.0f, 0.0f, 0.0f));
+        glm::mat4 View = glm::rotate(ViewRotateX,
+                                     Rotate.x, glm::vec3(0.0f, 1.0f, 0.0f));
+        glm::mat4 Model = glm::scale(
+                glm::mat4(1.0f), glm::vec3(0.5f));*/
+        glm::mat4 v = camera->calculateVisionMatrix();
+        glm::mat4 mvp = p*v /* * Model*/;
+        glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, glm::value_ptr(mvp));
     }
 
 } // PAG

@@ -10,6 +10,9 @@
 
 namespace PAG {
 
+    //Tipos de movimiento de la cámara
+    enum cameraMovementType {ZOOM,PAN,TILT,DOLLY,CRANE,ORBIT};
+
     class GUI {
     private:
         static GUI* gui_instance;
@@ -17,6 +20,9 @@ namespace PAG {
         bool shaderLoadButtonPressed; //dice si el botón está pulsado o no
         std::string shaderLoadInputText; //Texto con el nombre del shader
         std::stringstream messageBuffer; //Buffer de los mensajes que salen por pantalla
+        int cameraControlSelectedItem; //Control elegido en el combo de la camara
+        cameraMovementType cameraMovement; //Que tipo de movimiento está realizando la cámara
+        float cameraZoomValue; //valor de zoom de la cámara;
     public:
         virtual ~GUI();
         static GUI& getInstance();
@@ -31,6 +37,10 @@ namespace PAG {
         const std::string &getShaderLoadInputText() const;
         void messageBufferAdd(std::string text);
         std::string getMessageBufferText();
+        void drawCameraControls(float posX, float posY, float fontScale, const char *title);
+        cameraMovementType getCameraMovement() const;
+
+        float getCameraZoomValue() const;
     };
 } // PAG
 

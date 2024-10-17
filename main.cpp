@@ -13,6 +13,10 @@
 //int mode = -1; //Modo, rojo, verde, azul
 //PRÁCTICA 2 buffer con el texto que aparecerá por patalla
 
+//PRÁCTICA 5 variables para la dimensión del viewport
+int width = 1024;
+int height = 576;
+
 /**
  * Función que muestra por pantalla los errores que ocurren
  * @param _errno
@@ -46,8 +50,7 @@ void window_refresh_callback(GLFWwindow *window){
  */
 void framebuffer_size_callback(GLFWwindow *window, int width, int height){
     PAG::Renderer::getInstance().viewportResize(width,height);
-    /*
-    PAG::GUI::getInstance().messageBufferAdd("RESIZE CALLBACK CALLED");*/
+    PAG::Renderer::getInstance().getViewportSizes(width,height);
 }
 
 /**
@@ -129,7 +132,7 @@ int main()
     glfwWindowHint ( GLFW_CONTEXT_VERSION_MINOR, 1 );
 
     GLFWwindow *window;//Definir puntero de la ventana
-    window = glfwCreateWindow ( 1024, 576, "PAG Introduction", nullptr, nullptr );//Inicializar ventana
+    window = glfwCreateWindow ( width, height, "PAG Introduction", nullptr, nullptr );//Inicializar ventana
 
     //COmprobar que la ventana ha sido creada
     if ( window == nullptr )
@@ -167,6 +170,7 @@ int main()
     PAG::GUI::getInstance().messageBufferAdd(reinterpret_cast<const char *>(glGetString(GL_SHADING_LANGUAGE_VERSION)));
 
     PAG::Renderer::getInstance().rendererInit(); //inicializar opengl
+    PAG::Renderer::getInstance().getViewportSizes(width,height); //capturar las dimensiones iniciales
 
     //PRACTICA 2: Inicializar IMGUI
     PAG::GUI::getInstance().guiInit(window);
@@ -184,18 +188,20 @@ int main()
     //CICLO DE EVENTOS
     while ( !glfwWindowShouldClose ( window ) ) //Repetir hasta que se cierre la ventana
     {
-        //Crear nuevo shader si
-
         PAG::Renderer::getInstance().windowRefresh(); //Refrescar ventana constantemente
         PAG::GUI::getInstance().newFrame();//Llamadas de la interfaz de usuario
 
         //Dibujar interfaz
         PAG::GUI::getInstance().drawMessage(10,10,1.0f,"Mensajes",PAG::GUI::getInstance().getMessageBufferText().c_str());
 
-        PAG::GUI::getInstance().drawColorWheel(500,10,1.0f,PAG::Renderer::getInstance().getBgColor(),"Fondo","Actual");
+        PAG::GUI::getInstance().drawColorWheel(500, 10, 1.0f,
+                                               reinterpret_cast<float *>(PAG::Renderer::getInstance().getBgColor()), "Fondo", "Actual");
         PAG::Renderer::getInstance().updateBgColor();
 
         PAG::GUI::getInstance().drawShaderLoadWindow(10,450,1.0f,"Shader load");
+
+        PAG::GUI::getInstance().drawCameraControls(500, 450,1.0f,"Camera");
+
 
         //Dibujar escena
 
