@@ -66,6 +66,7 @@ namespace PAG {
                 camera->updateZoom(GUI::getInstance().getCameraZoomValue());
                 break;
             case PAG::cameraMovementType::PAN:
+                camera->updateRotationY(GUI::getInstance().getPanAngle());
                 break;
             case PAG::cameraMovementType::TILT:
                 break;

@@ -23,6 +23,7 @@ namespace PAG {
         dollyBackwardPressed = false;
         dollyLeftPressed = false;
         dollyRightPressed = false;
+        panAngle = 0.0f;
     }
 
     GUI::~GUI() {
@@ -104,6 +105,7 @@ namespace PAG {
                     break;
                 case 1:
                     cameraMovement = PAG::cameraMovementType::PAN;
+                    ImGui::SliderFloat("Pan",&panAngle,-180.f,180.f);
                     break;
                 case 2:
                     cameraMovement = PAG::cameraMovementType::TILT;
@@ -173,6 +175,10 @@ namespace PAG {
 
     bool GUI::isDollyRightPressed() const {
         return dollyRightPressed;
+    }
+
+    float GUI::getPanAngle() const {
+        return panAngle;
     }
 
 } // PAG

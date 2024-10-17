@@ -27,6 +27,7 @@ namespace PAG {
         bool dollyBackwardPressed;
         bool dollyLeftPressed;
         bool dollyRightPressed;
+        float panAngle;
     public:
         virtual ~GUI();
         static GUI& getInstance();
@@ -48,6 +49,8 @@ namespace PAG {
         bool isDollyBackwardPressed() const;
         bool isDollyLeftPressed() const;
         bool isDollyRightPressed() const;
+
+        float getPanAngle() const;
     };
 } // PAG
 
