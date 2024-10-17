@@ -70,6 +70,18 @@ namespace PAG {
             case PAG::cameraMovementType::TILT:
                 break;
             case PAG::cameraMovementType::DOLLY:
+                if (PAG::GUI::getInstance().isDollyForwardPressed()){
+                    camera->addTranslation(glm::vec3(0,0,0.1));
+                }
+                if (PAG::GUI::getInstance().isDollyBackwardPressed()){
+                    camera->addTranslation(glm::vec3(0,0,-0.1));
+                }
+                if (PAG::GUI::getInstance().isDollyLeftPressed()){
+                    camera->addTranslation(glm::vec3(0.1,0,0));
+                }
+                if (PAG::GUI::getInstance().isDollyRightPressed()){
+                    camera->addTranslation(glm::vec3(-0.1,0,0));
+                }
                 break;
             case PAG::cameraMovementType::CRANE:
                 break;

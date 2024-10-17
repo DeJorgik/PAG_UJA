@@ -16,6 +16,12 @@ namespace PAG {
         float zNear;
         float zFar;
         float aspectRatio;
+        //Transformaciones
+        glm::vec3 translation; //rotación (x,y,z)
+        //Ángulos de rotación en cada eje (EN GRADOS)
+        float rotationX;
+        float rotationY;
+        float rotationZ;
     public:
         Camera(const glm::vec3 &cameraPos, const glm::vec3 &lookAtPoint, const glm::vec3 &up, float fovY, float zNear,
                float zFar, float aspectRatio);
@@ -36,6 +42,9 @@ namespace PAG {
         void setAspectRatio(float aspectRatio);
 
         void updateZoom(float zoom);
+        void addTranslation(glm::vec3 translate);
+
+        void addRotationY(float angle);
     };
 
 } // PAG

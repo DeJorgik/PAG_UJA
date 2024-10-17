@@ -19,6 +19,10 @@ namespace PAG {
         shaderLoadInputText = "";
         cameraControlSelectedItem = 0;
         cameraZoomValue = 60.f;
+        dollyForwardPressed = false;
+        dollyBackwardPressed = false;
+        dollyLeftPressed = false;
+        dollyRightPressed = false;
     }
 
     GUI::~GUI() {
@@ -90,8 +94,8 @@ namespace PAG {
         ImGui::SetNextWindowPos ( ImVec2 (posX, posY), ImGuiCond_Once );
         if (ImGui::Begin(title)){
             ImGui::SetWindowFontScale ( fontScale );
-            const char* items[] = {"Zoom", "Pan", "etc"};
-            ImGui::Combo("Controls", &cameraControlSelectedItem, items, 3);
+            const char* items[] = {"Zoom", "Pan", "Tilt","Dolly","Crane","Orbit"};
+            ImGui::Combo("Controls", &cameraControlSelectedItem, items, 6);
 
             switch (cameraControlSelectedItem) {
                 case 0:
@@ -99,11 +103,27 @@ namespace PAG {
                     ImGui::SliderFloat("Zoom",&cameraZoomValue,1.f,120.f);
                     break;
                 case 1:
-                    // Handle case 1
+                    cameraMovement = PAG::cameraMovementType::PAN;
                     break;
-                    // ... add more cases as needed
+                case 2:
+                    cameraMovement = PAG::cameraMovementType::TILT;
+                    break;
+                case 3:
+                    cameraMovement = PAG::cameraMovementType::DOLLY;
+                    dollyForwardPressed = ImGui::Button("Forward");
+                    dollyBackwardPressed = ImGui::Button("Backward");
+                    dollyLeftPressed = ImGui::Button("Left");
+                    dollyRightPressed = ImGui::Button("Right");
+                    break;
+                case 4:
+                    cameraMovement = PAG::cameraMovementType::CRANE;
+                    ImGui::Button("Up");
+                    ImGui::Button("Down");
+                    break;
+                case 5:
+                    cameraMovement = PAG::cameraMovementType::ORBIT;
+                    break;
                 default:
-                    // Handle default case (if necessary)
                     break;
             }
         }
@@ -137,6 +157,22 @@ namespace PAG {
 
     float GUI::getCameraZoomValue() const {
         return cameraZoomValue;
+    }
+
+    bool GUI::isDollyForwardPressed() const {
+        return dollyForwardPressed;
+    }
+
+    bool GUI::isDollyBackwardPressed() const {
+        return dollyBackwardPressed;
+    }
+
+    bool GUI::isDollyLeftPressed() const {
+        return dollyLeftPressed;
+    }
+
+    bool GUI::isDollyRightPressed() const {
+        return dollyRightPressed;
     }
 
 } // PAG

@@ -11,7 +11,12 @@ namespace PAG {
     Camera::Camera(const glm::vec3 &cameraPos, const glm::vec3 &lookAtPoint, const glm::vec3 &up, float fovY,
                    float zNear, float zFar, float aspectRatio) : cameraPos(cameraPos), lookAtPoint(lookAtPoint), up(up),
                                                                  fovY(fovY), zNear(zNear), zFar(zFar),
-                                                                 aspectRatio(aspectRatio) {}
+                                                                 aspectRatio(aspectRatio) {
+        translation = glm::vec3(0,0,0);
+        rotationX = 0.f;
+        rotationY = 0.f;
+        rotationZ = 0.f;
+    }
 
     const glm::vec3 &Camera::getCameraPos() const {
         return cameraPos;
@@ -66,7 +71,11 @@ namespace PAG {
      * @return
      */
     glm::mat4 Camera::calculateVisionMatrix() {
-        return glm::lookAt(cameraPos,lookAtPoint,up);
+
+        glm::mat4 view = glm::lookAt(cameraPos,lookAtPoint,up);
+        glm::mat4 viewTranslated = glm::translate(view,translation);
+        glm::mat4 rotat
+        return viewTranslated;
     }
 
     /**
@@ -93,6 +102,22 @@ namespace PAG {
      */
     void Camera::updateZoom(float zoom){
         fovY = zoom;
+    }
+
+    /**
+     * Añade traslación a la cámata
+     * @param translate
+     */
+    void Camera::addTranslation(glm::vec3 translate) {
+        translation = translation+translate;
+    }
+
+    /**
+     * Añade Rotación a la cámata (depdende del eje)
+     * @param translate
+     */
+    void Camera::addRotationY(float angle) {
+        rotationY+=angle;
     }
 
 } // PAG

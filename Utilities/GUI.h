@@ -23,6 +23,10 @@ namespace PAG {
         int cameraControlSelectedItem; //Control elegido en el combo de la camara
         cameraMovementType cameraMovement; //Que tipo de movimiento está realizando la cámara
         float cameraZoomValue; //valor de zoom de la cámara;
+        bool dollyForwardPressed;
+        bool dollyBackwardPressed;
+        bool dollyLeftPressed;
+        bool dollyRightPressed;
     public:
         virtual ~GUI();
         static GUI& getInstance();
@@ -39,8 +43,11 @@ namespace PAG {
         std::string getMessageBufferText();
         void drawCameraControls(float posX, float posY, float fontScale, const char *title);
         cameraMovementType getCameraMovement() const;
-
         float getCameraZoomValue() const;
+        bool isDollyForwardPressed() const;
+        bool isDollyBackwardPressed() const;
+        bool isDollyLeftPressed() const;
+        bool isDollyRightPressed() const;
     };
 } // PAG
 
