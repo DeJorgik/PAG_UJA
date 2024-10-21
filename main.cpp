@@ -17,6 +17,8 @@
 int width = 1024;
 int height = 576;
 
+bool mouseCameraCtr = false; //variable para controlar la camara con el ratón
+
 /**
  * PRÁCTICA 5 función para los controles de la cámara
  */
@@ -140,6 +142,51 @@ void key_callback(GLFWwindow *window, int key, int action, int mods){
 void mouse_callback(GLFWwindow *window, int button, int action, int mods){
     /*
     buffer<<"MOUSE CALLBACK BUTTON: "<<button<<" ACTION: "<< action << std::endl;*/
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS){
+        mouseCameraCtr = true;
+    }
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
+        mouseCameraCtr = false;
+    }
+}
+
+/**
+ * Callback para recuperar la posición del ratón
+ * @param window
+ * @param xpos
+ * @param ypos
+ */
+void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    if(mouseCameraCtr){
+        //Guardar posicion
+        double mousePosX, mousePosY;
+        glfwGetCursorPos(window,&mousePosX,&mousePosY);
+
+        //Diferencia de posiciones
+        double diffX = xpos-mousePosX;
+        double diffY = ypos-mousePosY;
+
+        //Movimiento en X
+        if(diffX>0){
+            PAG::Renderer::getInstance().getCamera()->panMovement(0.5);
+        } else if(diffX<0){
+            PAG::Renderer::getInstance().getCamera()->panMovement(-0.5);
+        } else {
+            PAG::Renderer::getInstance().getCamera()->panMovement(0);
+        }
+
+        //Movimiento en Y
+        if(diffY>0){
+            PAG::Renderer::getInstance().getCamera()->tiltMovement(-0.5);
+        } else if(diffY<0){
+            PAG::Renderer::getInstance().getCamera()->tiltMovement(0.5);
+        } else {
+            PAG::Renderer::getInstance().getCamera()->tiltMovement(0);
+        }
+
+    }
+
 }
 
 /**
@@ -159,6 +206,7 @@ void scroll_callback(GLFWwindow *window, double xoffset, double yoffset){
         glfwSwapBuffers(window);
     }*/
 }
+
 
 //MAIN
 int main()
@@ -209,6 +257,7 @@ int main()
     glfwSetKeyCallback(window, (GLFWkeyfun) key_callback);
     glfwSetMouseButtonCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
+    glfwSetCursorPosCallback(window, cursor_position_callback);
 
     //Mostrar contexto ya definido
     PAG::GUI::getInstance().messageBufferAdd(reinterpret_cast<const char *>(glGetString(GL_RENDERER)));
