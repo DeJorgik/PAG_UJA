@@ -74,8 +74,10 @@ namespace PAG {
 
         glm::mat4 view = glm::lookAt(cameraPos,lookAtPoint,up);
         glm::mat4 viewTranslated = glm::translate(view,translation);
+        GLfloat rotationXRadians = glm::radians(rotationX);
         GLfloat rotationYRadians = glm::radians(rotationY); //Pasar a radianes
-        glm::mat4 viewTranslatedRotatedY = glm::rotate(viewTranslated,rotationYRadians,glm::vec3(0,1,0));
+        glm::mat4 viewTranslatedRotatedX = glm::rotate(viewTranslated,rotationXRadians,glm::vec3(1,0,0));
+        glm::mat4 viewTranslatedRotatedY = glm::rotate(viewTranslatedRotatedX,rotationYRadians,glm::vec3(0,1,0));
         return viewTranslatedRotatedY;
     }
 
@@ -114,11 +116,15 @@ namespace PAG {
     }
 
     /**
-     * Añade Rotación a la cámata (depdende del eje)
+     * Añade Rotación a la cámara (depdende del eje)
      * @param translate
      */
     void Camera::updateRotationY(float angle) {
         rotationY=angle;
+    }
+
+    void Camera::updateRotationX(float angle) {
+        rotationX = angle;
     }
 
 } // PAG

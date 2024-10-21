@@ -63,12 +63,13 @@ namespace PAG {
         //Según el modo de movimiento se actualiza una cosa u otra
         switch (GUI::getInstance().getCameraMovement()) {
             case PAG::cameraMovementType::ZOOM:
-                camera->updateZoom(GUI::getInstance().getCameraZoomValue());
+                camera->updateZoom(PAG::GUI::getInstance().getCameraZoomValue());
                 break;
             case PAG::cameraMovementType::PAN:
-                camera->updateRotationY(GUI::getInstance().getPanAngle());
+                camera->updateRotationY(PAG::GUI::getInstance().getPanAngle());
                 break;
             case PAG::cameraMovementType::TILT:
+                camera->updateRotationX(PAG::GUI::getInstance().getTiltAngle());
                 break;
             case PAG::cameraMovementType::DOLLY:
                 if (PAG::GUI::getInstance().isDollyForwardPressed()){

@@ -45,6 +45,8 @@ namespace PAG {
         void addTranslation(glm::vec3 translate);
 
         void updateRotationY(float angle);
+
+        void updateRotationX(float angle);
     };
 
 } // PAG

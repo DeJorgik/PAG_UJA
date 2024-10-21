@@ -109,6 +109,7 @@ namespace PAG {
                     break;
                 case 2:
                     cameraMovement = PAG::cameraMovementType::TILT;
+                    ImGui::SliderFloat("Tilt",&tiltAngle,-180.f,180.f);
                     break;
                 case 3:
                     cameraMovement = PAG::cameraMovementType::DOLLY;
@@ -179,6 +180,10 @@ namespace PAG {
 
     float GUI::getPanAngle() const {
         return panAngle;
+    }
+
+    float GUI::getTiltAngle() const {
+        return tiltAngle;
     }
 
 } // PAG
