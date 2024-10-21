@@ -17,7 +17,7 @@ namespace PAG {
         //Inicializa la camara
         //TODO poner bien
         camera = new Camera(glm::vec3(5,5,5),glm::vec3(0,0,0),glm::vec3(0,1,0),
-                            60.f,0.5f,100.f,viewportWidth/viewportHeight);
+                            60.f,0.5f,100.f,viewportWidth/viewportHeight,glm::vec3(0,1,0));
     }
 
     Renderer::~Renderer() {
@@ -66,26 +66,32 @@ namespace PAG {
                 camera->updateZoom(PAG::GUI::getInstance().getCameraZoomValue());
                 break;
             case PAG::cameraMovementType::PAN:
-                camera->updateRotationY(PAG::GUI::getInstance().getPanAngle());
+                camera->panMovement(-PAG::GUI::getInstance().getPanAngle());
                 break;
             case PAG::cameraMovementType::TILT:
-                camera->updateRotationX(PAG::GUI::getInstance().getTiltAngle());
+                camera->tiltMovement(-PAG::GUI::getInstance().getTiltAngle());
                 break;
             case PAG::cameraMovementType::DOLLY:
                 if (PAG::GUI::getInstance().isDollyForwardPressed()){
-                    camera->addTranslation(glm::vec3(0,0,0.1));
+                    camera->dollyCraneMovement(glm::vec3(0,0,-0.1));
                 }
                 if (PAG::GUI::getInstance().isDollyBackwardPressed()){
-                    camera->addTranslation(glm::vec3(0,0,-0.1));
+                    camera->dollyCraneMovement(glm::vec3(0,0,0.1));
                 }
                 if (PAG::GUI::getInstance().isDollyLeftPressed()){
-                    camera->addTranslation(glm::vec3(0.1,0,0));
+                    camera->dollyCraneMovement(glm::vec3(0.1,0,0));
                 }
                 if (PAG::GUI::getInstance().isDollyRightPressed()){
-                    camera->addTranslation(glm::vec3(-0.1,0,0));
+                    camera->dollyCraneMovement(glm::vec3(-0.1,0,0));
                 }
                 break;
             case PAG::cameraMovementType::CRANE:
+                if (PAG::GUI::getInstance().isCraneUpPressed()){
+                    camera->dollyCraneMovement(glm::vec3(0,0.1,0));
+                }
+                if (PAG::GUI::getInstance().isCraneDownPressed()){
+                    camera->dollyCraneMovement(glm::vec3(0,-0.1,0));
+                }
                 break;
             case PAG::cameraMovementType::ORBIT:
                 break;
@@ -230,7 +236,7 @@ namespace PAG {
                                      Rotate.x, glm::vec3(0.0f, 1.0f, 0.0f));
         glm::mat4 Model = glm::scale(
                 glm::mat4(1.0f), glm::vec3(0.5f));*/
-        glm::mat4 v = camera->calculateVisionMatrix();
+        glm::mat4 v = camera->calculateViewMatrix();
         glm::mat4 mvp = p*v /* * Model*/;
         glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, glm::value_ptr(mvp));
     }

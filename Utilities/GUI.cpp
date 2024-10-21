@@ -105,11 +105,17 @@ namespace PAG {
                     break;
                 case 1:
                     cameraMovement = PAG::cameraMovementType::PAN;
-                    ImGui::SliderFloat("Pan",&panAngle,-180.f,180.f);
+                    ImGui::SliderFloat("Pan",&panAngle,-0.1f,0.1f);
+                    if (!ImGui::IsItemActive()) {
+                        panAngle = 0.0f;
+                    }
                     break;
                 case 2:
                     cameraMovement = PAG::cameraMovementType::TILT;
-                    ImGui::SliderFloat("Tilt",&tiltAngle,-180.f,180.f);
+                    ImGui::SliderFloat("Tilt",&tiltAngle,-0.1f,0.1f);
+                    if (!ImGui::IsItemActive()) {
+                        tiltAngle = 0.0f;
+                    }
                     break;
                 case 3:
                     cameraMovement = PAG::cameraMovementType::DOLLY;
@@ -120,8 +126,8 @@ namespace PAG {
                     break;
                 case 4:
                     cameraMovement = PAG::cameraMovementType::CRANE;
-                    ImGui::Button("Up");
-                    ImGui::Button("Down");
+                    craneUpPressed = ImGui::Button("Up");
+                    craneDownPressed = ImGui::Button("Down");
                     break;
                 case 5:
                     cameraMovement = PAG::cameraMovementType::ORBIT;
@@ -184,6 +190,14 @@ namespace PAG {
 
     float GUI::getTiltAngle() const {
         return tiltAngle;
+    }
+
+    bool GUI::isCraneUpPressed() const {
+        return craneUpPressed;
+    }
+
+    bool GUI::isCraneDownPressed() const {
+        return craneDownPressed;
     }
 
 } // PAG

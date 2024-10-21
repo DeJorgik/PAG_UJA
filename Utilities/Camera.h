@@ -7,6 +7,11 @@ namespace PAG {
 
     class Camera {
     private:
+        //Sistema de coordenadas local
+        glm::vec3 u;
+        glm::vec3 v;
+        glm::vec3 n;
+        glm::vec3 Y;
         //Matriz Visión
         glm::vec3 cameraPos;
         glm::vec3 lookAtPoint;
@@ -24,10 +29,11 @@ namespace PAG {
         float rotationZ;
     public:
         Camera(const glm::vec3 &cameraPos, const glm::vec3 &lookAtPoint, const glm::vec3 &up, float fovY, float zNear,
-               float zFar, float aspectRatio);
-        glm::mat4 calculateVisionMatrix();
+               float zFar, float aspectRatio, const glm::vec3 Y);
+        glm::mat4 calculateViewMatrix();
         glm::mat4 calculateProjectionMatrix();
         void updateAspectRatio(int width, int height);
+        void updateCoordinateSystem();
         const glm::vec3 &getCameraPos() const;
         void setCameraPos(const glm::vec3 &cameraPos);
         const glm::vec3 &getLookAtPoint() const;
@@ -40,13 +46,16 @@ namespace PAG {
         void setZFar(float zFar);
         float getAspectRatio() const;
         void setAspectRatio(float aspectRatio);
-
         void updateZoom(float zoom);
         void addTranslation(glm::vec3 translate);
-
         void updateRotationY(float angle);
-
         void updateRotationX(float angle);
+
+        void panMovement(float angle);
+
+        void tiltMovement(float angle);
+
+        void dollyCraneMovement(glm::vec3 translate);
     };
 
 } // PAG
