@@ -47,8 +47,9 @@ namespace PAG {
         bool operator==(const Renderer &rhs) const;
         bool operator!=(const Renderer &rhs) const;
         void getViewportSizes(int width, int height);
-
         void setUniformMVP();
+
+        Camera *getCamera() const;
     };
 
 } // PAG

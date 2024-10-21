@@ -31,6 +31,8 @@ namespace PAG {
         float tiltAngle;
         bool craneUpPressed;
         bool craneDownPressed;
+        float longitudeAngle;
+        float latitudeAngle;
     public:
         virtual ~GUI();
         static GUI& getInstance();
@@ -56,6 +58,8 @@ namespace PAG {
         float getTiltAngle() const;
         bool isCraneUpPressed() const;
         bool isCraneDownPressed() const;
+        float getLongitudeAngle() const;
+        float getLatitudeAngle() const;
     };
 } // PAG
 

@@ -131,6 +131,14 @@ namespace PAG {
                     break;
                 case 5:
                     cameraMovement = PAG::cameraMovementType::ORBIT;
+                    ImGui::SliderFloat("Longitude",&longitudeAngle,-0.1f,0.1f);
+                    if (!ImGui::IsItemActive()) {
+                        longitudeAngle = 0.0f;
+                    }
+                    ImGui::SliderFloat("Latitude",&latitudeAngle,-0.1f,0.1f);
+                    if (!ImGui::IsItemActive()) {
+                        latitudeAngle = 0.0f;
+                    }
                     break;
                 default:
                     break;
@@ -198,6 +206,14 @@ namespace PAG {
 
     bool GUI::isCraneDownPressed() const {
         return craneDownPressed;
+    }
+
+    float GUI::getLongitudeAngle() const {
+        return longitudeAngle;
+    }
+
+    float GUI::getLatitudeAngle() const {
+        return latitudeAngle;
     }
 
 } // PAG

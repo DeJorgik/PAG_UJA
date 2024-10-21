@@ -59,43 +59,6 @@ namespace PAG {
                 GUI::getInstance().messageBufferAdd("ERROR: No shader selected.");
             }
         }
-        //Actualizar Cámara
-        //Según el modo de movimiento se actualiza una cosa u otra
-        switch (GUI::getInstance().getCameraMovement()) {
-            case PAG::cameraMovementType::ZOOM:
-                camera->updateZoom(PAG::GUI::getInstance().getCameraZoomValue());
-                break;
-            case PAG::cameraMovementType::PAN:
-                camera->panMovement(-PAG::GUI::getInstance().getPanAngle());
-                break;
-            case PAG::cameraMovementType::TILT:
-                camera->tiltMovement(-PAG::GUI::getInstance().getTiltAngle());
-                break;
-            case PAG::cameraMovementType::DOLLY:
-                if (PAG::GUI::getInstance().isDollyForwardPressed()){
-                    camera->dollyCraneMovement(glm::vec3(0,0,-0.1));
-                }
-                if (PAG::GUI::getInstance().isDollyBackwardPressed()){
-                    camera->dollyCraneMovement(glm::vec3(0,0,0.1));
-                }
-                if (PAG::GUI::getInstance().isDollyLeftPressed()){
-                    camera->dollyCraneMovement(glm::vec3(0.1,0,0));
-                }
-                if (PAG::GUI::getInstance().isDollyRightPressed()){
-                    camera->dollyCraneMovement(glm::vec3(-0.1,0,0));
-                }
-                break;
-            case PAG::cameraMovementType::CRANE:
-                if (PAG::GUI::getInstance().isCraneUpPressed()){
-                    camera->dollyCraneMovement(glm::vec3(0,0.1,0));
-                }
-                if (PAG::GUI::getInstance().isCraneDownPressed()){
-                    camera->dollyCraneMovement(glm::vec3(0,-0.1,0));
-                }
-                break;
-            case PAG::cameraMovementType::ORBIT:
-                break;
-        }
 
         glUseProgram(shaderProgram->getIdSp()); //usar el shader program creado
         glBindVertexArray(idVAO);
@@ -239,6 +202,10 @@ namespace PAG {
         glm::mat4 v = camera->calculateViewMatrix();
         glm::mat4 mvp = p*v /* * Model*/;
         glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, glm::value_ptr(mvp));
+    }
+
+    Camera *Renderer::getCamera() const {
+        return camera;
     }
 
 } // PAG

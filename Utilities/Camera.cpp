@@ -17,11 +17,6 @@ namespace PAG {
                                                                  aspectRatio(aspectRatio), Y(Y) {
         //Obtener sistema de coordenadas
         updateCoordinateSystem();
-        //Transformaciones
-        translation = glm::vec3(0,0,0);
-        rotationX = 0.f;
-        rotationY = 0.f;
-        rotationZ = 0.f;
     }
 
     const glm::vec3 &Camera::getCameraPos() const {
@@ -77,15 +72,8 @@ namespace PAG {
      * @return
      */
     glm::mat4 Camera::calculateViewMatrix() {
-        //Traslación
-        //glm::mat4 viewTranslated = glm::translate(view,translation);
-
-        //Rotación
-        //GLfloat rotationXRadians = glm::radians(rotationX);
-
-        // Tran
         glm::mat4 view = glm::lookAt(cameraPos,lookAtPoint,up);
-        updateCoordinateSystem();
+        updateCoordinateSystem();//actualizar sistema de coordenadas constatemete
         return view;
     }
 
@@ -116,34 +104,12 @@ namespace PAG {
     }
 
     /**
-     * Añade traslación a la cámata
-     * @param translate
-     */
-    void Camera::addTranslation(glm::vec3 translate) {
-        translation = translation+translate;
-    }
-
-    /**
-     * Añade Rotación a la cámara (depdende del eje)
-     * @param translate
-     */
-    void Camera::updateRotationY(float angle) {
-        rotationY=angle;
-    }
-
-    void Camera::updateRotationX(float angle) {
-        rotationX = angle;
-    }
-
-    /**
      * Movimiento de PAN: Rotación del punto lookat alrededor del eje v
      * @param angle
      */
     void Camera::panMovement(float angle){
-        rotationY = angle;
-        //PAN EJE Y
-        GLfloat rotationYRadians = glm::radians(rotationY); //Pasar a radianes
-        //-T * R * T
+        GLfloat rotationYRadians = glm::radians(angle); //Pasar a radianes
+        //T * R * -T
         //Mover al origen
         glm::mat4 t1 = glm::translate(-cameraPos);
         //Rotar alrededor de eje v
@@ -157,14 +123,9 @@ namespace PAG {
      * Movimiento de TILT: Rotación del punto lookat alrededor del eje u
      */
     void Camera::tiltMovement(float angle){
-        rotationX = angle;
-        GLfloat rotationYRadians = glm::radians(rotationX); //Pasar a radianes
-        //-T * R * T
-        //Mover al origen
+        GLfloat rotationYRadians = glm::radians(angle);
         glm::mat4 t1 = glm::translate(-cameraPos);
-        //Rotar alrededor de eje v
         glm::mat4 r = glm::rotate(rotationYRadians,u);
-        //Devolver a su sitio
         glm::mat4 t2 = glm::translate(cameraPos);
         lookAtPoint = t2*r*t1*glm::vec4(lookAtPoint,1.0f);
     }
@@ -173,10 +134,27 @@ namespace PAG {
      * Movimiento de DOLLY/CRANE: traslación de lookat y de posición en los ejes x y z
      */
      void Camera::dollyCraneMovement(glm::vec3 translate){
-         translation = translate;
          glm::mat4 t1 = glm::translate(translate);
          lookAtPoint = t1*glm::vec4(lookAtPoint,1.0f);
          cameraPos = t1*glm::vec4(cameraPos,1.0f);
+    }
+
+
+    /**
+     * Movimiento de ORBIT: rotación de la posición alrededor del LookAt
+     * longitud: respecto eje u
+     * latitud: respecto eje v
+     * @param longitude
+     * @param latitude
+     */
+    void Camera::orbitMovement(float longitude,float latitude){
+        GLfloat rotationLongitudeRadians = glm::radians(longitude);
+        GLfloat rotationLatitudeRadians = glm::radians(latitude);
+        glm::mat4 t1 = glm::translate(-lookAtPoint);
+        glm::mat4 r1 = glm::rotate(rotationLongitudeRadians,u);
+        glm::mat4 r2 = glm::rotate(rotationLatitudeRadians,v);
+        glm::mat4 t2 = glm::translate(lookAtPoint);
+        cameraPos = t2*r2*r1*t1*glm::vec4(cameraPos,1.0f);
     }
 
     /**

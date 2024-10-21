@@ -18,6 +18,53 @@ int width = 1024;
 int height = 576;
 
 /**
+ * PRÁCTICA 5 función para los controles de la cámara
+ */
+void cameraControlUi(){
+    //Actualizar Cámara
+    //Según el modo de movimiento se actualiza una cosa u otra
+    switch (PAG::GUI::getInstance().getCameraMovement()) {
+        case PAG::cameraMovementType::ZOOM:
+            PAG::Renderer::getInstance().getCamera()->updateZoom(PAG::GUI::getInstance().getCameraZoomValue());
+            break;
+        case PAG::cameraMovementType::PAN:
+            PAG::Renderer::getInstance().getCamera()->panMovement(-PAG::GUI::getInstance().getPanAngle());
+            break;
+        case PAG::cameraMovementType::TILT:
+            PAG::Renderer::getInstance().getCamera()->tiltMovement(-PAG::GUI::getInstance().getTiltAngle());
+            break;
+        case PAG::cameraMovementType::DOLLY:
+            //DUDA DOLLY: no deberia moverse en los ejes de la cámara??
+            //Se mueve sobre los ejes de la escena pero entonces hacia delante no es hacia donde mira la cámara
+            if (PAG::GUI::getInstance().isDollyForwardPressed()){
+                PAG::Renderer::getInstance().getCamera()->dollyCraneMovement(glm::vec3(0,0,-0.1));
+            }
+            if (PAG::GUI::getInstance().isDollyBackwardPressed()){
+                PAG::Renderer::getInstance().getCamera()->dollyCraneMovement(glm::vec3(0,0,0.1));
+            }
+            if (PAG::GUI::getInstance().isDollyLeftPressed()){
+                PAG::Renderer::getInstance().getCamera()->dollyCraneMovement(glm::vec3(0.1,0,0));
+            }
+            if (PAG::GUI::getInstance().isDollyRightPressed()){
+                PAG::Renderer::getInstance().getCamera()->dollyCraneMovement(glm::vec3(-0.1,0,0));
+            }
+            break;
+        case PAG::cameraMovementType::CRANE:
+            if (PAG::GUI::getInstance().isCraneUpPressed()){
+                PAG::Renderer::getInstance().getCamera()->dollyCraneMovement(glm::vec3(0,0.1,0));
+            }
+            if (PAG::GUI::getInstance().isCraneDownPressed()){
+                PAG::Renderer::getInstance().getCamera()->dollyCraneMovement(glm::vec3(0,-0.1,0));
+            }
+            break;
+        case PAG::cameraMovementType::ORBIT:
+            PAG::Renderer::getInstance().getCamera()->orbitMovement(PAG::GUI::getInstance().getLongitudeAngle(),
+                                  PAG::GUI::getInstance().getLatitudeAngle());
+            break;
+    }
+}
+
+/**
  * Función que muestra por pantalla los errores que ocurren
  * @param _errno
  * @param desc
@@ -188,6 +235,8 @@ int main()
     //CICLO DE EVENTOS
     while ( !glfwWindowShouldClose ( window ) ) //Repetir hasta que se cierre la ventana
     {
+        cameraControlUi(); //Control de la cámara
+
         PAG::Renderer::getInstance().windowRefresh(); //Refrescar ventana constantemente
         PAG::GUI::getInstance().newFrame();//Llamadas de la interfaz de usuario
 
@@ -197,14 +246,10 @@ int main()
         PAG::GUI::getInstance().drawColorWheel(500, 10, 1.0f,
                                                reinterpret_cast<float *>(PAG::Renderer::getInstance().getBgColor()), "Fondo", "Actual");
         PAG::Renderer::getInstance().updateBgColor();
-
         PAG::GUI::getInstance().drawShaderLoadWindow(10,450,1.0f,"Shader load");
-
         PAG::GUI::getInstance().drawCameraControls(500, 450,1.0f,"Camera");
 
-
         //Dibujar escena
-
         PAG::GUI::getInstance().render();//Renderizar interfaz
         glfwSwapBuffers(window);
         glfwPollEvents(); //Despachar pila de eventos
