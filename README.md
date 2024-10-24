@@ -65,3 +65,56 @@ PAG::ShaderProgram->OpenGL:utiliza
 PAG::ShaderObject->OpenGL:utiliza
 
 ````
+
+## PRÁCTICA 5:
+
+La cámara virtual ha sido implementada con una nueva clase **PAG::Camera**, la cual es instanciada y gestionada por el Renderer. Además, para simplificar el manejo de movimietos de la cámara se utiliza un tipo enumerado **cameraMovementType** que contiene los tipos de movimientos que puede realizar la cámara: ZOOM, PAN, TILT, DOLLY, CRANE y ORBIT. 
+
+Entre los atributos de la cámara se ecuentran:
+- Los vectores que definen su **eje de coordenadas:** u,v y n.
+- El vector **Y**.
+- La **posición** de la cámara, el punto **lookAt** y el vector **up**.
+- El **fovY**, el **zNear** y el **zFar**
+- El **aspecto**, el cual se calcula cada vez que se redimensiona el  viewport mediante un callback.
+
+### Instrucciones
+
+La cámara puede controlarse de dos maneras, mediante el ratón y la interfaz.
+
+- **Control por ratón**: al pulsar el click derecho del ratón y arrastrar, el ángulo de la cámara cambiará en dirección del movimiento. Es decir, el punto lookAt se mueve.
+- **Control por interfaz**: hay una nueva ventana con menú combo donde se muestran las diferentes opciones de movimiento.
+  - Zoom: se puede ajustar un zoom mediante un *slider*. Esto simplemente altera el valor de fovY.
+  - Tilt/Pan: un slider permite rotar el punto lookAt de la cámara alrededor del el eje v y u de esta, la posición del slider se resetea cuando se suelta. Esto realiza un movimiento de rotación del punto lookAt respecto un eje en concreto, moviendolo al origen de las coordenadas con glm::translate(-cameraPos), rotándolo en el eje  correspondiente con glm::rotate y devolviéndolo a su posición con glm::translate(camerapos).
+  - Dolly/Crane: se utilizan botones para mover la cámara trasladando su posición y la del punto lookat. Esto se hace con glm::translate
+  - Orbit: similar a Tilt y Pan, pero intercambiando el punto lookAt por la posición de la cámara. Es decir, la cámara rota alrededor del lookAt.
+
+### Funcionamiento
+
+Desde el main, se llaman a las funciones **processUiCameraMovement** y **proscessCameraMovement** de Renderer y se le pasan como argumentos las variables necesarias de GUI y los datos relevantes de la posición del ratón respectivamente. Después el Renderer procesa esos datos y llama a la cámara para que efectue los movimientos necesarios mediante la multiplicación de matrices de transformación. Finalente, se calcula la matriz de visión y se actualiza el sistema de coordenadas de la cámara. Esta matriz de visión es enviada con un *uniform* a el vertex shader.
+
+### UML
+
+````plantuml
+class OpenGL
+class ImGui
+class PAG::Renderer{
+PAG::ShaderProgram* shaderProgram
+PAG::Camera* camera
+}
+class PAG::GUI
+class PAG::ShaderProgram{
+PAG::ShaderObject* vertexShader
+PAG::ShaderObject* fragmentShader
+}
+class PAG::ShaderObject
+class PAG::Camera
+
+PAG::Renderer-->PAG::ShaderProgram:instancia
+PAG::Renderer-->OpenGL:llama
+PAG::Renderer->PAG::GUI:llama
+PAG::Renderer->PAG::Camera::instancia
+PAG::GUI-->ImGui:llama
+PAG::ShaderProgram-->PAG::ShaderObject:instancia
+PAG::ShaderProgram->OpenGL:utiliza
+PAG::ShaderObject->OpenGL:utiliza
+````

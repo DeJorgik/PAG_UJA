@@ -19,54 +19,6 @@ namespace PAG {
         updateCoordinateSystem();
     }
 
-    const glm::vec3 &Camera::getCameraPos() const {
-        return cameraPos;
-    }
-
-    void Camera::setCameraPos(const glm::vec3 &cameraPos) {
-        Camera::cameraPos = cameraPos;
-    }
-
-    const glm::vec3 &Camera::getLookAtPoint() const {
-        return lookAtPoint;
-    }
-
-    void Camera::setLookAtPoint(const glm::vec3 &lookAtPoint) {
-        Camera::lookAtPoint = lookAtPoint;
-    }
-
-    float Camera::getFovY() const {
-        return fovY;
-    }
-
-    void Camera::setFovY(float fovY) {
-        Camera::fovY = fovY;
-    }
-
-    float Camera::getZNear() const {
-        return zNear;
-    }
-
-    void Camera::setZNear(float zNear) {
-        Camera::zNear = zNear;
-    }
-
-    float Camera::getZFar() const {
-        return zFar;
-    }
-
-    void Camera::setZFar(float zFar) {
-        Camera::zFar = zFar;
-    }
-
-    float Camera::getAspectRatio() const {
-        return aspectRatio;
-    }
-
-    void Camera::setAspectRatio(float aspectRatio) {
-        Camera::aspectRatio = aspectRatio;
-    }
-
     /**
      * Calcula la matriz de visión
      * @return
@@ -134,11 +86,17 @@ namespace PAG {
      * Movimiento de DOLLY/CRANE: traslación de lookat y de posición en los ejes x y z
      */
      void Camera::dollyCraneMovement(glm::vec3 translate){
-         glm::mat4 t1 = glm::translate(translate);
-         lookAtPoint = t1*glm::vec4(lookAtPoint,1.0f);
-         cameraPos = t1*glm::vec4(cameraPos,1.0f);
+        glm::mat4 t;
+         if(translate.x!=0){
+             t = glm::translate(u*translate.x);
+         } else if(translate.y!=0){
+             t = glm::translate(v*translate.y);
+         } else if(translate.z!=0){
+             t = glm::translate(n*translate.z);
+         }
+         lookAtPoint = t*glm::vec4(lookAtPoint,1.0f);
+         cameraPos = t*glm::vec4(cameraPos,1.0f);
     }
-
 
     /**
      * Movimiento de ORBIT: rotación de la posición alrededor del LookAt

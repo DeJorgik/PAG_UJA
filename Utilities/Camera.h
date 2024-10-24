@@ -5,6 +5,9 @@
 
 namespace PAG {
 
+    //Tipos de movimiento de la cámara
+    enum cameraMovementType {ZOOM,PAN,TILT,DOLLY,CRANE,ORBIT};
+
     class Camera {
     private:
         //Sistema de coordenadas local
@@ -28,26 +31,10 @@ namespace PAG {
         glm::mat4 calculateProjectionMatrix();
         void updateAspectRatio(int width, int height);
         void updateCoordinateSystem();
-        const glm::vec3 &getCameraPos() const;
-        void setCameraPos(const glm::vec3 &cameraPos);
-        const glm::vec3 &getLookAtPoint() const;
-        void setLookAtPoint(const glm::vec3 &lookAtPoint);
-        float getFovY() const;
-        void setFovY(float fovY);
-        float getZNear() const;
-        void setZNear(float zNear);
-        float getZFar() const;
-        void setZFar(float zFar);
-        float getAspectRatio() const;
-        void setAspectRatio(float aspectRatio);
-
         void panMovement(float angle);
         void tiltMovement(float angle);
         void dollyCraneMovement(glm::vec3 translate);
         void updateZoom(float zoom);
-        void orbitMovementX(float longitude);
-        void orbitMovementY(float latitude);
-
         void orbitMovement(float longitude, float latitude);
     };
 

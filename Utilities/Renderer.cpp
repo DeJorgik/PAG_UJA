@@ -249,10 +249,10 @@ namespace PAG {
                 //DUDA DOLLY: no deberia moverse en los ejes de la cámara??
                 //Se mueve sobre los ejes de la escena pero entonces hacia delante no es hacia donde mira la cámara
                 if (dollyForward){
-                    camera->dollyCraneMovement(glm::vec3(0,0,-0.1));
+                    camera->dollyCraneMovement(glm::vec3(0,0,0.2));
                 }
                 if (dollyBackward){
-                    camera->dollyCraneMovement(glm::vec3(0,0,0.1));
+                    camera->dollyCraneMovement(glm::vec3(0,0,-0.2));
                 }
                 if (dollyLeft){
                     camera->dollyCraneMovement(glm::vec3(0.1,0,0));

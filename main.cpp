@@ -44,7 +44,7 @@ void window_refresh_callback(GLFWwindow *window){
 }
 
 /**
- * Función que se llama cada cez que se cambie el area de dibujo del opengl
+ * Función que se llama cada vez que se cambie el area de dibujo del opengl
  * en este caso, solo tenemos un viewport que ocupa toda la pantalla, luego
  * cuando se cambia de tamaño la pantalla entonces se cambia el tamaño del viewport
  * @param window
