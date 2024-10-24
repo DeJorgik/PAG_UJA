@@ -18,53 +18,7 @@ int width = 1024;
 int height = 576;
 
 bool mouseCameraCtr = false; //variable para controlar la camara con el ratón
-
-/**
- * PRÁCTICA 5 función para los controles de la cámara
- */
-void cameraControlUi(){
-    //Actualizar Cámara
-    //Según el modo de movimiento se actualiza una cosa u otra
-    switch (PAG::GUI::getInstance().getCameraMovement()) {
-        case PAG::cameraMovementType::ZOOM:
-            PAG::Renderer::getInstance().getCamera()->updateZoom(PAG::GUI::getInstance().getCameraZoomValue());
-            break;
-        case PAG::cameraMovementType::PAN:
-            PAG::Renderer::getInstance().getCamera()->panMovement(-PAG::GUI::getInstance().getPanAngle());
-            break;
-        case PAG::cameraMovementType::TILT:
-            PAG::Renderer::getInstance().getCamera()->tiltMovement(-PAG::GUI::getInstance().getTiltAngle());
-            break;
-        case PAG::cameraMovementType::DOLLY:
-            //DUDA DOLLY: no deberia moverse en los ejes de la cámara??
-            //Se mueve sobre los ejes de la escena pero entonces hacia delante no es hacia donde mira la cámara
-            if (PAG::GUI::getInstance().isDollyForwardPressed()){
-                PAG::Renderer::getInstance().getCamera()->dollyCraneMovement(glm::vec3(0,0,-0.1));
-            }
-            if (PAG::GUI::getInstance().isDollyBackwardPressed()){
-                PAG::Renderer::getInstance().getCamera()->dollyCraneMovement(glm::vec3(0,0,0.1));
-            }
-            if (PAG::GUI::getInstance().isDollyLeftPressed()){
-                PAG::Renderer::getInstance().getCamera()->dollyCraneMovement(glm::vec3(0.1,0,0));
-            }
-            if (PAG::GUI::getInstance().isDollyRightPressed()){
-                PAG::Renderer::getInstance().getCamera()->dollyCraneMovement(glm::vec3(-0.1,0,0));
-            }
-            break;
-        case PAG::cameraMovementType::CRANE:
-            if (PAG::GUI::getInstance().isCraneUpPressed()){
-                PAG::Renderer::getInstance().getCamera()->dollyCraneMovement(glm::vec3(0,0.1,0));
-            }
-            if (PAG::GUI::getInstance().isCraneDownPressed()){
-                PAG::Renderer::getInstance().getCamera()->dollyCraneMovement(glm::vec3(0,-0.1,0));
-            }
-            break;
-        case PAG::cameraMovementType::ORBIT:
-            PAG::Renderer::getInstance().getCamera()->orbitMovement(PAG::GUI::getInstance().getLongitudeAngle(),
-                                  PAG::GUI::getInstance().getLatitudeAngle());
-            break;
-    }
-}
+double mousePosX, mousePosY; //posicion del ratón
 
 /**
  * Función que muestra por pantalla los errores que ocurren
@@ -140,12 +94,14 @@ void key_callback(GLFWwindow *window, int key, int action, int mods){
  * @param mods
  */
 void mouse_callback(GLFWwindow *window, int button, int action, int mods){
-    /*
-    buffer<<"MOUSE CALLBACK BUTTON: "<<button<<" ACTION: "<< action << std::endl;*/
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS){
+
+    //cout<<"MOUSE CALLBACK BUTTON: "<<button<<" ACTION: "<< action << std::endl;
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS){
         mouseCameraCtr = true;
+        glfwGetCursorPos(window,&mousePosX,&mousePosY);
+
     }
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE){
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE){
         mouseCameraCtr = false;
     }
 }
@@ -159,32 +115,14 @@ void mouse_callback(GLFWwindow *window, int button, int action, int mods){
 void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
     if(mouseCameraCtr){
-        //Guardar posicion
-        double mousePosX, mousePosY;
-        glfwGetCursorPos(window,&mousePosX,&mousePosY);
 
         //Diferencia de posiciones
         double diffX = xpos-mousePosX;
         double diffY = ypos-mousePosY;
 
-        //Movimiento en X
-        if(diffX>0){
-            PAG::Renderer::getInstance().getCamera()->panMovement(0.5);
-        } else if(diffX<0){
-            PAG::Renderer::getInstance().getCamera()->panMovement(-0.5);
-        } else {
-            PAG::Renderer::getInstance().getCamera()->panMovement(0);
-        }
+        PAG::Renderer::getInstance().processMouseCameraMovement(-diffX,-diffY);
 
-        //Movimiento en Y
-        if(diffY>0){
-            PAG::Renderer::getInstance().getCamera()->tiltMovement(-0.5);
-        } else if(diffY<0){
-            PAG::Renderer::getInstance().getCamera()->tiltMovement(0.5);
-        } else {
-            PAG::Renderer::getInstance().getCamera()->tiltMovement(0);
-        }
-
+        glfwGetCursorPos(window,&mousePosX,&mousePosY);
     }
 
 }
@@ -284,7 +222,21 @@ int main()
     //CICLO DE EVENTOS
     while ( !glfwWindowShouldClose ( window ) ) //Repetir hasta que se cierre la ventana
     {
-        cameraControlUi(); //Control de la cámara
+
+        //El renderer captura la info de GUI desde el main para hacer el movimiento de la cámara
+        PAG::Renderer::getInstance().processUiCameraMovement(
+                PAG::GUI::getInstance().getCameraMovement(),
+                PAG::GUI::getInstance().getCameraZoomValue(),
+                PAG::GUI::getInstance().getPanAngle(),
+                PAG::GUI::getInstance().getTiltAngle(),
+                PAG::GUI::getInstance().isDollyForwardPressed(),
+                PAG::GUI::getInstance().isDollyBackwardPressed(),
+                PAG::GUI::getInstance().isDollyLeftPressed(),
+                PAG::GUI::getInstance().isDollyRightPressed(),
+                PAG::GUI::getInstance().isCraneUpPressed(),
+                PAG::GUI::getInstance().isCraneDownPressed(),
+                PAG::GUI::getInstance().getLongitudeAngle(),
+                PAG::GUI::getInstance().getLatitudeAngle());
 
         PAG::Renderer::getInstance().windowRefresh(); //Refrescar ventana constantemente
         PAG::GUI::getInstance().newFrame();//Llamadas de la interfaz de usuario

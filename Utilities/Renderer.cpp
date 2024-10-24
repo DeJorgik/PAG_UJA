@@ -208,4 +208,93 @@ namespace PAG {
         return camera;
     }
 
+    /**
+     * Función que toma los parámetros de movimiento y llama a la cámara para que los efecue cuando sea necesario
+     * @param movementType
+     * @param cameraZoomValue
+     * @param panAngle
+     * @param tiltAngle
+     * @param dollyForward
+     * @param dollyBackward
+     * @param dollyLeft
+     * @param dollyRight
+     * @param craneUp
+     * @param craneDown
+     * @param orbitLongitude
+     * @param orbitLatitude
+     */
+    void Renderer::processUiCameraMovement(PAG::cameraMovementType movementType,
+                                           float cameraZoomValue,
+                                           float panAngle,
+                                           float tiltAngle,
+                                           bool dollyForward,
+                                           bool dollyBackward,
+                                           bool dollyLeft,
+                                           bool dollyRight,
+                                           bool craneUp,
+                                           bool craneDown,
+                                           float orbitLongitude,
+                                           float orbitLatitude){
+        switch (movementType) {
+            case PAG::cameraMovementType::ZOOM:
+                camera->updateZoom(cameraZoomValue);
+                break;
+            case PAG::cameraMovementType::PAN:
+                camera->panMovement(panAngle);
+                break;
+            case PAG::cameraMovementType::TILT:
+                camera->tiltMovement(tiltAngle);
+                break;
+            case PAG::cameraMovementType::DOLLY:
+                //DUDA DOLLY: no deberia moverse en los ejes de la cámara??
+                //Se mueve sobre los ejes de la escena pero entonces hacia delante no es hacia donde mira la cámara
+                if (dollyForward){
+                    camera->dollyCraneMovement(glm::vec3(0,0,-0.1));
+                }
+                if (dollyBackward){
+                    camera->dollyCraneMovement(glm::vec3(0,0,0.1));
+                }
+                if (dollyLeft){
+                    camera->dollyCraneMovement(glm::vec3(0.1,0,0));
+                }
+                if (dollyRight){
+                    camera->dollyCraneMovement(glm::vec3(-0.1,0,0));
+                }
+                break;
+            case PAG::cameraMovementType::CRANE:
+                if (craneUp){
+                    camera->dollyCraneMovement(glm::vec3(0,0.1,0));
+                }
+                if (craneDown){
+                    PAG::Renderer::getInstance().getCamera()->dollyCraneMovement(glm::vec3(0,-0.1,0));
+                }
+                break;
+            case PAG::cameraMovementType::ORBIT:
+                camera->orbitMovement(orbitLongitude,
+                                      orbitLatitude);
+                break;
+        }
+    }
+
+    void Renderer::processMouseCameraMovement(double diffX, double diffY) {
+        //Movimiento en X
+        if(diffX>0){
+            camera->panMovement(0.5);
+        } else if(diffX<0){
+            camera->panMovement(-0.5);
+        } else {
+            camera->panMovement(0);
+        }
+
+        //Movimiento en Y
+        if(diffY>0){
+            camera->tiltMovement(-0.5);
+        } else if(diffY<0){
+            camera->tiltMovement(0.5);
+        } else {
+            camera->tiltMovement(0);
+        }
+    }
+
+
 } // PAG

@@ -5,6 +5,7 @@
 #include <glad/glad.h>
 #include "ShaderProgram.h"
 #include "Camera.h"
+#include "GUI.h"
 #include <glm/glm.hpp>
 
 //Clase que encapsula el dibujado de la pantalla
@@ -50,6 +51,12 @@ namespace PAG {
         void setUniformMVP();
 
         Camera *getCamera() const;
+
+        void processUiCameraMovement(PAG::cameraMovementType movementType, float cameraZoomValue, float panAngle,
+                                     float tiltAngle,
+                                     bool dollyForward, bool dollyBackward, bool dollyLeft, bool dollyRight, bool craneUp,
+                                     bool craneDown, float orbitLongitude, float orbitLatitude);
+        void processMouseCameraMovement(double diffX, double diffY);
     };
 
 } // PAG
