@@ -6,6 +6,7 @@
 #include "ShaderProgram.h"
 #include "Camera.h"
 #include "GUI.h"
+#include "Model.h"
 #include <glm/glm.hpp>
 
 //Clase que encapsula el dibujado de la pantalla
@@ -20,18 +21,14 @@ namespace PAG {
         static Renderer* rederer_instance; //Instancia del Singleton
         Renderer(); //Constructor
         glm::vec3 bg_color; //Color de fondo 0 R, 1 G, 2 B, 3Alpha
-        //PRACTICA 3, IDENTIFICADORES
-        GLuint idVAO = 0; //Identificador del vertex array object
-        GLuint idVBO_pos = 0; //Identificador del vertex buffer object
-        GLuint idVBO_color = 0;
-        GLuint idVBO = 0;
-        GLuint idIBO = 0; //Identificador del index buffer object
         //PRÁCTICA 4, ShaderProgram
         ShaderProgram* shaderProgram;
         //PRÁCTICA 5, camara
         Camera* camera;
         int viewportWidth;
         int viewportHeight;
+        //PRÁCTICA 6, lista con los modelos de la escena
+        std::vector<PAG::Model> modelList;
     public:
         virtual ~Renderer ();
         static Renderer& getInstance ();
@@ -44,7 +41,7 @@ namespace PAG {
         void setBgColor(int color_id,float value);
         void addBgColor(int color_id,double value);
         void createShaderProgram(std::string shaderProgramName);
-        void createModel();
+        void createScene();
         bool operator==(const Renderer &rhs) const;
         bool operator!=(const Renderer &rhs) const;
         void getViewportSizes(int width, int height);

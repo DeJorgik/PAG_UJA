@@ -17,6 +17,8 @@ add_executable(PAG_1 main.cpp
         Utilities/ShaderObject.h
         Utilities/Camera.cpp
         Utilities/Camera.h
+        Utilities/Model.cpp
+        Utilities/Model.h
 )
 
 find_package(glfw3)

@@ -101,59 +101,42 @@ namespace PAG {
         updateBgColor();
     }
 
-    void Renderer::createModel() {
-        //Geometría y topología
-        GLfloat vertices[] = {-.5,-.5,0,
-                              .5,-.5,0,
-                              .0,.5,0};
-        GLuint indices[] = {0,1,2};
-        GLfloat colors[] = {1,0,0,
-                            0,1,0,
-                            0,0,1};
-        GLfloat verticesAndColors[] = {-.5,-.5,0,
-                                       1,0,0,
-                                       .5,-.5,0,
-                                       0,1,0,
-                                       .0,.5,0,
-                                       0,0,1};
+    /**
+     * Función que recorre la lista de modelos y genera los VAOs, VBOs e IBOs necesarios
+     */
+    void Renderer::createScene() {
 
-        //Generar VAO
-        glGenVertexArrays (1,&idVAO);
-        glBindVertexArray(idVAO);
+        for (auto &model:modelList) {
+            //Generar VAO
+            glGenVertexArrays (1, reinterpret_cast<GLuint *>(model.getIdVao()));
+            glBindVertexArray(model.getIdVao());
 
-        //Generar VBO)
-        //Versión no entrelazada
+            //VBO posición
+            glGenBuffers(1, reinterpret_cast<GLuint *>(model.getIdVboPos()));
+            glBindBuffer(GL_ARRAY_BUFFER,model.getIdVboPos());
+            glBufferData(GL_ARRAY_BUFFER,model.getVertices()->size()*sizeof(GLfloat),model.getVertices(),GL_STATIC_DRAW);
+            glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),nullptr);
+            glEnableVertexAttribArray(0);
 
-        //VBO posición
-        glGenBuffers(1,&idVBO_pos);
-        glBindBuffer(GL_ARRAY_BUFFER,idVBO_pos);
-        glBufferData(GL_ARRAY_BUFFER,9*sizeof(GLfloat),vertices,GL_STATIC_DRAW); //OJO: se pone 9 porque el tamaño del vector de vertices es 9
-        glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),nullptr); //Solo para vbo
-        glEnableVertexAttribArray(0);
+            //VBO color
+            glGenBuffers(1, reinterpret_cast<GLuint *>(model.getIdVboColors()));
+            glBindBuffer(GL_ARRAY_BUFFER,model.getIdVboColors());
+            glBufferData(GL_ARRAY_BUFFER,model.getColors()->size()*sizeof(GLfloat),model.getColors(),GL_STATIC_DRAW);
+            glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),nullptr);
+            glEnableVertexAttribArray(1);
 
-        //VBO color
-        glGenBuffers(1,&idVBO_color);
-        glBindBuffer(GL_ARRAY_BUFFER,idVBO_color);
-        glBufferData(GL_ARRAY_BUFFER,9*sizeof(GLfloat),colors,GL_STATIC_DRAW);
-        glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),nullptr);
-        glEnableVertexAttribArray(1);
+            //VBO texturas
+            glGenBuffers(1, reinterpret_cast<GLuint *>(model.getIdVboTextureCoordinates()));
+            glBindBuffer(GL_ARRAY_BUFFER,model.getIdVboTextureCoordinates());
+            glBufferData(GL_ARRAY_BUFFER,model.getTextureCoordinates()->size()*sizeof(GLfloat),model.getTextureCoordinates(),GL_STATIC_DRAW);
+            glVertexAttribPointer(2,3,GL_FLOAT,GL_FALSE,2*sizeof(GLfloat),nullptr);
+            glEnableVertexAttribArray(2);
 
-
-        //Versión entrelazada
-        /*
-        glGenBuffers(1,&idVBO);
-        glBindBuffer(GL_ARRAY_BUFFER,idVBO);
-        glBufferData(GL_ARRAY_BUFFER,sizeof(verticesAndColors),verticesAndColors,GL_STATIC_DRAW);
-        glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,6*sizeof(GLfloat),(void*)0);
-        glEnableVertexAttribArray(0); // atributo posición
-        glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,6*sizeof(GLfloat), (void*)(3 * sizeof(GLfloat)));
-        glEnableVertexAttribArray(1); // atributo color
-*/
-
-        //Generar IBO
-        glGenBuffers(1,&idIBO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,idIBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER,3*sizeof(GLfloat),indices,GL_STATIC_DRAW); //OJO: se pone 9 porque el tamaño del vector de vertices es 9
+            //Generar IBO
+            glGenBuffers(1,&idIBO);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,idIBO);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER,3*sizeof(GLfloat),indices,GL_STATIC_DRAW); //OJO: se pone 9 porque el tamaño del vector de vertices es 9
+        }
     }
 
     /**
