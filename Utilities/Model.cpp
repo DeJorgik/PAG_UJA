@@ -9,10 +9,7 @@ namespace PAG {
 
     }
 
-    /**
-     * Crea el triángulo por defecto
-     */
-    Model::Model() {
+    void Model::drawDefaultTriangle(){
         vertices = new std::vector<GLfloat>();
         vertices->push_back(-5);
         vertices->push_back(-5);
@@ -29,22 +26,27 @@ namespace PAG {
         indices->push_back(1);
         indices->push_back(2);
 
-        colors = new std::vector<GLfloat>();
-        colors->push_back(1);
-        colors->push_back(0);
-        colors->push_back(0);
-        colors->push_back(0);
-        colors->push_back(1);
-        colors->push_back(0);
-        colors->push_back(0);
-        colors->push_back(0);
-        colors->push_back(1);
+        normals = new std::vector<GLfloat>();
+        normals->push_back(1);
+        normals->push_back(0);
+        normals->push_back(0);
+        normals->push_back(0);
+        normals->push_back(1);
+        normals->push_back(0);
+        normals->push_back(0);
+        normals->push_back(0);
+        normals->push_back(1);
 
-        modelType = PAG::modelType::COLORED;
         shaderProgramId = 1;
     }
 
-    Model::Model(std::string filename, PAG::modelType modelType, int shaderProgramId) {
+    //PRACTICA 6 Sólo Posiciones y Normales
+    Model::Model(std::string filename,int shaderProgramId){
+        if (filename.empty()){
+            drawDefaultTriangle();
+        }else{
+
+        }
 
     }
 
@@ -52,28 +54,9 @@ namespace PAG {
         return modelMatrix;
     }
 
-    modelType Model::getModelType() const {
-        return modelType;
-    }
 
     GLuint Model::getShaderProgramId() const {
         return shaderProgramId;
-    }
-
-    GLuint Model::getIdVao() const {
-        return idVAO;
-    }
-
-    GLuint Model::getIdVboPos() const {
-        return idVBO_pos;
-    }
-
-    GLuint Model::getIdVboColors() const {
-        return idVBO_colors;
-    }
-
-    GLuint Model::getIdVboTextureCoordinates() const {
-        return idVBO_textureCoordinates;
     }
 
     std::vector<GLfloat> *Model::getVertices() const {
@@ -84,12 +67,40 @@ namespace PAG {
         return indices;
     }
 
-    std::vector<GLfloat> *Model::getColors() const {
-        return colors;
+    std::vector<GLfloat> *Model::getNormals() const {
+        return normals;
     }
 
-    std::vector<GLfloat> *Model::getTextureCoordinates() const {
-        return textureCoordinates;
+    GLuint* Model::getIdVaoPointer() {
+        return &idVAO;
+    }
+
+    GLuint Model::getIdVao() {
+        return idVAO;
+    }
+
+    GLuint Model::getIdVboPos() {
+        return idVBO_pos;
+    }
+
+    GLuint *Model::getIdVboPosPointer() {
+        return &idVBO_pos;
+    }
+
+    GLuint Model::getIdVboNormals() {
+        return idVBO_normals;
+    }
+
+    GLuint *Model::getIdVboNormalsPointer() {
+        return &idVBO_normals;
+    }
+
+    GLuint Model::getIdIbo() {
+        return idIBO;
+    }
+
+    GLuint *Model::getIdIboPointer() {
+        return &idIBO;
     }
 
 

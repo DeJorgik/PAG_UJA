@@ -18,12 +18,14 @@ namespace PAG {
         //TODO poner bien
         camera = new Camera(glm::vec3(5,5,5),glm::vec3(0,0,0),glm::vec3(0,1,0),
                             60.f,0.5f,100.f,viewportWidth/viewportHeight,glm::vec3(0,1,0));
+        modelList = new std::vector<PAG::Model>();
     }
 
     Renderer::~Renderer() {
-        if (idVBO_pos!=0){glDeleteShader(idVBO_pos);}
-        if (idVBO_color!=0){glDeleteShader(idVBO_color);}
-        if (idIBO!=0){glDeleteShader(idIBO);}
+        //Destruir modelos
+        for (auto &model:*modelList) {
+            delete &model;
+        }
         delete &shaderProgram; //destruir shader program
         delete &camera;
     }
@@ -61,8 +63,9 @@ namespace PAG {
         }
 
         glUseProgram(shaderProgram->getIdSp()); //usar el shader program creado
-        glBindVertexArray(idVAO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,idIBO);
+        //Dibujar los modelos de la lista
+        glBindVertexArray(modelList->at(0).getIdVao());
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,modelList->at(0).getIdIbo());
         setUniformMVP(); //aplicar cámara
         glDrawElements(GL_TRIANGLES,3,GL_UNSIGNED_INT,nullptr); //dibujar elementos
     }
@@ -101,42 +104,37 @@ namespace PAG {
         updateBgColor();
     }
 
-    /**
-     * Función que recorre la lista de modelos y genera los VAOs, VBOs e IBOs necesarios
+    /**Función que crea un modelo, crea el triangulo por defecto si no
+     * se le pasa nombre
      */
-    void Renderer::createScene() {
+    void Renderer::createModel(std::string modelName,int shaderProgramId) {
 
-        for (auto &model:modelList) {
-            //Generar VAO
-            glGenVertexArrays (1, reinterpret_cast<GLuint *>(model.getIdVao()));
-            glBindVertexArray(model.getIdVao());
+        PAG::Model model = PAG::Model(modelName,shaderProgramId);
 
-            //VBO posición
-            glGenBuffers(1, reinterpret_cast<GLuint *>(model.getIdVboPos()));
-            glBindBuffer(GL_ARRAY_BUFFER,model.getIdVboPos());
-            glBufferData(GL_ARRAY_BUFFER,model.getVertices()->size()*sizeof(GLfloat),model.getVertices(),GL_STATIC_DRAW);
-            glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),nullptr);
-            glEnableVertexAttribArray(0);
+        //Generar VAO
+        glGenVertexArrays (1, model.getIdVaoPointer());
+        glBindVertexArray(model.getIdVao());
 
-            //VBO color
-            glGenBuffers(1, reinterpret_cast<GLuint *>(model.getIdVboColors()));
-            glBindBuffer(GL_ARRAY_BUFFER,model.getIdVboColors());
-            glBufferData(GL_ARRAY_BUFFER,model.getColors()->size()*sizeof(GLfloat),model.getColors(),GL_STATIC_DRAW);
-            glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),nullptr);
-            glEnableVertexAttribArray(1);
+        //VBO posición
+        glGenBuffers(1, model.getIdVboPosPointer());
+        glBindBuffer(GL_ARRAY_BUFFER,model.getIdVboPos());
+        glBufferData(GL_ARRAY_BUFFER,model.getVertices()->size()*sizeof(GLfloat),model.getVertices(),GL_STATIC_DRAW);
+        glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),nullptr);
+        glEnableVertexAttribArray(0);
 
-            //VBO texturas
-            glGenBuffers(1, reinterpret_cast<GLuint *>(model.getIdVboTextureCoordinates()));
-            glBindBuffer(GL_ARRAY_BUFFER,model.getIdVboTextureCoordinates());
-            glBufferData(GL_ARRAY_BUFFER,model.getTextureCoordinates()->size()*sizeof(GLfloat),model.getTextureCoordinates(),GL_STATIC_DRAW);
-            glVertexAttribPointer(2,3,GL_FLOAT,GL_FALSE,2*sizeof(GLfloat),nullptr);
-            glEnableVertexAttribArray(2);
+        //VBO Normales
+        glGenBuffers(1, model.getIdVboNormalsPointer());
+        glBindBuffer(GL_ARRAY_BUFFER, model.getIdVboNormals());
+        glBufferData(GL_ARRAY_BUFFER, model.getNormals()->size() * sizeof(GLfloat), model.getNormals(), GL_STATIC_DRAW);
+        glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),nullptr);
+        glEnableVertexAttribArray(1);
 
-            //Generar IBO
-            glGenBuffers(1,&idIBO);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,idIBO);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER,3*sizeof(GLfloat),indices,GL_STATIC_DRAW); //OJO: se pone 9 porque el tamaño del vector de vertices es 9
-        }
+        //Generar IBO
+        glGenBuffers(1, model.getIdIboPointer());
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,model.getIdIbo());
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER,model.getIndices()->size()*sizeof(GLfloat),model.getIndices(),GL_STATIC_DRAW);
+
+        modelList->push_back(model);
     }
 
     /**

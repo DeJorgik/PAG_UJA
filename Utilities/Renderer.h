@@ -28,7 +28,7 @@ namespace PAG {
         int viewportWidth;
         int viewportHeight;
         //PRÁCTICA 6, lista con los modelos de la escena
-        std::vector<PAG::Model> modelList;
+        std::vector<PAG::Model>* modelList;
     public:
         virtual ~Renderer ();
         static Renderer& getInstance ();
@@ -54,6 +54,10 @@ namespace PAG {
                                      bool dollyForward, bool dollyBackward, bool dollyLeft, bool dollyRight, bool craneUp,
                                      bool craneDown, float orbitLongitude, float orbitLatitude);
         void processMouseCameraMovement(double diffX, double diffY);
+
+        void createModel(std::string modelName);
+
+        void createModel(std::string modelName, int shaderProgramId);
     };
 
 } // PAG

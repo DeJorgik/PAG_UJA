@@ -217,7 +217,7 @@ int main()
         PAG::GUI::getInstance().messageBufferAdd( e.what());
     }
 
-    PAG::Renderer::getInstance().createScene();
+    PAG::Renderer::getInstance().createModel("",1);
 
     //CICLO DE EVENTOS
     while ( !glfwWindowShouldClose ( window ) ) //Repetir hasta que se cierre la ventana
