@@ -28,7 +28,7 @@ namespace PAG {
         int viewportWidth;
         int viewportHeight;
         //PRÁCTICA 6, lista con los modelos de la escena
-        std::vector<PAG::Model>* modelList;
+        std::vector<std::pair<PAG::Model,GLuint>>* modelList;
     public:
         virtual ~Renderer ();
         static Renderer& getInstance ();
