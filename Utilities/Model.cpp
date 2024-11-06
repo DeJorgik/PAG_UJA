@@ -6,7 +6,7 @@
 
 namespace PAG {
     Model::~Model() {
-
+        
     }
 
     void Model::drawDefaultTriangle(){
@@ -41,15 +41,44 @@ namespace PAG {
     }
 
     //PRACTICA 6 Sólo Posiciones y Normales
-    Model::Model(std::string filename,int shaderProgramId){
+    //Se le pasa el nombre del archivo, el shader program se pone a parte
+    Model::Model(std::string filename){
         if (filename.empty()){
             drawDefaultTriangle();
         }else{
+            Assimp::Importer importer;
+            const aiScene* assimpScene = importer.ReadFile ( filename, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_GenSmoothNormals);
 
+            if (!scene) {
+                //Sistema de seguridad
+                //Mostrar mensaje por pantalla
+                return;
+            }
+
+            //Procesar la escena para guardar vertices y normales
+            sceneProcess(assimpScene);
+            
         }
 
     }
 
+    //Función que procesa una escena importada por assimp
+    void Model::sceneProcess(aiScene* assimpScene){
+        //Procesar meshes de la escena
+        for(unsigned int i = 0; i < assimpScene->mNumMeshes; i++) {
+            aiMesh *mesh = scene->mMeshes[i];
+            meshProcess(mesh);
+        }
+    }
+
+    //Función que procesa una mesh
+    void Model::meshProcess(aiMesh* mesh){
+        for(unsigned int i = 0; i < mesh->mNumVertices; i++) {
+        Vertex vertex;
+        vertices.push_back(vertex);
+        }
+    }
+    
     const glm::mat4 &Model::getModelMatrix() const {
         return modelMatrix;
     }
