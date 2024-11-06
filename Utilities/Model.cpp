@@ -73,9 +73,24 @@ namespace PAG {
 
     //Función que procesa una mesh
     void Model::meshProcess(aiMesh* mesh){
+        //Procesar vertices
         for(unsigned int i = 0; i < mesh->mNumVertices; i++) {
-        Vertex vertex;
-        vertices.push_back(vertex);
+            const aiVector3D& vertex = mesh->mVertices[i];
+            vertices.push_back(vertex.x);
+            vertices.push_back(vertex.y);
+            vertices.push_back(vertex.z);
+        }
+        //Procesar indices
+        for(unsigned int i = 0; i < mesh->mNumIndices; i++) {
+            unsigned int& index = mesh->mIndices[i];
+            indices->push_back(index);
+        }
+        //Procesar normales
+        for(unsigned int i = 0; i < mesh->mNumNormals; i++) {
+            const aiVector3D& normal = mesh->mNormals[i];
+            normals->push_back(normal.x);
+            normals->push_back(normal.y);
+            normals->push_back(normal.z);
         }
     }
     
