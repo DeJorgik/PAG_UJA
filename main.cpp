@@ -250,6 +250,16 @@ int main()
         PAG::GUI::getInstance().drawShaderLoadWindow(10,450,1.0f,"Shader load");
         PAG::GUI::getInstance().drawCameraControls(500, 450,1.0f,"Camera");
 
+        PAG::GUI::getInstance().drawModelLoaderWindow();
+        if(PAG::GUI::getInstance().getModelLoaderWindow().HasSelected())
+        {
+            //Crear nuevo modelo
+            PAG::Renderer.createModel(PAG::GUI::getInstance().getModelLoaderWindow().getSelected());
+            PAG::GUI::getInstance().getModelLoaderWindow().ClearSelected();
+        }
+        
+        //Cargar modelos
+
         //Dibujar escena
         PAG::GUI::getInstance().render();//Renderizar interfaz
         glfwSwapBuffers(window);
