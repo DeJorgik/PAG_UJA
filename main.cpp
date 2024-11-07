@@ -218,7 +218,7 @@ int main()
         PAG::GUI::getInstance().messageBufferAdd( e.what());
     }
 
-    PAG::Renderer::getInstance().createModel("");
+    PAG::Renderer::getInstance().createModel("../Models/vaca.obj");
 
     //PAG::Renderer::getInstance().getViewportSizes(width,height);
 

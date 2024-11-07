@@ -44,7 +44,7 @@ namespace PAG {
      * @param height
      */
     void Camera::updateAspectRatio(int width, int height) {
-        aspectRatio = width/height;
+        aspectRatio = float(width)/float(height);
     }
 
     /**
