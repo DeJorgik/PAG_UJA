@@ -6,22 +6,22 @@
 #define PAG_1_MODEL_H
 
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include <vector>
 #include <glm/glm.hpp>
 #include <string>
-
 
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
-
 namespace PAG {
-    //Tipo de modelo para que haga algo distinto según si estan coloreados, texturizados o sin nada.
-    //enum modelType {BLANK,COLORED,TEXTURED};
+    //Tipo de transformación del modelo
+    enum modelTransformType{TRANSLATE,ROTATE,SCALE};
+
     class Model {
     private:
-
+        std::string name; //Nombre del modelo (se usa para el combo)
         int vertexCount;
         std::vector<GLfloat> *vertices;
         std::vector<GLuint> *indices;
@@ -39,6 +39,7 @@ namespace PAG {
         //Model(); //Crea el modelo del triángulo por defecto
         //Model(std::string filename, PAG::modelType modelType, int shaderProgramId); //Carga el modelo desde el nombre
         virtual ~Model();
+
         std::vector<GLfloat> *getVertices() const;
         std::vector<GLuint> *getIndices() const;
         std::vector<GLfloat> *getNormals() const;
@@ -54,13 +55,18 @@ namespace PAG {
         GLuint *getIdVboNormalsPointer();
         GLuint getIdIbo();
         GLuint *getIdIboPointer();
-        GLuint getShaderProgramId() const;
         const glm::mat4 &getModelMatrix() const;
         //PAG::modelType getModelType() const;
 
         void sceneProcess(const aiScene *assimpScene);
         void meshProcess(aiMesh *mesh);
         Model(std::string filename);
+
+        std::string *getModelName();
+
+        void modelTranslate(glm::vec3 transform);
+        void modelRotate(glm::vec3 axis, float angle);
+        void modelScale(glm::vec3 scale);
     };
 } // PAG
 

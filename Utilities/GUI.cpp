@@ -5,7 +5,6 @@
 #include <string>
 #include "GUI.h"
 
-#include "../imgui/imgui.h"
 #include "../imgui/imgui_impl_glfw.h"
 #include "../imgui/imgui_impl_opengl3.h"
 #include "../imgui/imgui_stdlib.h"
@@ -24,6 +23,14 @@ namespace PAG {
         dollyLeftPressed = false;
         dollyRightPressed = false;
         panAngle = 0.0f;
+        fileBrowserWindow.SetPwd("../Models");
+        currentModelIndex = 0;
+        modelTransformSelectedItem = 0;
+        modelTranslate = glm::vec3(0.f);
+        modelRotateAxis = glm::vec3(0,1,0);
+        modelRotateAngle = .0f;
+        modelScale = glm::vec3(1,1,1);
+        modelTransformApplyPressed = false;
     }
 
     GUI::~GUI() {
@@ -147,7 +154,6 @@ namespace PAG {
         ImGui::End();
     }
 
-
     //Ventana de carga de modelo
     void GUI::drawModelLoaderWindow(float posX, float posY, float fontScale, const char *title){
         ImGui::SetNextWindowPos ( ImVec2 (posX, posY), ImGuiCond_Once );
@@ -158,6 +164,64 @@ namespace PAG {
         }
         ImGui::End();
         fileBrowserWindow.Display();
+    }
+
+    //Función estúpida para que esto tire
+    void GUI::clearModelLoader(){
+        fileBrowserWindow.ClearSelected();
+    }
+
+    /**
+     * Función que lista los modelos que actualmente están en la escena, al igual que
+     * las operaciones que se pueden realizar con estos
+     * Contiene un puntero a la lista con los modelos del Renderer
+     */
+    void GUI::drawModelTransformWindow(float posX, float posY, float fontScale, const char *title,
+                                       std::vector<std::pair<PAG::Model,GLuint>>* modelList){
+        ImGui::SetNextWindowPos ( ImVec2 (posX, posY), ImGuiCond_Once );
+        if (ImGui::Begin(title)){
+            if(ImGui::BeginCombo("Model List",modelList->at(currentModelIndex).first.getModelName()->c_str())){
+                if(modelList!= nullptr){
+                    for (int i = 0; i < modelList->size(); ++i) {
+                        bool isSelected = currentModelIndex == i;
+                        if (ImGui::Selectable(modelList->at(i).first.getModelName()->c_str(), isSelected)){
+                            currentModelIndex = i;
+                        }
+                        if (isSelected) {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            const char* items[] = {"Translate", "Rotate", "Scale"};
+            ImGui::Combo("Transformation", &modelTransformSelectedItem, items, 3);
+            switch (modelTransformSelectedItem) {
+                case 0:
+                    modelTransform = PAG::modelTransformType::TRANSLATE;
+                    ImGui::InputFloat("X", &modelTranslate.x);
+                    ImGui::InputFloat("Y", &modelTranslate.y);
+                    ImGui::InputFloat("Z", &modelTranslate.z);
+                    break;
+                case 1:
+                    modelTransform = PAG::modelTransformType::ROTATE;
+                    ImGui::InputFloat("X Axis", &modelRotateAxis.x);
+                    ImGui::InputFloat("Y Axis", &modelRotateAxis.y);
+                    ImGui::InputFloat("Z Axis", &modelRotateAxis.z);
+                    ImGui::InputFloat("Angle", &modelRotateAngle);
+                    break;
+                case 2:
+                    modelTransform = PAG::modelTransformType::SCALE;
+                    ImGui::InputFloat("X", &modelScale.x);
+                    ImGui::InputFloat("Y", &modelScale.y);
+                    ImGui::InputFloat("Z", &modelScale.z);
+                    break;
+                default:
+                    break;
+            }
+            modelTransformApplyPressed = ImGui::Button("Apply");
+        }
+        ImGui::End();
     }
 
     bool GUI::isShaderLoadButtonPressed() const {
@@ -232,5 +296,38 @@ namespace PAG {
     const ImGui::FileBrowser &GUI::getFileBrowserWindow() const {
         return fileBrowserWindow;
     }
+
+    bool GUI::isModelTransformApplyPressed() const {
+        return modelTransformApplyPressed;
+    }
+
+    int GUI::getCurrentModelIndex() const {
+        return currentModelIndex;
+    }
+
+    int GUI::getModelTransformSelectedItem() const {
+        return modelTransformSelectedItem;
+    }
+
+    modelTransformType GUI::getModelTransform() const {
+        return modelTransform;
+    }
+
+    const glm::vec3 &GUI::getModelTranslate() const {
+        return modelTranslate;
+    }
+
+    const glm::vec3 &GUI::getModelRotateAxis() const {
+        return modelRotateAxis;
+    }
+
+    float GUI::getModelRotateAngle() const {
+        return modelRotateAngle;
+    }
+
+    const glm::vec3 &GUI::getModelScale() const {
+        return modelScale;
+    }
+
 
 } // PAG

@@ -18,7 +18,7 @@ namespace PAG {
         //TODO poner bien
         camera = new Camera(glm::vec3(5,5,5),glm::vec3(0,0,0),glm::vec3(0,1,0),
                             60.f,0.5f,100.f,viewportWidth/viewportHeight,glm::vec3(0,1,0));
-        modelList = new std::vector<std::pair<PAG::Model, GLuint>>();
+        modelList = new std::vector<std::pair<PAG::Model,GLuint>>();
     }
 
     Renderer::~Renderer() {
@@ -26,7 +26,7 @@ namespace PAG {
         for (auto &model:*modelList) {
             delete &model;
         }
-        delete &shaderProgram; //destruir shader program
+        //delete &shaderProgram; //destruir shader program
         delete &camera;
     }
 
@@ -41,7 +41,6 @@ namespace PAG {
         glEnable(GL_DEPTH_TEST);
         glEnable (GL_MULTISAMPLE);
         updateBgColor();
-        modelList = new std::vector<std::pair<PAG::Model,GLuint>>(); //inicializar lista de modelos
     }
 
     void Renderer::windowRefresh() {
@@ -50,8 +49,6 @@ namespace PAG {
         //Crear nuevo shader si le han dado a load
         if(GUI::getInstance().isShaderLoadButtonPressed()){
             if(GUI::getInstance().getShaderLoadInputText()!=""){
-                delete shaderProgram; //borrar anterior
-                shaderProgram = nullptr;
                 try{
                     createShaderProgram(GUI::getInstance().getShaderLoadInputText());
                 }catch (const std::exception& e){ //capturar excepción en caso de error
@@ -64,12 +61,21 @@ namespace PAG {
 
         //Recorre lista de modelos, usando el par modelo/id
         //first es model, second es el int del shader program
-        setUniformMVP(); //aplicar cámara
         for (auto &model:*modelList) {
-            glUseProgram(model.second); //usar el shader program del modelo
+            drawModel(model);
+        }
+    }
+
+    /**
+     * Función para dibujar el modelo con su shaderprogram correspondiente
+     */
+    void Renderer::drawModel(std::pair<PAG::Model,GLuint> model){
+        if(model.second!=0){ //dibuja cuando el shader no es erroneo
             //Dibujar los modelos de la lista
             glBindVertexArray(model.first.getIdVao());
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model.first.getIdIbo());
+            glUseProgram(model.second); //usar el shader program del modelo
+            setUniformMVP(model.first,model.second); //aplicar cámara
             glDrawElements(GL_TRIANGLES, model.first.getIndices()->size(), GL_UNSIGNED_INT,
                            nullptr); //dibujar elementos
         }
@@ -175,22 +181,14 @@ namespace PAG {
         camera->updateAspectRatio(width,height);//actualizar aspect ratio de la camara;
     }
 
-    void Renderer::setUniformMVP()
+    void Renderer::setUniformMVP(PAG::Model model,GLuint IdSp)
     {
-        GLint mvpLoc = glGetUniformLocation(shaderProgram->getIdSp(), "mModelViewProj");
-        glm::mat4 p = camera->calculateProjectionMatrix();
-                /*
-        glm::mat4 ViewTranslate = glm::translate(
-                glm::mat4(1.0f), Translate);
-        glm::mat4 ViewRotateX = glm::rotate(
-                ViewTranslate, Rotate.y, glm::vec3(-1.0f, 0.0f, 0.0f));
-        glm::mat4 View = glm::rotate(ViewRotateX,
-                                     Rotate.x, glm::vec3(0.0f, 1.0f, 0.0f));
-        glm::mat4 Model = glm::scale(
-                glm::mat4(1.0f), glm::vec3(0.5f));*/
-        glm::mat4 v = camera->calculateViewMatrix();
-        glm::mat4 mvp = p*v /* * Model*/;
-        glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, glm::value_ptr(mvp));
+        //Cuando el shaderprogram no sea 0
+            GLint mvpLoc = glGetUniformLocation(IdSp, "mModelViewProj");
+            glm::mat4 p = camera->calculateProjectionMatrix();
+            glm::mat4 v = camera->calculateViewMatrix();
+            glm::mat4 mvp = p*v*model.getModelMatrix();
+            glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, glm::value_ptr(mvp));
     }
 
     Camera *Renderer::getCamera() const {
@@ -265,6 +263,30 @@ namespace PAG {
         }
     }
 
+    /**
+     * Función que aplica las transformaciones definidas en la interfaz al modelo correspondiente
+     */
+    void Renderer::processUiModelTransform(int modelId,
+                                           PAG::modelTransformType modelTransformType,
+                                           glm::vec3 modelTranslate,
+                                           glm::vec3 modelRotateAxis,
+                                           float modelRotateAngle,
+                                           glm::vec3 modelScale){
+        switch (modelTransformType) {
+            case PAG::modelTransformType::TRANSLATE:
+                modelList->at(modelId).first.modelTranslate(modelTranslate);
+                break;
+            case PAG::modelTransformType::ROTATE:
+                modelList->at(modelId).first.modelRotate(modelRotateAxis,modelRotateAngle);
+                break;
+            case PAG::modelTransformType::SCALE:
+                modelList->at(modelId).first.modelScale(modelScale);
+                break;
+            default:
+                break;
+        }
+    }
+
     void Renderer::processMouseCameraMovement(double diffX, double diffY) {
         //Movimiento en X
         if(diffX>0){
@@ -283,6 +305,10 @@ namespace PAG {
         } else {
             camera->tiltMovement(0);
         }
+    }
+
+    std::vector<std::pair<PAG::Model, GLuint>> *Renderer::getModelList() const {
+        return modelList;
     }
 
 

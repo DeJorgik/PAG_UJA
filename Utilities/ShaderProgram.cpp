@@ -22,8 +22,9 @@ namespace PAG {
     }
 
     void ShaderProgram::createShaderProgram(std::string shaderProgramName) {
-        //Cargar shaders
+        name = shaderProgramName;
 
+        //Cargar shaders
         vertexShader->createShader(shaderProgramName);
         fragmentShader->createShader(shaderProgramName);
 
@@ -59,5 +60,9 @@ namespace PAG {
 
     GLuint ShaderProgram::getIdSp() const {
         return idSP;
+    }
+
+    const std::string &ShaderProgram::getName() const {
+        return name;
     }
 }

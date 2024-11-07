@@ -5,10 +5,10 @@
 #ifndef PAG_1_GUI_H
 #define PAG_1_GUI_H
 
-#include <GLFW/glfw3.h>
 #include <sstream>
 #include "Camera.h"
 #include "../imgui/imfilebrowser.h"
+#include "Model.h"
 
 namespace PAG {
 
@@ -32,8 +32,16 @@ namespace PAG {
         bool craneDownPressed;
         float longitudeAngle;
         float latitudeAngle;
-        //File Browser instance
         ImGui::FileBrowser fileBrowserWindow;
+        //PRÁCTICA 6
+        int currentModelIndex; //Indice del modelo actual
+        int modelTransformSelectedItem;
+        PAG::modelTransformType modelTransform;
+        glm::vec3 modelTranslate;
+        glm::vec3 modelRotateAxis;
+        float modelRotateAngle;
+        glm::vec3 modelScale;
+        bool modelTransformApplyPressed;
     public:
         virtual ~GUI();
         static GUI& getInstance();
@@ -61,10 +69,27 @@ namespace PAG {
         bool isCraneDownPressed() const;
         float getLongitudeAngle() const;
         float getLatitudeAngle() const;
-
         void drawModelLoaderWindow(float posX, float posY, float fontScale, const char *title);
-
         const ImGui::FileBrowser &getFileBrowserWindow() const;
+        void clearModelLoader();
+        void drawModelTransformWindow(float posX, float posY, float fontScale, const char *title);
+        void drawModelTransformWindow(float posX, float posY, float fontScale, const char *title,
+                                      std::vector<std::pair<PAG::Model, GLuint>> *modelList);
+        bool isModelTransformApplyPressed() const;
+
+        int getCurrentModelIndex() const;
+
+        int getModelTransformSelectedItem() const;
+
+        modelTransformType getModelTransform() const;
+
+        const glm::vec3 &getModelTranslate() const;
+
+        const glm::vec3 &getModelRotateAxis() const;
+
+        float getModelRotateAngle() const;
+
+        const glm::vec3 &getModelScale() const;
     };
 } // PAG
 

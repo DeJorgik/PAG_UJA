@@ -241,6 +241,17 @@ int main()
                 PAG::GUI::getInstance().getLongitudeAngle(),
                 PAG::GUI::getInstance().getLatitudeAngle());
 
+        //Aplicar transformación del modelo actual cuando se pulse aplicar
+        if (PAG::GUI::getInstance().isModelTransformApplyPressed()){
+            PAG::Renderer::getInstance().processUiModelTransform(
+                    PAG::GUI::getInstance().getCurrentModelIndex(),
+                    PAG::GUI::getInstance().getModelTransform(),
+                    PAG::GUI::getInstance().getModelTranslate(),
+                    PAG::GUI::getInstance().getModelRotateAxis(),
+                    PAG::GUI::getInstance().getModelRotateAngle(),
+                    PAG::GUI::getInstance().getModelScale());
+        }
+
         PAG::Renderer::getInstance().windowRefresh(); //Refrescar ventana constantemente
         PAG::GUI::getInstance().newFrame();//Llamadas de la interfaz de usuario
 
@@ -255,13 +266,21 @@ int main()
 
         //Cargar modelos
         PAG::GUI::getInstance().drawModelLoaderWindow(10,600,1.0f,"Model load");
+
         if(PAG::GUI::getInstance().getFileBrowserWindow().HasSelected())
         {
-            //Crear nuevo modelo
-            PAG::Renderer::getInstance().createModel(PAG::GUI::getInstance().getFileBrowserWindow().GetSelected().string());
-            //PAG::GUI::getInstance().getFileBrowserWindow().;
+            //Añadir cuando el archivo sea .obj
+            if (PAG::GUI::getInstance().getFileBrowserWindow().GetSelected().string().substr(PAG::GUI::getInstance().getFileBrowserWindow().GetSelected().string().length()-4)==".obj"){
+                //Crear nuevo modelo
+                PAG::Renderer::getInstance().createModel(PAG::GUI::getInstance().getFileBrowserWindow().GetSelected().string());
+            } else{
+                PAG::GUI::getInstance().messageBufferAdd("ERROR: unsupported format");
+            }
+            PAG::GUI::getInstance().clearModelLoader();
         }
-        
+
+        //Transformar Modelos
+        PAG::GUI::getInstance().drawModelTransformWindow(500,600,1.0f,"Model Transform",PAG::Renderer::getInstance().getModelList());
 
         //Dibujar escena
         PAG::GUI::getInstance().render();//Renderizar interfaz

@@ -13,6 +13,7 @@
 namespace PAG{
     class ShaderProgram {
     private:
+        std::string name; //nombre del programa
         GLuint idSP; //Identificador shader program
         ShaderObject* vertexShader;
         ShaderObject* fragmentShader;
@@ -22,6 +23,9 @@ namespace PAG{
         //PRÁCICA 3:
         void createShaderProgram(std::string shaderProgramName);
         GLuint getIdSp() const;
+
+        const std::string &getName() const;
+
     private:
         void shaderProgramCompileErrorExceptionLauncher(GLuint shaderProgramId);
     };

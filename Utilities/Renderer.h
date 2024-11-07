@@ -45,16 +45,24 @@ namespace PAG {
         bool operator!=(const Renderer &rhs) const;
         void getViewportSizes(int width, int height);
         void setUniformMVP();
-
         Camera *getCamera() const;
-
         void processUiCameraMovement(PAG::cameraMovementType movementType, float cameraZoomValue, float panAngle,
                                      float tiltAngle,
                                      bool dollyForward, bool dollyBackward, bool dollyLeft, bool dollyRight, bool craneUp,
                                      bool craneDown, float orbitLongitude, float orbitLatitude);
         void processMouseCameraMovement(double diffX, double diffY);
-
         void createModel(std::string modelName);
+
+        std::vector<std::pair<PAG::Model, GLuint>> *getModelList() const;
+
+        void setUniformMVP(GLuint IdSp);
+
+        void drawModel(std::pair<PAG::Model, GLuint> model);
+
+        void setUniformMVP(Model model, GLuint IdSp);
+
+        void processUiModelTransform(int modelId, modelTransformType modelTransformType, glm::vec3 modelTranslate,
+                                     glm::vec3 modelRotateAxis, float modelRotateAngle, glm::vec3 modelScale);
     };
 
 } // PAG
