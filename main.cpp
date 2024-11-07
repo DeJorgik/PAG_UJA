@@ -210,6 +210,7 @@ int main()
     PAG::GUI::getInstance().guiInit(window);
 
     //Crear shader program y cargar modelo
+
     try{
         PAG::Renderer::getInstance().createShaderProgram("pag03");
     }
@@ -217,7 +218,9 @@ int main()
         PAG::GUI::getInstance().messageBufferAdd( e.what());
     }
 
-    PAG::Renderer::getInstance().createModel("",1);
+    PAG::Renderer::getInstance().createModel("");
+
+    //PAG::Renderer::getInstance().getViewportSizes(width,height);
 
     //CICLO DE EVENTOS
     while ( !glfwWindowShouldClose ( window ) ) //Repetir hasta que se cierre la ventana
@@ -250,13 +253,14 @@ int main()
         PAG::GUI::getInstance().drawShaderLoadWindow(10,450,1.0f,"Shader load");
         PAG::GUI::getInstance().drawCameraControls(500, 450,1.0f,"Camera");
 
+        /*
         PAG::GUI::getInstance().drawModelLoaderWindow();
         if(PAG::GUI::getInstance().getModelLoaderWindow().HasSelected())
         {
             //Crear nuevo modelo
             PAG::Renderer.createModel(PAG::GUI::getInstance().getModelLoaderWindow().getSelected());
             PAG::GUI::getInstance().getModelLoaderWindow().ClearSelected();
-        }
+        }*/
         
         //Cargar modelos
 

@@ -18,7 +18,7 @@ namespace PAG {
         //TODO poner bien
         camera = new Camera(glm::vec3(5,5,5),glm::vec3(0,0,0),glm::vec3(0,1,0),
                             60.f,0.5f,100.f,viewportWidth/viewportHeight,glm::vec3(0,1,0));
-        modelList = new std::vector<PAG::Model>();
+        modelList = new std::vector<std::pair<PAG::Model, GLuint>>();
     }
 
     Renderer::~Renderer() {
@@ -34,7 +34,6 @@ namespace PAG {
         if (!rederer_instance){
             rederer_instance = new Renderer;
         }
-
         return *rederer_instance;
     }
 
@@ -42,6 +41,7 @@ namespace PAG {
         glEnable(GL_DEPTH_TEST);
         glEnable (GL_MULTISAMPLE);
         updateBgColor();
+        modelList = new std::vector<std::pair<PAG::Model,GLuint>>(); //inicializar lista de modelos
     }
 
     void Renderer::windowRefresh() {
@@ -62,12 +62,16 @@ namespace PAG {
             }
         }
 
-        glUseProgram(shaderProgram->getIdSp()); //usar el shader program creado
+        //Recorre lista de modelos, usando el par modelo/id
+        //first es model, second es el int del shader program
+        //for (auto &model:*modelList) {
+        glUseProgram(modelList->at(0).second); //usar el shader program del modelo
         //Dibujar los modelos de la lista
-        glBindVertexArray(modelList->at(0).getIdVao());
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,modelList->at(0).getIdIbo());
+        glBindVertexArray(modelList->at(0).first.getIdVao());
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,modelList->at(0).first.getIdIbo());
+        glDrawElements(GL_TRIANGLES,modelList->at(0).first.getIndices()->size(),GL_UNSIGNED_INT,nullptr); //dibujar elementos
+
         setUniformMVP(); //aplicar cámara
-        glDrawElements(GL_TRIANGLES,3,GL_UNSIGNED_INT,nullptr); //dibujar elementos
     }
 
     void Renderer::viewportResize(int width, int height) {
@@ -107,34 +111,37 @@ namespace PAG {
     /**Función que crea un modelo, crea el triangulo por defecto si no
      * se le pasa nombre
      */
-    void Renderer::createModel(std::string modelName,int shaderProgramId) {
+    void Renderer::createModel(std::string modelName) {
 
-        PAG::Model model = PAG::Model(modelName,shaderProgramId);
+        PAG::Model model = PAG::Model(modelName);
 
         //Generar VAO
         glGenVertexArrays (1, model.getIdVaoPointer());
         glBindVertexArray(model.getIdVao());
 
+        GLuint indices[] = {0,1,2};
+
         //VBO posición
         glGenBuffers(1, model.getIdVboPosPointer());
         glBindBuffer(GL_ARRAY_BUFFER,model.getIdVboPos());
-        glBufferData(GL_ARRAY_BUFFER,model.getVertices()->size()*sizeof(GLfloat),model.getVertices(),GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER,model.getVertices()->size()*sizeof(GLfloat),model.getVerticesArray(),GL_STATIC_DRAW);
         glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),nullptr);
         glEnableVertexAttribArray(0);
 
         //VBO Normales
         glGenBuffers(1, model.getIdVboNormalsPointer());
         glBindBuffer(GL_ARRAY_BUFFER, model.getIdVboNormals());
-        glBufferData(GL_ARRAY_BUFFER, model.getNormals()->size() * sizeof(GLfloat), model.getNormals(), GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, model.getNormals()->size() * sizeof(GLfloat), model.getNormalsArray(), GL_STATIC_DRAW);
         glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),nullptr);
         glEnableVertexAttribArray(1);
 
         //Generar IBO
         glGenBuffers(1, model.getIdIboPointer());
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,model.getIdIbo());
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER,model.getIndices()->size()*sizeof(GLfloat),model.getIndices(),GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER,model.getIndices()->size()*sizeof(GLfloat),model.getIndicesArray(),GL_STATIC_DRAW);
 
-        modelList->push_back(model);
+        //Guarda el shader actual con el modelo
+        modelList->emplace_back(model,shaderProgram->getIdSp());
     }
 
     /**

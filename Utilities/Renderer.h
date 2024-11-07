@@ -41,7 +41,6 @@ namespace PAG {
         void setBgColor(int color_id,float value);
         void addBgColor(int color_id,double value);
         void createShaderProgram(std::string shaderProgramName);
-        void createScene();
         bool operator==(const Renderer &rhs) const;
         bool operator!=(const Renderer &rhs) const;
         void getViewportSizes(int width, int height);
@@ -56,8 +55,6 @@ namespace PAG {
         void processMouseCameraMovement(double diffX, double diffY);
 
         void createModel(std::string modelName);
-
-        void createModel(std::string modelName, int shaderProgramId);
     };
 
 } // PAG

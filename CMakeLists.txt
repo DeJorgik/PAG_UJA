@@ -25,7 +25,17 @@ find_package(glfw3)
 find_package(glad)
 find_package(glm)
 
+set(ASSIMP_BUILD_DLL ON CACHE BOOL "Build Assimp as a DLL")
+add_subdirectory(assimp)  # Añadir la carpeta Assimp al proyecto como un subdirectorio
+include_directories(${CMAKE_SOURCE_DIR}/assimp/include)  # Incluir los archivos de encabezado de Assimp
+set(ASSIMP_DLL_PATH "${CMAKE_SOURCE_DIR}/external_libs")
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${ASSIMP_DLL_PATH}/libassimp-5d.dll"
+        $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
 target_link_libraries(PAG_1 glad::glad)
 target_link_libraries(PAG_1 glfw)
 target_link_libraries(PAG_1 glm::glm)
+
+target_link_libraries(PAG_1 assimp)

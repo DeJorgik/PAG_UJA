@@ -8,7 +8,7 @@
 #include <GLFW/glfw3.h>
 #include <sstream>
 #include "Camera.h"
-#include <imfilebrowser.h>
+//#include "imfilebrowser.h"
 
 namespace PAG {
 
@@ -33,7 +33,7 @@ namespace PAG {
         float longitudeAngle;
         float latitudeAngle;
         //File Browser instance
-        ImGui::FileBrowser fileBrowserWindow;
+        //ImGui::FileBrowser fileBrowserWindow;
     public:
         virtual ~GUI();
         static GUI& getInstance();

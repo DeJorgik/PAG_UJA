@@ -147,6 +147,7 @@ namespace PAG {
         ImGui::End();
     }
 
+    /*
     //Ventana de carga de modelo
     void GUI::drawModelLoaderWindow(float posX, float posY, float fontScale, const char *title){
         ImGui::SetNextWindowPos ( ImVec2 (posX, posY), ImGuiCond_Once );
@@ -157,7 +158,7 @@ namespace PAG {
         }
         ImGui::End();
         fileDialog.Display();
-    }
+    }*/
 
     bool GUI::isShaderLoadButtonPressed() const {
         return shaderLoadButtonPressed; //devuelve cuado el botón esta presionado para cargar un nuevo shader
