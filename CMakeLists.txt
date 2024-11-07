@@ -19,6 +19,7 @@ add_executable(PAG_1 main.cpp
         Utilities/Camera.h
         Utilities/Model.cpp
         Utilities/Model.h
+        imgui/imfilebrowser.h
 )
 
 find_package(glfw3)

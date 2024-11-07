@@ -8,7 +8,7 @@
 #include <GLFW/glfw3.h>
 #include <sstream>
 #include "Camera.h"
-//#include "imfilebrowser.h"
+#include "../imgui/imfilebrowser.h"
 
 namespace PAG {
 
@@ -33,7 +33,7 @@ namespace PAG {
         float longitudeAngle;
         float latitudeAngle;
         //File Browser instance
-        //ImGui::FileBrowser fileBrowserWindow;
+        ImGui::FileBrowser fileBrowserWindow;
     public:
         virtual ~GUI();
         static GUI& getInstance();
@@ -49,7 +49,7 @@ namespace PAG {
         void messageBufferAdd(std::string text);
         std::string getMessageBufferText();
         void drawCameraControls(float posX, float posY, float fontScale, const char *title);
-       PAG::cameraMovementType getCameraMovement() const;
+        PAG::cameraMovementType getCameraMovement() const;
         float getCameraZoomValue() const;
         bool isDollyForwardPressed() const;
         bool isDollyBackwardPressed() const;
@@ -61,6 +61,10 @@ namespace PAG {
         bool isCraneDownPressed() const;
         float getLongitudeAngle() const;
         float getLatitudeAngle() const;
+
+        void drawModelLoaderWindow(float posX, float posY, float fontScale, const char *title);
+
+        const ImGui::FileBrowser &getFileBrowserWindow() const;
     };
 } // PAG
 

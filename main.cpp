@@ -218,7 +218,7 @@ int main()
         PAG::GUI::getInstance().messageBufferAdd( e.what());
     }
 
-    PAG::Renderer::getInstance().createModel("../Models/vaca.obj");
+    PAG::Renderer::getInstance().createModel("");
 
     //PAG::Renderer::getInstance().getViewportSizes(width,height);
 
@@ -253,16 +253,15 @@ int main()
         PAG::GUI::getInstance().drawShaderLoadWindow(10,450,1.0f,"Shader load");
         PAG::GUI::getInstance().drawCameraControls(500, 450,1.0f,"Camera");
 
-        /*
-        PAG::GUI::getInstance().drawModelLoaderWindow();
-        if(PAG::GUI::getInstance().getModelLoaderWindow().HasSelected())
+        //Cargar modelos
+        PAG::GUI::getInstance().drawModelLoaderWindow(10,600,1.0f,"Model load");
+        if(PAG::GUI::getInstance().getFileBrowserWindow().HasSelected())
         {
             //Crear nuevo modelo
-            PAG::Renderer.createModel(PAG::GUI::getInstance().getModelLoaderWindow().getSelected());
-            PAG::GUI::getInstance().getModelLoaderWindow().ClearSelected();
-        }*/
+            PAG::Renderer::getInstance().createModel(PAG::GUI::getInstance().getFileBrowserWindow().GetSelected().string());
+            //PAG::GUI::getInstance().getFileBrowserWindow().;
+        }
         
-        //Cargar modelos
 
         //Dibujar escena
         PAG::GUI::getInstance().render();//Renderizar interfaz

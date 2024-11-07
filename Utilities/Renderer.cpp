@@ -64,14 +64,15 @@ namespace PAG {
 
         //Recorre lista de modelos, usando el par modelo/id
         //first es model, second es el int del shader program
-        //for (auto &model:*modelList) {
-        glUseProgram(modelList->at(0).second); //usar el shader program del modelo
-        //Dibujar los modelos de la lista
-        glBindVertexArray(modelList->at(0).first.getIdVao());
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,modelList->at(0).first.getIdIbo());
-        glDrawElements(GL_TRIANGLES,modelList->at(0).first.getIndices()->size(),GL_UNSIGNED_INT,nullptr); //dibujar elementos
-
         setUniformMVP(); //aplicar cámara
+        for (auto &model:*modelList) {
+            glUseProgram(model.second); //usar el shader program del modelo
+            //Dibujar los modelos de la lista
+            glBindVertexArray(model.first.getIdVao());
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model.first.getIdIbo());
+            glDrawElements(GL_TRIANGLES, model.first.getIndices()->size(), GL_UNSIGNED_INT,
+                           nullptr); //dibujar elementos
+        }
     }
 
     void Renderer::viewportResize(int width, int height) {
