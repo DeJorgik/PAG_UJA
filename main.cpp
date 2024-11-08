@@ -27,8 +27,8 @@ double mousePosX, mousePosY; //posicion del ratón
  */
 void error_callback(int errno, const char* desc){
     std::string aux(desc);
-   PAG::GUI::getInstance().messageBufferAdd("GLFW ERROR NUMBER: " + errno);
-   PAG::GUI::getInstance().messageBufferAdd("Description:" + aux);
+    PAG::GUI::getInstance().messageBufferAdd("GLFW ERROR NUMBER: " + errno);
+    PAG::GUI::getInstance().messageBufferAdd("Description:" + aux);
 }
 
 /**
@@ -261,17 +261,29 @@ int main()
         PAG::GUI::getInstance().drawColorWheel(500, 10, 1.0f,
                                                reinterpret_cast<float *>(PAG::Renderer::getInstance().getBgColor()), "Fondo", "Actual");
         PAG::Renderer::getInstance().updateBgColor();
-        PAG::GUI::getInstance().drawShaderLoadWindow(10,450,1.0f,"Shader load");
+        //PAG::GUI::getInstance().drawShaderLoadWindow(10,450,1.0f,"Shader load");
         PAG::GUI::getInstance().drawCameraControls(500, 450,1.0f,"Camera");
 
         //Cargar modelos
-        PAG::GUI::getInstance().drawModelLoaderWindow(10,600,1.0f,"Model load");
+        PAG::GUI::getInstance().drawModelLoaderWindow(10,350,1.0f,"Model load");
 
         if(PAG::GUI::getInstance().getFileBrowserWindow().HasSelected())
         {
             //Añadir cuando el archivo sea .obj
             if (PAG::GUI::getInstance().getFileBrowserWindow().GetSelected().string().substr(PAG::GUI::getInstance().getFileBrowserWindow().GetSelected().string().length()-4)==".obj"){
-                //Crear nuevo modelo
+                //Cargar Shader
+                //Crear Shader del texto
+                if(PAG::GUI::getInstance().getShaderLoadInputText()!=""){
+                    try{
+                        //Crear Shader Program
+                        PAG::Renderer::getInstance().createShaderProgram(PAG::GUI::getInstance().getShaderLoadInputText());
+                    }catch (const std::exception& e){ //capturar excepción en caso de error
+                        PAG::GUI::getInstance().messageBufferAdd(e.what());
+                    }
+                } else{
+                    PAG::GUI::getInstance().messageBufferAdd("ERROR: No shader selected.");
+                }
+                //Crear modelo
                 PAG::Renderer::getInstance().createModel(PAG::GUI::getInstance().getFileBrowserWindow().GetSelected().string());
             } else{
                 PAG::GUI::getInstance().messageBufferAdd("ERROR: unsupported format");
@@ -280,7 +292,7 @@ int main()
         }
 
         //Transformar Modelos
-        PAG::GUI::getInstance().drawModelTransformWindow(500,600,1.0f,"Model Transform",PAG::Renderer::getInstance().getModelList());
+        PAG::GUI::getInstance().drawModelTransformWindow(500,300,1.0f,"Model Transform",PAG::Renderer::getInstance().getModelList());
 
         //Dibujar escena
         PAG::GUI::getInstance().render();//Renderizar interfaz

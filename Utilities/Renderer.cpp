@@ -46,18 +46,6 @@ namespace PAG {
     void Renderer::windowRefresh() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
         glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-        //Crear nuevo shader si le han dado a load
-        if(GUI::getInstance().isShaderLoadButtonPressed()){
-            if(GUI::getInstance().getShaderLoadInputText()!=""){
-                try{
-                    createShaderProgram(GUI::getInstance().getShaderLoadInputText());
-                }catch (const std::exception& e){ //capturar excepción en caso de error
-                    GUI::getInstance().messageBufferAdd(e.what());
-                }
-            } else{
-                GUI::getInstance().messageBufferAdd("ERROR: No shader selected.");
-            }
-        }
 
         //Recorre lista de modelos, usando el par modelo/id
         //first es model, second es el int del shader program
@@ -70,15 +58,13 @@ namespace PAG {
      * Función para dibujar el modelo con su shaderprogram correspondiente
      */
     void Renderer::drawModel(std::pair<PAG::Model,GLuint> model){
-        if(model.second!=0){ //dibuja cuando el shader no es erroneo
-            //Dibujar los modelos de la lista
-            glBindVertexArray(model.first.getIdVao());
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model.first.getIdIbo());
-            glUseProgram(model.second); //usar el shader program del modelo
-            setUniformMVP(model.first,model.second); //aplicar cámara
-            glDrawElements(GL_TRIANGLES, model.first.getIndices()->size(), GL_UNSIGNED_INT,
-                           nullptr); //dibujar elementos
-        }
+        //Dibujar los modelos de la lista
+        glBindVertexArray(model.first.getIdVao());
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model.first.getIdIbo());
+        glUseProgram(model.second); //usar el shader program del modelo
+        setUniformMVP(model.first,model.second); //aplicar cámara
+        glDrawElements(GL_TRIANGLES, model.first.getIndices()->size(), GL_UNSIGNED_INT,
+                       nullptr); //dibujar elementos
     }
 
     void Renderer::viewportResize(int width, int height) {
@@ -148,7 +134,9 @@ namespace PAG {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER,model.getIndices()->size()*sizeof(GLfloat),model.getIndicesArray(),GL_STATIC_DRAW);
 
         //Guarda el shader actual con el modelo
-        modelList->emplace_back(model,shaderProgram->getIdSp());
+        if(shaderProgram->getIdSp()!=0){ //guarda modelo cuando el shader program no es erróneo
+            modelList->emplace_back(model,shaderProgram->getIdSp());
+        }
     }
 
     /**

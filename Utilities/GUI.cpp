@@ -158,6 +158,10 @@ namespace PAG {
     void GUI::drawModelLoaderWindow(float posX, float posY, float fontScale, const char *title){
         ImGui::SetNextWindowPos ( ImVec2 (posX, posY), ImGuiCond_Once );
         if (ImGui::Begin(title)){
+            ImGui::SeparatorText("Shader");
+            ImGui::SetWindowFontScale ( fontScale );
+            ImGui::InputText ( "##", &shaderLoadInputText, ImGuiInputTextFlags_AutoSelectAll );
+            ImGui::SeparatorText("Model");
             if(ImGui::Button("Select Model")){
                 fileBrowserWindow.Open();    //Abrir ventana al pulsar el botón
             }
@@ -166,7 +170,7 @@ namespace PAG {
         fileBrowserWindow.Display();
     }
 
-    //Función estúpida para que esto tire
+    //Función para borrar el buffer del file browser
     void GUI::clearModelLoader(){
         fileBrowserWindow.ClearSelected();
     }
@@ -220,6 +224,13 @@ namespace PAG {
                     break;
             }
             modelTransformApplyPressed = ImGui::Button("Apply");
+            ImGui::SameLine();
+            if(ImGui::Button("Reset")){
+                modelTranslate = glm::vec3(0.f);
+                modelRotateAxis = glm::vec3(0,1,0);
+                modelRotateAngle = .0f;
+                modelScale = glm::vec3(1,1,1);
+            }
         }
         ImGui::End();
     }
