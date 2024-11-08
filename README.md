@@ -118,3 +118,53 @@ PAG::ShaderProgram-->PAG::ShaderObject:instancia
 PAG::ShaderProgram->OpenGL:utiliza
 PAG::ShaderObject->OpenGL:utiliza
 ````
+
+## PRÁCTICA 6
+
+En esta práctica se realiza encapsulamiento de los modelos en su propia clase, **PAG::Model**. El renderer se encarga de gestionar estos modelos, guardándolos en una lista de pares donde un elemento es el modelo y el otro el id del shader program asociado. En el ciclo de renderizado, el renderer dibuja los modelos, haciendo uso de sus matrices de modelado respectivas. Para cargar modelos desde un archivo, los modelos hacen uso de **Assimp**, guardando todos los vértices, normales e índices de la escena que se carga. Estos valores son luego utilizados por el Renderer a la hora de crear los VAOs,IBOs y VBOs necesarios.
+
+Entre los atributos del modelo se ecuentran:
+- Su matriz de modelado **modelMatrix**.
+- Un puntero a los vértices, índices y normales del modelo: **vertices**, **indices** y **normals**.
+- El id del VAO del modelo, **idVAO**.
+- El id de los VBO de posición y de normales: **idVBO_pos** y **idVBO_normals**.
+- El id del IBO del modelo, **idIBO**.
+
+### Instrucciones
+
+Para añadir un nuevo modelo, hay una ventana donde se escribe el nombre del Shader Program a utilizar, el cual se se carga desde la carpeta *./Shaders*, después se pulsa en el botón para cargar el modelo. Este botón abre un explorador de archivos que comienza en el directorio ./Models. Al seleccionar un archivo .obj, se creará un modelo con el shader especificado. El modelo no cargará si el archivo elegido no es .obj o el Shader Program no existe.
+
+Para transformar y gestionar modelos, hay una nueva ventana donde se muestran todos los modelos de la escena. Debajo, se ecuentra otro combo con las transformaciones que se pueden realizar sobre el modelo escogido. Estas transformaciones son Traslación, Rotación y Escalado, las cuales se aplican al modelo escogido al pusar el botón correspondiente, además hay un botón que permite resetear los valores de la transformaciones. Finalmente hay un botón que permite destruir el objeto elegido. El programa empieza con el triángulo por defecto como primer objeto.
+
+### UML
+
+````plantuml
+class OpenGL
+class ImGui
+class Assimp
+
+class PAG::Renderer{
+PAG::ShaderProgram* shaderProgram
+PAG::Camera* camera
+std::vector<std::pair(PAG::Model,GLuint)>* modelList
+}
+class PAG::GUI
+class PAG::ShaderProgram{
+PAG::ShaderObject* vertexShader
+PAG::ShaderObject* fragmentShader
+}
+class PAG::ShaderObject
+class PAG::Camera
+class PAG::Model
+
+PAG::GUI - PAG::Renderer : se comunican por el main
+
+PAG::GUI ..|> ImGui : usa
+PAG::Renderer ..|> OpenGL : usa
+PAG::Renderer --* PAG::ShaderProgram : contiene
+PAG::Renderer --* PAG::Camera : contiene
+PAG::Renderer --* PAG::Model : contiene varios
+
+PAG::ShaderProgram --* PAG::ShaderObject : contiene 2
+PAG::Model ..|> Assimp : usa
+````

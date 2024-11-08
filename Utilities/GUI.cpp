@@ -353,5 +353,9 @@ namespace PAG {
         return modelDeletePressed;
     }
 
+    void GUI::setCurrentModelIndex(int currentModelIndex) {
+        GUI::currentModelIndex = currentModelIndex;
+    }
+
 
 } // PAG

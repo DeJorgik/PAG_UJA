@@ -56,7 +56,6 @@ namespace PAG {
         GLuint getIdIbo();
         GLuint *getIdIboPointer();
         const glm::mat4 &getModelMatrix() const;
-        //PAG::modelType getModelType() const;
 
         void sceneProcess(const aiScene *assimpScene);
         void meshProcess(aiMesh *mesh);

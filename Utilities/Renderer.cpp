@@ -140,7 +140,6 @@ namespace PAG {
         for (auto &modelPair : *modelList) {
             if (*model.getModelName() == *modelPair.first.getModelName()){
                 model.setName(*model.getModelName()+"_copy");
-                break;
             }
         }
 

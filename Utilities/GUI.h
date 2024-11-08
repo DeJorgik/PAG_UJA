@@ -85,6 +85,8 @@ namespace PAG {
         float getModelRotateAngle() const;
         const glm::vec3 &getModelScale() const;
         bool isModelDeletePressed() const;
+
+        void setCurrentModelIndex(int currentModelIndex);
     };
 } // PAG
 
