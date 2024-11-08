@@ -212,5 +212,9 @@ namespace PAG {
         Model::name = name;
     }
 
+    PAG::modelVisualizationType Model::getModelVisualizationType() const {
+        return modelVisualizationType;
+    }
+
 
 } // PAG

@@ -19,9 +19,13 @@ namespace PAG {
     //Tipo de transformación del modelo
     enum modelTransformType{TRANSLATE,ROTATE,SCALE};
 
+    //Tipo de visualización del modelo
+    enum modelVisualizationType{WIREFRAME,FILL};
+
     class Model {
     private:
         std::string name; //Nombre del modelo (se usa para el combo)
+        modelVisualizationType modelVisualizationType; //Tipo de visualización
         int vertexCount;
         std::vector<GLfloat> *vertices;
         std::vector<GLuint> *indices;
@@ -68,6 +72,8 @@ namespace PAG {
         void modelTranslate(glm::vec3 transform);
         void modelRotate(glm::vec3 axis, float angle);
         void modelScale(glm::vec3 scale);
+
+        PAG::modelVisualizationType getModelVisualizationType() const;
     };
 } // PAG
 

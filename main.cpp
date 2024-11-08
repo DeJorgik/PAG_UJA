@@ -296,8 +296,10 @@ int main()
 
         if(PAG::GUI::getInstance().isModelDeletePressed()){
             PAG::Renderer::getInstance().deleteModel(PAG::GUI::getInstance().getCurrentModelIndex());
-            if(PAG::GUI::getInstance().getCurrentModelIndex()==PAG::Renderer::getInstance().getModelList()->size()){
-                PAG::GUI::getInstance().setCurrentModelIndex(PAG::GUI::getInstance().getCurrentModelIndex()-1);
+            if(!PAG::Renderer::getInstance().getModelList()->empty()){
+                if((PAG::GUI::getInstance().getCurrentModelIndex()==PAG::Renderer::getInstance().getModelList()->size())){
+                    PAG::GUI::getInstance().setCurrentModelIndex(PAG::GUI::getInstance().getCurrentModelIndex()-1);
+                }
             }
         }
 
