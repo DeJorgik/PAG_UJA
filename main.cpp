@@ -280,19 +280,23 @@ int main()
                     }catch (const std::exception& e){ //capturar excepción en caso de error
                         PAG::GUI::getInstance().messageBufferAdd(e.what());
                     }
+                    //Crear modelo
+                    PAG::Renderer::getInstance().createModel(PAG::GUI::getInstance().getFileBrowserWindow().GetSelected().string());
                 } else{
                     PAG::GUI::getInstance().messageBufferAdd("ERROR: No shader selected.");
                 }
-                //Crear modelo
-                PAG::Renderer::getInstance().createModel(PAG::GUI::getInstance().getFileBrowserWindow().GetSelected().string());
             } else{
-                PAG::GUI::getInstance().messageBufferAdd("ERROR: unsupported format");
+                PAG::GUI::getInstance().messageBufferAdd("ERROR: Unsupported format.");
             }
             PAG::GUI::getInstance().clearModelLoader();
         }
 
         //Transformar Modelos
         PAG::GUI::getInstance().drawModelTransformWindow(500,300,1.0f,"Model Transform",PAG::Renderer::getInstance().getModelList());
+
+        if(PAG::GUI::getInstance().isModelDeletePressed()){
+            PAG::Renderer::getInstance().deleteModel(PAG::GUI::getInstance().getCurrentModelIndex());
+        }
 
         //Dibujar escena
         PAG::GUI::getInstance().render();//Renderizar interfaz

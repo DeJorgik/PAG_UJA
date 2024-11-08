@@ -49,8 +49,10 @@ namespace PAG {
 
         //Recorre lista de modelos, usando el par modelo/id
         //first es model, second es el int del shader program
-        for (auto &model:*modelList) {
-            drawModel(model);
+        if(!modelList->empty()){
+            for (auto &model:*modelList) {
+                drawModel(model);
+            }
         }
     }
 
@@ -112,8 +114,6 @@ namespace PAG {
         glGenVertexArrays (1, model.getIdVaoPointer());
         glBindVertexArray(model.getIdVao());
 
-        GLuint indices[] = {0,1,2};
-
         //VBO posición
         glGenBuffers(1, model.getIdVboPosPointer());
         glBindBuffer(GL_ARRAY_BUFFER,model.getIdVboPos());
@@ -133,9 +133,30 @@ namespace PAG {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,model.getIdIbo());
         glBufferData(GL_ELEMENT_ARRAY_BUFFER,model.getIndices()->size()*sizeof(GLfloat),model.getIndicesArray(),GL_STATIC_DRAW);
 
+        //Poner shader en el nombre
+        model.setName(*model.getModelName()+"_"+shaderProgram->getName());
+
+        //Cambiar nombre si hay un modelo con el mismo nombre
+        for (auto &modelPair : *modelList) {
+            if (*model.getModelName() == *modelPair.first.getModelName()){
+                model.setName(*model.getModelName()+"_copy");
+                break;
+            }
+        }
+
         //Guarda el shader actual con el modelo
         if(shaderProgram->getIdSp()!=0){ //guarda modelo cuando el shader program no es erróneo
             modelList->emplace_back(model,shaderProgram->getIdSp());
+        }
+    }
+
+    /**
+     * Función que borra un modelo de la lista
+     * @param modelId
+     */
+    void Renderer::deleteModel(int modelId){
+        if(!modelList->empty()){
+            modelList->erase(modelList->begin()+modelId);
         }
     }
 

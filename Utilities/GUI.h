@@ -42,6 +42,7 @@ namespace PAG {
         float modelRotateAngle;
         glm::vec3 modelScale;
         bool modelTransformApplyPressed;
+        bool modelDeletePressed;
     public:
         virtual ~GUI();
         static GUI& getInstance();
@@ -76,20 +77,14 @@ namespace PAG {
         void drawModelTransformWindow(float posX, float posY, float fontScale, const char *title,
                                       std::vector<std::pair<PAG::Model, GLuint>> *modelList);
         bool isModelTransformApplyPressed() const;
-
         int getCurrentModelIndex() const;
-
         int getModelTransformSelectedItem() const;
-
         modelTransformType getModelTransform() const;
-
         const glm::vec3 &getModelTranslate() const;
-
         const glm::vec3 &getModelRotateAxis() const;
-
         float getModelRotateAngle() const;
-
         const glm::vec3 &getModelScale() const;
+        bool isModelDeletePressed() const;
     };
 } // PAG
 

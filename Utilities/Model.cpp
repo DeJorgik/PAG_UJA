@@ -11,7 +11,9 @@
 namespace PAG {
 
     Model::~Model() {
-        
+        vertices = nullptr;
+        indices = nullptr;
+        normals = nullptr;
     }
 
     void Model::drawDefaultTriangle(){
@@ -204,6 +206,10 @@ namespace PAG {
 
     std::string *Model::getModelName() {
         return &name;
+    }
+
+    void Model::setName(const std::string &name) {
+        Model::name = name;
     }
 
 

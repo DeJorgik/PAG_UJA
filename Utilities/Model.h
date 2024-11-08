@@ -62,6 +62,8 @@ namespace PAG {
         void meshProcess(aiMesh *mesh);
         Model(std::string filename);
 
+        void setName(const std::string &name);
+
         std::string *getModelName();
 
         void modelTranslate(glm::vec3 transform);

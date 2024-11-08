@@ -63,6 +63,8 @@ namespace PAG {
 
         void processUiModelTransform(int modelId, modelTransformType modelTransformType, glm::vec3 modelTranslate,
                                      glm::vec3 modelRotateAxis, float modelRotateAngle, glm::vec3 modelScale);
+
+        void deleteModel(int modelId);
     };
 
 } // PAG

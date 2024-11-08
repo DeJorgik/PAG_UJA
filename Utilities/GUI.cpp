@@ -31,6 +31,7 @@ namespace PAG {
         modelRotateAngle = .0f;
         modelScale = glm::vec3(1,1,1);
         modelTransformApplyPressed = false;
+        modelDeletePressed = false;
     }
 
     GUI::~GUI() {
@@ -127,13 +128,16 @@ namespace PAG {
                 case 3:
                     cameraMovement = PAG::cameraMovementType::DOLLY;
                     dollyForwardPressed = ImGui::Button("Forward");
+                    ImGui::SameLine();
                     dollyBackwardPressed = ImGui::Button("Backward");
                     dollyLeftPressed = ImGui::Button("Left");
+                    ImGui::SameLine();
                     dollyRightPressed = ImGui::Button("Right");
                     break;
                 case 4:
                     cameraMovement = PAG::cameraMovementType::CRANE;
                     craneUpPressed = ImGui::Button("Up");
+                    ImGui::SameLine();
                     craneDownPressed = ImGui::Button("Down");
                     break;
                 case 5:
@@ -184,8 +188,9 @@ namespace PAG {
                                        std::vector<std::pair<PAG::Model,GLuint>>* modelList){
         ImGui::SetNextWindowPos ( ImVec2 (posX, posY), ImGuiCond_Once );
         if (ImGui::Begin(title)){
-            if(ImGui::BeginCombo("Model List",modelList->at(currentModelIndex).first.getModelName()->c_str())){
-                if(modelList!= nullptr){
+            ImGui::SeparatorText("Model Transform");
+            if(!modelList->empty()){
+                if(ImGui::BeginCombo("Model List",modelList->at(currentModelIndex).first.getModelName()->c_str())){
                     for (int i = 0; i < modelList->size(); ++i) {
                         bool isSelected = currentModelIndex == i;
                         if (ImGui::Selectable(modelList->at(i).first.getModelName()->c_str(), isSelected)){
@@ -195,8 +200,10 @@ namespace PAG {
                             ImGui::SetItemDefaultFocus();
                         }
                     }
+                    ImGui::EndCombo();
                 }
-                ImGui::EndCombo();
+            } else {
+                ImGui::Text("No models loaded.");
             }
             const char* items[] = {"Translate", "Rotate", "Scale"};
             ImGui::Combo("Transformation", &modelTransformSelectedItem, items, 3);
@@ -231,6 +238,8 @@ namespace PAG {
                 modelRotateAngle = .0f;
                 modelScale = glm::vec3(1,1,1);
             }
+            ImGui::SeparatorText("Model Manegment");
+            modelDeletePressed = ImGui::Button("Delete Model");
         }
         ImGui::End();
     }
@@ -338,6 +347,10 @@ namespace PAG {
 
     const glm::vec3 &GUI::getModelScale() const {
         return modelScale;
+    }
+
+    bool GUI::isModelDeletePressed() const {
+        return modelDeletePressed;
     }
 
 
