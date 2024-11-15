@@ -43,6 +43,8 @@ namespace PAG {
         glm::vec3 modelScale;
         bool modelTransformApplyPressed;
         bool modelDeletePressed;
+        //PRÁCTICA 7
+        PAG::modelVisualizationTypes modelVisualizationType;
     public:
         virtual ~GUI();
         static GUI& getInstance();
@@ -73,7 +75,6 @@ namespace PAG {
         void drawModelLoaderWindow(float posX, float posY, float fontScale, const char *title);
         const ImGui::FileBrowser &getFileBrowserWindow() const;
         void clearModelLoader();
-        void drawModelTransformWindow(float posX, float posY, float fontScale, const char *title);
         void drawModelTransformWindow(float posX, float posY, float fontScale, const char *title,
                                       std::vector<std::pair<PAG::Model, GLuint>> *modelList);
         bool isModelTransformApplyPressed() const;
@@ -85,8 +86,9 @@ namespace PAG {
         float getModelRotateAngle() const;
         const glm::vec3 &getModelScale() const;
         bool isModelDeletePressed() const;
-
         void setCurrentModelIndex(int currentModelIndex);
+
+        PAG::modelVisualizationTypes getModelVisualizationType() const;
     };
 } // PAG
 

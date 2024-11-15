@@ -1,3 +1,4 @@
+#include <glad/glad.h>
 #include "Renderer.h"
 #include "GUI.h"
 #include <stdexcept>
@@ -45,7 +46,6 @@ namespace PAG {
 
     void Renderer::windowRefresh() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-        glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
         //Recorre lista de modelos, usando el par modelo/id
         //first es model, second es el int del shader program
@@ -60,9 +60,25 @@ namespace PAG {
      * Función para dibujar el modelo con su shaderprogram correspondiente
      */
     void Renderer::drawModel(std::pair<PAG::Model,GLuint> model){
+        GLuint subroutineIndex;
+        switch (model.first.getModelVisualizationType()) {
+            case PAG::modelVisualizationTypes::FILL:
+                glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+                subroutineIndex = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "colorMaterial");
+
+                break;
+            case PAG::modelVisualizationTypes::WIREFRAME:
+                glPolygonMode(GL_FRONT_AND_BACK,GL_LINES);
+                subroutineIndex = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "colorWireframe");
+                break;
+            default:
+                break;
+        }
         //Dibujar los modelos de la lista
         glBindVertexArray(model.first.getIdVao());
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model.first.getIdIbo());
+        //Elegir subrutina
+        glUniformSubroutinesuiv ( GL_FRAGMENT_SHADER, 1, &subroutineIndex );
         glUseProgram(model.second); //usar el shader program del modelo
         setUniformMVP(model.first,model.second); //aplicar cámara
         glDrawElements(GL_TRIANGLES, model.first.getIndices()->size(), GL_UNSIGNED_INT,

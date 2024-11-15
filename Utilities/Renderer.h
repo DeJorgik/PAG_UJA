@@ -1,12 +1,13 @@
 #ifndef PAG_1_RENDERER_H
 #define PAG_1_RENDERER_H
 
+#include <gl/gl.h>
 #include <iostream>
-#include <glad/glad.h>
 #include "ShaderProgram.h"
 #include "Camera.h"
 #include "GUI.h"
 #include "Model.h"
+#include "Renderer.h"
 #include <glm/glm.hpp>
 
 //Clase que encapsula el dibujado de la pantalla

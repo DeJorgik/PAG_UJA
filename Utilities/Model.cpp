@@ -47,8 +47,14 @@ namespace PAG {
         normals->push_back(1);
     }
 
-    //PRACTICA 6 Sólo Posiciones y Normales
-    //Se le pasa el nombre del archivo, el shader program se pone a parte
+    /**
+     * crea un material por defecto, pinta de color rojo
+     * TODO: cambiar esto para que se puedan customizar los materiales antes de crear el objeto
+     */
+    void Model::createDefaultMaterial(){
+        material = new PAG::Material(name+"_material",glm::vec3(),glm::vec3(),glm::vec3(),1);
+    }
+
     Model::Model(std::string filename){
         modelMatrix = glm::mat4(1.0f); //matriz de modelo por defecto
         if (filename.empty()){
@@ -67,7 +73,6 @@ namespace PAG {
             std::filesystem::path p(filename);
             name = p.stem().string();
 
-
             //Crear vectores
             vertices = new std::vector<GLfloat>();
             indices = new std::vector<GLuint>();
@@ -75,6 +80,9 @@ namespace PAG {
 
             //Procesar la escena para guardar vertices y normales
             sceneProcess(assimpScene);
+
+            //Crear material por defecto
+            createDefaultMaterial();
         }
     }
 
@@ -212,8 +220,12 @@ namespace PAG {
         Model::name = name;
     }
 
-    PAG::modelVisualizationType Model::getModelVisualizationType() const {
+    PAG::modelVisualizationTypes Model::getModelVisualizationType() const {
         return modelVisualizationType;
+    }
+
+    void Model::setModelVisualizationType(modelVisualizationTypes modelVisualizationType) {
+        Model::modelVisualizationType = modelVisualizationType;
     }
 
 

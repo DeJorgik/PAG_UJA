@@ -14,18 +14,19 @@
 #include <assimp/scene.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
+#include "Material.h"
 
 namespace PAG {
     //Tipo de transformación del modelo
     enum modelTransformType{TRANSLATE,ROTATE,SCALE};
 
     //Tipo de visualización del modelo
-    enum modelVisualizationType{WIREFRAME,FILL};
+    enum modelVisualizationTypes{WIREFRAME,FILL};
 
     class Model {
     private:
         std::string name; //Nombre del modelo (se usa para el combo)
-        modelVisualizationType modelVisualizationType; //Tipo de visualización
+        modelVisualizationTypes modelVisualizationType; //Tipo de visualización
         int vertexCount;
         std::vector<GLfloat> *vertices;
         std::vector<GLuint> *indices;
@@ -38,7 +39,10 @@ namespace PAG {
         GLuint idVBO_normals = 0;
         //GLuint idVBO_textureCoordinates = 0;
         GLuint idIBO = 0;
+        //PRACTICA 7
+        Material* material;
         void drawDefaultTriangle();
+        void createDefaultMaterial(); //Ahora para la prueba
     public:
         //Model(); //Crea el modelo del triángulo por defecto
         //Model(std::string filename, PAG::modelType modelType, int shaderProgramId); //Carga el modelo desde el nombre
@@ -73,7 +77,9 @@ namespace PAG {
         void modelRotate(glm::vec3 axis, float angle);
         void modelScale(glm::vec3 scale);
 
-        PAG::modelVisualizationType getModelVisualizationType() const;
+        void setModelVisualizationType(modelVisualizationTypes modelVisualizationType);
+
+        PAG::modelVisualizationTypes getModelVisualizationType() const;
     };
 } // PAG
 

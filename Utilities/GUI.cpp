@@ -357,5 +357,9 @@ namespace PAG {
         GUI::currentModelIndex = currentModelIndex;
     }
 
+    modelVisualizationTypes GUI::getModelVisualizationType() const {
+        return modelVisualizationType;
+    }
+
 
 } // PAG
