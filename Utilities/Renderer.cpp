@@ -80,6 +80,7 @@ namespace PAG {
         glUniformSubroutinesuiv ( GL_FRAGMENT_SHADER, 1, &subroutineIndex );
         glUseProgram(model.second); //usar el shader program del modelo
         setUniformMVP(model.first,model.second); //aplicar cámara
+        setUniformMaterial(*model.first.getMaterial(),model.second);//aplicar material
         glDrawElements(GL_TRIANGLES, model.first.getIndices()->size(), GL_UNSIGNED_INT,
                        nullptr); //dibujar elementos
     }
@@ -123,10 +124,10 @@ namespace PAG {
      * PRACTICA 8
      * ahora tambien se le pasan los atributos de su material
      */
-    void Renderer::createModel(std::string modelName,const glm::vec3 &ambient, const glm::vec3 &diffuse,
+    void Renderer::createModel(std::string modelName,modelVisualizationTypes modelVisualizationType,const glm::vec3 &ambient, const glm::vec3 &diffuse,
                                const glm::vec3 &specular, GLfloat exponent) {
 
-        PAG::Model model = PAG::Model(modelName); //crear modelo
+        PAG::Model model = PAG::Model(modelName,modelVisualizationType); //crear modelo
         model.createMaterial(ambient,diffuse,specular,exponent); //crear y aplicar material
 
         //Generar VAO
@@ -146,8 +147,6 @@ namespace PAG {
         glBufferData(GL_ARRAY_BUFFER, model.getNormals()->size() * sizeof(GLfloat), model.getNormalsArray(), GL_STATIC_DRAW);
         glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),nullptr);
         glEnableVertexAttribArray(1);
-
-        //VBO
 
         //Generar IBO
         glGenBuffers(1, model.getIdIboPointer());
@@ -218,6 +217,34 @@ namespace PAG {
             glm::mat4 v = camera->calculateViewMatrix();
             glm::mat4 mvp = p*v*model.getModelMatrix();
             glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, glm::value_ptr(mvp));
+    }
+
+    /**
+     * Función que pasa los colores ambient diffuse y specular como atributos uniform al shader program
+     * @param material
+     */
+    void Renderer::setUniformMaterial(PAG::Material material, GLuint IdSp){
+        GLint ambientLoc = glGetUniformLocation(IdSp, "matAmbient");
+        GLint diffuseLoc = glGetUniformLocation(IdSp, "matDiffuse");
+        GLint specularLoc = glGetUniformLocation(IdSp, "matSpecular");
+        GLint exponentLoc = glGetUniformLocation(IdSp, "matExponent");
+
+        //Si no se utiliza el uniform, no lo enlaza, poniendo la localizazión en -1
+        if(ambientLoc!=-1){
+            float ambientColor[] = {material.getAmbient().x, material.getAmbient().y, material.getAmbient().z};
+            glUniform3fv(ambientLoc, 1,ambientColor);
+        }
+        //TODO HACER ESTO BIEN
+        /*
+        if(diffuseLoc!=-1){
+            glUniform3fv(diffuseLoc, 1,material.getMaterialDiffuse());
+        }
+        if(specularLoc!=-1){
+            glUniform3fv(specularLoc, 1,material.getMaterialSpecular());
+        }*/
+        //if(exponentLoc!=-1){
+          //  glUniform1f(exponentLoc,material.getExponent());
+        //}
     }
 
     Camera *Renderer::getCamera() const {

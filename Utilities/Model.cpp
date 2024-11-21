@@ -54,23 +54,7 @@ namespace PAG {
     void Model::createMaterial(const glm::vec3 &ambient, const glm::vec3 &diffuse,
                                const glm::vec3 &specular, GLfloat exponent){
         material = new PAG::Material(name+"_material",ambient,diffuse,specular,exponent);
-        //Lo guarda en un vector que luego se le pasa al opengl con todas la iformación del material
-        //Primero se añaden los colores de luz ambiente [0,1,2]
-        materialColors->push_back(material->getAmbient().x); //r
-        materialColors->push_back(material->getAmbient().y); //g
-        materialColors->push_back(material->getAmbient().z); //b
-        //despues lo de difusa [3,4,5]
-        materialColors->push_back(material->getAmbient().x); //r
-        materialColors->push_back(material->getAmbient().y); //g
-        materialColors->push_back(material->getAmbient().z); //b
-        //Después specular [6,7,8]
-        materialColors->push_back(material->getAmbient().x); //r
-        materialColors->push_back(material->getAmbient().y); //g
-        materialColors->push_back(material->getAmbient().z); //b
-        //último es el exponente [9]
-        materialColors->push_back(material->getExponent());
     }
-
     Model::Model(std::string filename, modelVisualizationTypes modelVisualizationType):
             modelVisualizationType(modelVisualizationType){
         modelMatrix = glm::mat4(1.0f); //matriz de modelo por defecto
@@ -99,7 +83,7 @@ namespace PAG {
             sceneProcess(assimpScene);
 
             //Crear material por defecto
-            createDefaultMaterial();
+            //createDefaultMaterial();
         }
     }
 
@@ -231,6 +215,12 @@ namespace PAG {
         return arr;
     }
 
+    GLfloat *Model::getMaterialColorsArray() {
+        auto * arr = new GLfloat [materialColors->size()];
+        std::copy(materialColors->begin(), materialColors->end(), arr);
+        return arr;
+    }
+
     GLuint *Model::getIndicesArray() {
         auto * arr = new GLuint [indices->size()];
         std::copy(indices->begin(), indices->end(), arr);
@@ -251,6 +241,10 @@ namespace PAG {
 
     void Model::setModelVisualizationType(modelVisualizationTypes modelVisualizationType) {
         Model::modelVisualizationType = modelVisualizationType;
+    }
+
+    Material *Model::getMaterial() const {
+        return material;
     }
 
 

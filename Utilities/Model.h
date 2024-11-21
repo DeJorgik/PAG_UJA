@@ -27,8 +27,6 @@ namespace PAG {
     private:
         Model(std::string filename, modelVisualizationTypes modelVisualizationType, Material material);
 
-        Model(std::string filename, modelVisualizationTypes modelVisualizationType);
-
         std::string name; //Nombre del modelo (se usa para el combo)
         modelVisualizationTypes modelVisualizationType; //Tipo de visualización
         int vertexCount;
@@ -91,6 +89,12 @@ namespace PAG {
 
         void
         createMaterial(const glm::vec3 &ambient, const glm::vec3 &diffuse, const glm::vec3 &specular, GLfloat exponent);
+
+        GLfloat *getMaterialColorsArray();
+
+        Material *getMaterial() const;
+
+        Model(std::string filename, modelVisualizationTypes modelVisualizationType);
     };
 } // PAG
 

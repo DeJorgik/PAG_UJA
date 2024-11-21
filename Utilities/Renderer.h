@@ -66,11 +66,15 @@ namespace PAG {
 
         void deleteModel(int modelId);
 
-        void createModel(std::string modelName, Material material);
-
         void createModel(std::string modelName, const glm::vec3 &ambient, const glm::vec3 &diffuse,
                          const glm::vec3 &specular,
                          GLfloat exponent);
+
+        void setUniformMaterial(Material material, GLuint IdSp);
+
+        void
+        createModel(std::string modelName, modelVisualizationTypes modelVisualizationType, const glm::vec3 &ambient,
+                    const glm::vec3 &diffuse, const glm::vec3 &specular, GLfloat exponent);
     };
 
 } // PAG

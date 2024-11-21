@@ -32,6 +32,12 @@ namespace PAG {
         const glm::vec3 &getSpecular() const;
 
         GLfloat getExponent() const;
+
+        GLfloat *getMaterialAmbient();
+
+        GLfloat *getMaterialDiffuse();
+
+        GLfloat *getMaterialSpecular();
     };
 
 } // PAG

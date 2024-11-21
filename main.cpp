@@ -218,7 +218,7 @@ int main()
         PAG::GUI::getInstance().messageBufferAdd( e.what());
     }
 
-    PAG::Renderer::getInstance().createModel("");
+    PAG::Renderer::getInstance().createModel("",PAG::modelVisualizationTypes::FILL,glm::vec3(1,0,0),glm::vec3(1,0,0),glm::vec3(1,0,0),1);
 
     //PAG::Renderer::getInstance().getViewportSizes(width,height);
 
@@ -265,6 +265,7 @@ int main()
         PAG::GUI::getInstance().drawCameraControls(500, 450,1.0f,"Camera");
 
         //Cargar modelos
+        /*
         PAG::GUI::getInstance().drawModelLoaderWindow(10,350,1.0f,"Model load");
 
         if(PAG::GUI::getInstance().getFileBrowserWindow().HasSelected())
@@ -290,7 +291,7 @@ int main()
                 PAG::GUI::getInstance().messageBufferAdd("ERROR: Unsupported format.");
             }
             PAG::GUI::getInstance().clearModelLoader();
-        }
+        }*/
 
         //Transformar Modelos
         PAG::GUI::getInstance().drawModelTransformWindow(500,300,1.0f,"Model Transform",PAG::Renderer::getInstance().getModelList());
