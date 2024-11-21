@@ -171,15 +171,17 @@ PAG::Model ..|> Assimp : usa
 
 ## PRÁCTICA 7
 
-En esta práctica se realiza encapsulamiento de los materiales en la nueva clase **PAG::Material**.
+En esta práctica se realiza encapsulamiento de los materiales en la nueva clase **PAG::Material**. La clase del modelo ha sido actualizada para contener un material como uno de sus atributos. Los archivos de shader también han sido alterados para que contengan subrutinas que se ativan dependiendo de que el modelo se dibuje en modo *GL_FILL* o en modo *GL_LINE*. Se utiliza un enum, **modelVisualizationTypes{WIREFRAME,FILL}** para facilitar esta distinción.
 
 Entre los atributos del material se ecuentran:
 - Los colores ambient, diffuse y specular: **ambient, diffuse, specular**.
 - El exponente, **exponent**
 
 ### Instrucciones
+En la ventana para añadir un modelo de la práctica anterior se ha añadido una rueda de color para elegir el color del material y una casilla para elegir si el modelo debe de ser rellenado o sólo será visualizado como wireframe. Esta misma configuración tambien es añadida en una nueva opción en la ventana de transformaciones para poder transformar el material del un objeto después de haber sido creado.
 
-
+### Funcionamiento
+El Renderer recoje los datos de los controles de interfaz ya mencionados y los utiliza para o bien crear un nuevo material o para editar los valores del material de un modelo en concreto. Actualmente, sólo se utiliza el color ambiente, el cual se envía a los shaders como un uniform. Dependiendo del modo de visualización del modelo, se elige una de las subrutinas del shader y elige el modo de polígonos de OpenGL. En el nuevo shader, **pag07**, la subrutina *colorMaterial* colorea el modelo del color ambiente del material, la subrutina *colorWireframe* lo colorea de negro.
 
 ### UML
 
