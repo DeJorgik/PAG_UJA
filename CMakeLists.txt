@@ -5,7 +5,11 @@ set(CMAKE_CXX_STANDARD 17)
 
 file( GLOB IMGUI imgui/*cpp)
 
-add_executable(PAG_1 main.cpp
+find_package(glfw3)
+find_package(glm)
+
+add_executable(PAG_1 glad/src/glad.c
+        main.cpp
         Utilities/Renderer.cpp
         Utilities/Renderer.h
         Utilities/GUI.cpp
@@ -24,9 +28,7 @@ add_executable(PAG_1 main.cpp
         Utilities/Material.h
 )
 
-find_package(glfw3)
-find_package(glad)
-find_package(glm)
+target_include_directories(PAG_1 PUBLIC glad/include)
 
 set(ASSIMP_BUILD_DLL ON CACHE BOOL "Build Assimp as a DLL")
 add_subdirectory(assimp)  # Añadir la carpeta Assimp al proyecto como un subdirectorio
@@ -37,7 +39,6 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         "${ASSIMP_DLL_PATH}/libassimp-5d.dll"
         $<TARGET_FILE_DIR:${PROJECT_NAME}>)
 
-target_link_libraries(PAG_1 glad::glad)
 target_link_libraries(PAG_1 glfw)
 target_link_libraries(PAG_1 glm::glm)
 

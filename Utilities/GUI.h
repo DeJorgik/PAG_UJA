@@ -44,7 +44,7 @@ namespace PAG {
         bool modelTransformApplyPressed;
         bool modelDeletePressed;
         //PRÁCTICA 7
-        PAG::modelVisualizationTypes modelVisualizationType;
+        bool modelVisualizationTypeFillPressed;
     public:
         virtual ~GUI();
         static GUI& getInstance();

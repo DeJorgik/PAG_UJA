@@ -2,8 +2,7 @@
 #include "Renderer.h"
 #include "GUI.h"
 #include <stdexcept>
-#include <fstream>
-#include <sstream>
+
 #include <glm/gtc/type_ptr.hpp> // value_ptr
 
 namespace PAG {
@@ -121,10 +120,14 @@ namespace PAG {
 
     /**Función que crea un modelo, crea el triangulo por defecto si no
      * se le pasa nombre
+     * PRACTICA 8
+     * ahora tambien se le pasan los atributos de su material
      */
-    void Renderer::createModel(std::string modelName) {
+    void Renderer::createModel(std::string modelName,const glm::vec3 &ambient, const glm::vec3 &diffuse,
+                               const glm::vec3 &specular, GLfloat exponent) {
 
-        PAG::Model model = PAG::Model(modelName);
+        PAG::Model model = PAG::Model(modelName); //crear modelo
+        model.createMaterial(ambient,diffuse,specular,exponent); //crear y aplicar material
 
         //Generar VAO
         glGenVertexArrays (1, model.getIdVaoPointer());
@@ -143,6 +146,8 @@ namespace PAG {
         glBufferData(GL_ARRAY_BUFFER, model.getNormals()->size() * sizeof(GLfloat), model.getNormalsArray(), GL_STATIC_DRAW);
         glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),nullptr);
         glEnableVertexAttribArray(1);
+
+        //VBO
 
         //Generar IBO
         glGenBuffers(1, model.getIdIboPointer());

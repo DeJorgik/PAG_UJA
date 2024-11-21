@@ -165,6 +165,8 @@ namespace PAG {
             ImGui::SeparatorText("Shader");
             ImGui::SetWindowFontScale ( fontScale );
             ImGui::InputText ( "##", &shaderLoadInputText, ImGuiInputTextFlags_AutoSelectAll );
+            ImGui::SeparatorText("Material");
+            ImGui::Checkbox("Fill Model",&modelVisualizationTypeFillPressed);
             ImGui::SeparatorText("Model");
             if(ImGui::Button("Select Model")){
                 fileBrowserWindow.Open();    //Abrir ventana al pulsar el botón
@@ -358,7 +360,8 @@ namespace PAG {
     }
 
     modelVisualizationTypes GUI::getModelVisualizationType() const {
-        return modelVisualizationType;
+        if(modelVisualizationTypeFillPressed) return modelVisualizationTypes::FILL;
+        else return modelVisualizationTypes::WIREFRAME;
     }
 
 

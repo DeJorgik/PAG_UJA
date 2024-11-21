@@ -51,11 +51,28 @@ namespace PAG {
      * crea un material por defecto, pinta de color rojo
      * TODO: cambiar esto para que se puedan customizar los materiales antes de crear el objeto
      */
-    void Model::createDefaultMaterial(){
-        material = new PAG::Material(name+"_material",glm::vec3(),glm::vec3(),glm::vec3(),1);
+    void Model::createMaterial(const glm::vec3 &ambient, const glm::vec3 &diffuse,
+                               const glm::vec3 &specular, GLfloat exponent){
+        material = new PAG::Material(name+"_material",ambient,diffuse,specular,exponent);
+        //Lo guarda en un vector que luego se le pasa al opengl con todas la iformación del material
+        //Primero se añaden los colores de luz ambiente [0,1,2]
+        materialColors->push_back(material->getAmbient().x); //r
+        materialColors->push_back(material->getAmbient().y); //g
+        materialColors->push_back(material->getAmbient().z); //b
+        //despues lo de difusa [3,4,5]
+        materialColors->push_back(material->getAmbient().x); //r
+        materialColors->push_back(material->getAmbient().y); //g
+        materialColors->push_back(material->getAmbient().z); //b
+        //Después specular [6,7,8]
+        materialColors->push_back(material->getAmbient().x); //r
+        materialColors->push_back(material->getAmbient().y); //g
+        materialColors->push_back(material->getAmbient().z); //b
+        //último es el exponente [9]
+        materialColors->push_back(material->getExponent());
     }
 
-    Model::Model(std::string filename){
+    Model::Model(std::string filename, modelVisualizationTypes modelVisualizationType):
+            modelVisualizationType(modelVisualizationType){
         modelMatrix = glm::mat4(1.0f); //matriz de modelo por defecto
         if (filename.empty()){
             drawDefaultTriangle();
@@ -184,6 +201,14 @@ namespace PAG {
 
     GLuint *Model::getIdVboNormalsPointer() {
         return &idVBO_normals;
+    }
+
+    GLuint Model::getIdVboMaterialColors() {
+        return idVBO_materialColors;
+    }
+
+    GLuint *Model::getIdVboMaterialColorsPointer() {
+        return &idVBO_materialColors;
     }
 
     GLuint Model::getIdIbo() {

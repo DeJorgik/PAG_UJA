@@ -212,7 +212,7 @@ int main()
     //Crear shader program y cargar modelo
 
     try{
-        PAG::Renderer::getInstance().createShaderProgram("pag03");
+        PAG::Renderer::getInstance().createShaderProgram("pag07");
     }
     catch (const std::exception& e){ //capturar excepción en caso de error
         PAG::GUI::getInstance().messageBufferAdd( e.what());
@@ -280,6 +280,7 @@ int main()
                     }catch (const std::exception& e){ //capturar excepción en caso de error
                         PAG::GUI::getInstance().messageBufferAdd(e.what());
                     }
+                    //Crear material co
                     //Crear modelo
                     PAG::Renderer::getInstance().createModel(PAG::GUI::getInstance().getFileBrowserWindow().GetSelected().string());
                 } else{

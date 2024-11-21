@@ -25,18 +25,24 @@ namespace PAG {
 
     class Model {
     private:
+        Model(std::string filename, modelVisualizationTypes modelVisualizationType, Material material);
+
+        Model(std::string filename, modelVisualizationTypes modelVisualizationType);
+
         std::string name; //Nombre del modelo (se usa para el combo)
         modelVisualizationTypes modelVisualizationType; //Tipo de visualización
         int vertexCount;
         std::vector<GLfloat> *vertices;
         std::vector<GLuint> *indices;
         std::vector<GLfloat> *normals;
+        std::vector<GLfloat> *materialColors; //vector que contiene en orden los colores ambiente,difuso y especular del modelo, el último valor es el exponente
         //std::vector<GLfloat> *textureCoordinates;
         glm::mat4 modelMatrix;
         //PAG::modelType modelType;
         GLuint idVAO = 0;
         GLuint idVBO_pos = 0;
         GLuint idVBO_normals = 0;
+        GLuint idVBO_materialColors = 0; //VBO ENTRELAZADO DE LOS COLORES DEL MATERIAL
         //GLuint idVBO_textureCoordinates = 0;
         GLuint idIBO = 0;
         //PRACTICA 7
@@ -61,6 +67,8 @@ namespace PAG {
         GLuint *getIdVboPosPointer();
         GLuint getIdVboNormals();
         GLuint *getIdVboNormalsPointer();
+        GLuint getIdVboMaterialColors();
+        GLuint *getIdVboMaterialColorsPointer();
         GLuint getIdIbo();
         GLuint *getIdIboPointer();
         const glm::mat4 &getModelMatrix() const;
@@ -80,6 +88,9 @@ namespace PAG {
         void setModelVisualizationType(modelVisualizationTypes modelVisualizationType);
 
         PAG::modelVisualizationTypes getModelVisualizationType() const;
+
+        void
+        createMaterial(const glm::vec3 &ambient, const glm::vec3 &diffuse, const glm::vec3 &specular, GLfloat exponent);
     };
 } // PAG
 

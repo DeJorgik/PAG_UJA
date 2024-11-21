@@ -7,7 +7,6 @@
 #include "Camera.h"
 #include "GUI.h"
 #include "Model.h"
-#include "Renderer.h"
 #include <glm/glm.hpp>
 
 //Clase que encapsula el dibujado de la pantalla
@@ -26,8 +25,8 @@ namespace PAG {
         ShaderProgram* shaderProgram;
         //PRÁCTICA 5, camara
         Camera* camera;
-        int viewportWidth;
-        int viewportHeight;
+        int viewportWidth = 1; //inicializado a 1 para que no de error en linux
+        int viewportHeight = 1;
         //PRÁCTICA 6, lista con los modelos de la escena
         std::vector<std::pair<PAG::Model,GLuint>>* modelList;
     public:
@@ -66,6 +65,12 @@ namespace PAG {
                                      glm::vec3 modelRotateAxis, float modelRotateAngle, glm::vec3 modelScale);
 
         void deleteModel(int modelId);
+
+        void createModel(std::string modelName, Material material);
+
+        void createModel(std::string modelName, const glm::vec3 &ambient, const glm::vec3 &diffuse,
+                         const glm::vec3 &specular,
+                         GLfloat exponent);
     };
 
 } // PAG
