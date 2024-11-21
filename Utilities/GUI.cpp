@@ -32,6 +32,7 @@ namespace PAG {
         modelScale = glm::vec3(1,1,1);
         modelTransformApplyPressed = false;
         modelDeletePressed = false;
+        modelVisualizationTypeFillPressed = true;
     }
 
     GUI::~GUI() {
@@ -166,6 +167,7 @@ namespace PAG {
             ImGui::SetWindowFontScale ( fontScale );
             ImGui::InputText ( "##", &shaderLoadInputText, ImGuiInputTextFlags_AutoSelectAll );
             ImGui::SeparatorText("Material");
+            ImGui::ColorPicker3("Ambient Color",modelAmbientColor,ImGuiColorEditFlags_PickerHueWheel);
             ImGui::Checkbox("Fill Model",&modelVisualizationTypeFillPressed);
             ImGui::SeparatorText("Model");
             if(ImGui::Button("Select Model")){
@@ -362,6 +364,10 @@ namespace PAG {
     modelVisualizationTypes GUI::getModelVisualizationType() const {
         if(modelVisualizationTypeFillPressed) return modelVisualizationTypes::FILL;
         else return modelVisualizationTypes::WIREFRAME;
+    }
+
+    const float *GUI::getModelAmbientColor() const {
+        return modelAmbientColor;
     }
 
 

@@ -16,7 +16,7 @@ vec4 colorMaterial ()
 }
 subroutine ( getColor )
 vec4 colorWireframe ()
-{ return vec4 ( 1, 1, 1, 1 );
+{ return vec4 ( 0, 0, 0, 1 );
 }
 
 void main ()

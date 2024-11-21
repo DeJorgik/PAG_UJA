@@ -45,6 +45,7 @@ namespace PAG {
         bool modelDeletePressed;
         //PRÁCTICA 7
         bool modelVisualizationTypeFillPressed;
+        float modelAmbientColor[3] = {1,0,0};
     public:
         virtual ~GUI();
         static GUI& getInstance();
@@ -87,8 +88,9 @@ namespace PAG {
         const glm::vec3 &getModelScale() const;
         bool isModelDeletePressed() const;
         void setCurrentModelIndex(int currentModelIndex);
-
         PAG::modelVisualizationTypes getModelVisualizationType() const;
+
+        const float *getModelAmbientColor() const;
     };
 } // PAG
 

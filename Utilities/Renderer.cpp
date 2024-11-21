@@ -59,26 +59,25 @@ namespace PAG {
      * Función para dibujar el modelo con su shaderprogram correspondiente
      */
     void Renderer::drawModel(std::pair<PAG::Model,GLuint> model){
+        //Dibujar los modelos de la lista
+        glBindVertexArray(model.first.getIdVao());
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model.first.getIdIbo());
+        glUseProgram(model.second); //usar el shader program del modelo
+        //Elegir subrutina
         GLuint subroutineIndex;
         switch (model.first.getModelVisualizationType()) {
             case PAG::modelVisualizationTypes::FILL:
                 glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
                 subroutineIndex = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "colorMaterial");
-
                 break;
             case PAG::modelVisualizationTypes::WIREFRAME:
-                glPolygonMode(GL_FRONT_AND_BACK,GL_LINES);
+                glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
                 subroutineIndex = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "colorWireframe");
                 break;
             default:
                 break;
         }
-        //Dibujar los modelos de la lista
-        glBindVertexArray(model.first.getIdVao());
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model.first.getIdIbo());
-        //Elegir subrutina
         glUniformSubroutinesuiv ( GL_FRAGMENT_SHADER, 1, &subroutineIndex );
-        glUseProgram(model.second); //usar el shader program del modelo
         setUniformMVP(model.first,model.second); //aplicar cámara
         setUniformMaterial(*model.first.getMaterial(),model.second);//aplicar material
         glDrawElements(GL_TRIANGLES, model.first.getIndices()->size(), GL_UNSIGNED_INT,

@@ -265,7 +265,7 @@ int main()
         PAG::GUI::getInstance().drawCameraControls(500, 450,1.0f,"Camera");
 
         //Cargar modelos
-        /*
+
         PAG::GUI::getInstance().drawModelLoaderWindow(10,350,1.0f,"Model load");
 
         if(PAG::GUI::getInstance().getFileBrowserWindow().HasSelected())
@@ -283,7 +283,14 @@ int main()
                     }
                     //Crear material co
                     //Crear modelo
-                    PAG::Renderer::getInstance().createModel(PAG::GUI::getInstance().getFileBrowserWindow().GetSelected().string());
+                    PAG::Renderer::getInstance().createModel(PAG::GUI::getInstance().getFileBrowserWindow().GetSelected().string(),
+                                                             PAG::GUI::getInstance().getModelVisualizationType(),
+                                                             glm::vec3 (PAG::GUI::getInstance().getModelAmbientColor()[0],
+                                                                        PAG::GUI::getInstance().getModelAmbientColor()[1],
+                                                                        PAG::GUI::getInstance().getModelAmbientColor()[2]),
+                                                             glm::vec3 (),
+                                                             glm::vec3 (),
+                                                             1);
                 } else{
                     PAG::GUI::getInstance().messageBufferAdd("ERROR: No shader selected.");
                 }
@@ -291,7 +298,7 @@ int main()
                 PAG::GUI::getInstance().messageBufferAdd("ERROR: Unsupported format.");
             }
             PAG::GUI::getInstance().clearModelLoader();
-        }*/
+        }
 
         //Transformar Modelos
         PAG::GUI::getInstance().drawModelTransformWindow(500,300,1.0f,"Model Transform",PAG::Renderer::getInstance().getModelList());
