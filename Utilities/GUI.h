@@ -46,6 +46,8 @@ namespace PAG {
         //PRÁCTICA 7
         bool modelVisualizationTypeFillPressed;
         float modelAmbientColor[3] = {1,0,0};
+        float modelAmbientColorTransform[3] = {1,0,0};
+        bool modelVIsualizationTypeFillPressedTransform;
     public:
         virtual ~GUI();
         static GUI& getInstance();
@@ -89,8 +91,9 @@ namespace PAG {
         bool isModelDeletePressed() const;
         void setCurrentModelIndex(int currentModelIndex);
         PAG::modelVisualizationTypes getModelVisualizationType() const;
-
         const float *getModelAmbientColor() const;
+        const float *getModelAmbientColorTransform() const;
+        bool isModelVIsualizationTypeFillPressedTransform() const;
     };
 } // PAG
 

@@ -33,6 +33,7 @@ namespace PAG {
         modelTransformApplyPressed = false;
         modelDeletePressed = false;
         modelVisualizationTypeFillPressed = true;
+        modelVIsualizationTypeFillPressedTransform = true;
     }
 
     GUI::~GUI() {
@@ -209,8 +210,8 @@ namespace PAG {
             } else {
                 ImGui::Text("No models loaded.");
             }
-            const char* items[] = {"Translate", "Rotate", "Scale"};
-            ImGui::Combo("Transformation", &modelTransformSelectedItem, items, 3);
+            const char* items[] = {"Translate", "Rotate", "Scale", "Material"};
+            ImGui::Combo("Transformation", &modelTransformSelectedItem, items, 4);
             switch (modelTransformSelectedItem) {
                 case 0:
                     modelTransform = PAG::modelTransformType::TRANSLATE;
@@ -231,16 +232,23 @@ namespace PAG {
                     ImGui::InputFloat("Y", &modelScale.y);
                     ImGui::InputFloat("Z", &modelScale.z);
                     break;
+                case 3:
+                    modelTransform = PAG::modelTransformType::MATERIAL;
+                    ImGui::ColorPicker3("Ambient Color",modelAmbientColorTransform,ImGuiColorEditFlags_PickerHueWheel);
+                    ImGui::Checkbox("Fill Model",&modelVIsualizationTypeFillPressedTransform);
+                    break;
                 default:
                     break;
             }
             modelTransformApplyPressed = ImGui::Button("Apply");
-            ImGui::SameLine();
-            if(ImGui::Button("Reset")){
-                modelTranslate = glm::vec3(0.f);
-                modelRotateAxis = glm::vec3(0,1,0);
-                modelRotateAngle = .0f;
-                modelScale = glm::vec3(1,1,1);
+            if(modelTransform != PAG::modelTransformType::MATERIAL){
+                ImGui::SameLine();
+                if(ImGui::Button("Reset")){
+                    modelTranslate = glm::vec3(0.f);
+                    modelRotateAxis = glm::vec3(0,1,0);
+                    modelRotateAngle = .0f;
+                    modelScale = glm::vec3(1,1,1);
+                }
             }
             ImGui::SeparatorText("Model Manegment");
             modelDeletePressed = ImGui::Button("Delete Model");
@@ -368,6 +376,14 @@ namespace PAG {
 
     const float *GUI::getModelAmbientColor() const {
         return modelAmbientColor;
+    }
+
+    const float *GUI::getModelAmbientColorTransform() const {
+        return modelAmbientColorTransform;
+    }
+
+    bool GUI::isModelVIsualizationTypeFillPressedTransform() const {
+        return modelVIsualizationTypeFillPressedTransform;
     }
 
 

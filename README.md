@@ -168,3 +168,50 @@ PAG::Renderer --* PAG::Model : contiene varios
 PAG::ShaderProgram --* PAG::ShaderObject : contiene 2
 PAG::Model ..|> Assimp : usa
 ````
+
+## PRÁCTICA 7
+
+En esta práctica se realiza encapsulamiento de los materiales en la nueva clase **PAG::Material**.
+
+Entre los atributos del material se ecuentran:
+- Los colores ambient, diffuse y specular: **ambient, diffuse, specular**.
+- El exponente, **exponent**
+
+### Instrucciones
+
+
+
+### UML
+
+````plantuml
+class OpenGL
+class ImGui
+class Assimp
+
+class PAG::Renderer{
+PAG::ShaderProgram* shaderProgram
+PAG::Camera* camera
+std::vector<std::pair(PAG::Model,GLuint)>* modelList
+}
+class PAG::GUI
+class PAG::ShaderProgram{
+PAG::ShaderObject* vertexShader
+PAG::ShaderObject* fragmentShader
+}
+class PAG::ShaderObject
+class PAG::Camera
+class PAG::Model
+class PAG::Material
+
+PAG::GUI - PAG::Renderer : se comunican por el main
+
+PAG::GUI ..|> ImGui : usa
+PAG::Renderer ..|> OpenGL : usa
+PAG::Renderer --* PAG::ShaderProgram : contiene
+PAG::Renderer --* PAG::Camera : contiene
+PAG::Renderer --* PAG::Model : contiene varios
+PAG::Model --* PAG::Material : contiene
+
+PAG::ShaderProgram --* PAG::ShaderObject : contiene 2
+PAG::Model ..|> Assimp : usa
+````

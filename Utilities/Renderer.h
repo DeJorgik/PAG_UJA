@@ -52,29 +52,17 @@ namespace PAG {
                                      bool craneDown, float orbitLongitude, float orbitLatitude);
         void processMouseCameraMovement(double diffX, double diffY);
         void createModel(std::string modelName);
-
         std::vector<std::pair<PAG::Model, GLuint>> *getModelList() const;
-
         void setUniformMVP(GLuint IdSp);
-
         void drawModel(std::pair<PAG::Model, GLuint> model);
-
         void setUniformMVP(Model model, GLuint IdSp);
-
-        void processUiModelTransform(int modelId, modelTransformType modelTransformType, glm::vec3 modelTranslate,
-                                     glm::vec3 modelRotateAxis, float modelRotateAngle, glm::vec3 modelScale);
-
         void deleteModel(int modelId);
-
-        void createModel(std::string modelName, const glm::vec3 &ambient, const glm::vec3 &diffuse,
-                         const glm::vec3 &specular,
-                         GLfloat exponent);
-
         void setUniformMaterial(Material material, GLuint IdSp);
-
-        void
-        createModel(std::string modelName, modelVisualizationTypes modelVisualizationType, const glm::vec3 &ambient,
+        void createModel(std::string modelName, modelVisualizationTypes modelVisualizationType, const glm::vec3 &ambient,
                     const glm::vec3 &diffuse, const glm::vec3 &specular, GLfloat exponent);
+        void processUiModelTransform(int modelId, modelTransformType modelTransformType, glm::vec3 modelTranslate,
+                                     glm::vec3 modelRotateAxis, float modelRotateAngle, glm::vec3 modelScale,
+                                     glm::vec3 modelAmbientTransform, bool isWireframe);
     };
 
 } // PAG

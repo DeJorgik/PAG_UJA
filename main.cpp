@@ -249,7 +249,11 @@ int main()
                     PAG::GUI::getInstance().getModelTranslate(),
                     PAG::GUI::getInstance().getModelRotateAxis(),
                     PAG::GUI::getInstance().getModelRotateAngle(),
-                    PAG::GUI::getInstance().getModelScale());
+                    PAG::GUI::getInstance().getModelScale(),
+                    glm::vec3(PAG::GUI::getInstance().getModelAmbientColorTransform()[0],
+                              PAG::GUI::getInstance().getModelAmbientColorTransform()[1],
+                              PAG::GUI::getInstance().getModelAmbientColorTransform()[2]),
+                    PAG::GUI::getInstance().isModelVIsualizationTypeFillPressedTransform());
         }
 
         PAG::Renderer::getInstance().windowRefresh(); //Refrescar ventana constantemente

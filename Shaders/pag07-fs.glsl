@@ -5,7 +5,6 @@ uniform vec3 matDiffuse;
 uniform vec3 matSpecular;
 
 out vec4 fragColor;
-in vec3 normal;
 
 subroutine vec4 getColor();
 subroutine uniform getColor getColorMethod;

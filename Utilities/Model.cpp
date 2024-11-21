@@ -187,14 +187,6 @@ namespace PAG {
         return &idVBO_normals;
     }
 
-    GLuint Model::getIdVboMaterialColors() {
-        return idVBO_materialColors;
-    }
-
-    GLuint *Model::getIdVboMaterialColorsPointer() {
-        return &idVBO_materialColors;
-    }
-
     GLuint Model::getIdIbo() {
         return idIBO;
     }
@@ -215,11 +207,6 @@ namespace PAG {
         return arr;
     }
 
-    GLfloat *Model::getMaterialColorsArray() {
-        auto * arr = new GLfloat [materialColors->size()];
-        std::copy(materialColors->begin(), materialColors->end(), arr);
-        return arr;
-    }
 
     GLuint *Model::getIndicesArray() {
         auto * arr = new GLuint [indices->size()];
@@ -245,6 +232,15 @@ namespace PAG {
 
     Material *Model::getMaterial() const {
         return material;
+    }
+
+    /**
+     * Función que se usa para cambiar el modo de visualización
+     * @param isWireframe
+     */
+    void Model::setWireframe(bool isWireframe) {
+        if(isWireframe) modelVisualizationType = modelVisualizationTypes::WIREFRAME;
+        else  modelVisualizationType = modelVisualizationTypes::FILL;
     }
 
 

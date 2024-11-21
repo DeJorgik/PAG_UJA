@@ -326,7 +326,9 @@ namespace PAG {
                                            glm::vec3 modelTranslate,
                                            glm::vec3 modelRotateAxis,
                                            float modelRotateAngle,
-                                           glm::vec3 modelScale){
+                                           glm::vec3 modelScale,
+                                           glm::vec3 modelAmbientTransform,
+                                           bool isWireframe){
         switch (modelTransformType) {
             case PAG::modelTransformType::TRANSLATE:
                 modelList->at(modelId).first.modelTranslate(modelTranslate);
@@ -336,6 +338,11 @@ namespace PAG {
                 break;
             case PAG::modelTransformType::SCALE:
                 modelList->at(modelId).first.modelScale(modelScale);
+                break;
+            case PAG::modelTransformType::MATERIAL:
+                //Cambiar material del modelo
+                modelList->at(modelId).first.setWireframe(!isWireframe);
+                modelList->at(modelId).first.getMaterial()->setAmbient(modelAmbientTransform);
                 break;
             default:
                 break;

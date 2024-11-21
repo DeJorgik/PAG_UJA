@@ -29,4 +29,20 @@ namespace PAG {
     GLfloat Material::getExponent() const {
         return exponent;
     }
+
+    void Material::setAmbient(const glm::vec3 &ambient) {
+        Material::ambient = ambient;
+    }
+
+    void Material::setDiffuse(const glm::vec3 &diffuse) {
+        Material::diffuse = diffuse;
+    }
+
+    void Material::setSpecular(const glm::vec3 &specular) {
+        Material::specular = specular;
+    }
+
+    void Material::setExponent(GLfloat exponent) {
+        Material::exponent = exponent;
+    }
 } // PAG
