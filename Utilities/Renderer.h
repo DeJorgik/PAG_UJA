@@ -27,8 +27,7 @@ namespace PAG {
         Camera* camera;
         int viewportWidth = 1; //inicializado a 1 para que no de error en linux
         int viewportHeight = 1;
-        //PRÁCTICA 6, lista con los modelos de la escena
-        std::vector<std::pair<PAG::Model,GLuint>>* modelList;
+        std::vector<std::pair<PAG::Model,GLuint>>* modelList;//lista con los modelos de la escena
     public:
         virtual ~Renderer ();
         static Renderer& getInstance ();
