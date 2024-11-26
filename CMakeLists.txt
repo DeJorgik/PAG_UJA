@@ -26,6 +26,8 @@ add_executable(PAG_1 glad/src/glad.c
         imgui/imfilebrowser.h
         Utilities/Material.cpp
         Utilities/Material.h
+        Utilities/Light.cpp
+        Utilities/Light.h
 )
 
 target_include_directories(PAG_1 PUBLIC glad/include)
