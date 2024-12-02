@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "GUI.h"
 #include "Model.h"
+#include "Light.h"
 #include <glm/glm.hpp>
 
 //Clase que encapsula el dibujado de la pantalla
@@ -28,6 +29,7 @@ namespace PAG {
         int viewportWidth = 1; //inicializado a 1 para que no de error en linux
         int viewportHeight = 1;
         std::vector<std::pair<PAG::Model,GLuint>>* modelList;//lista con los modelos de la escena
+        std::vector<PAG::Light>* lightList; //luces de la escena
     public:
         virtual ~Renderer ();
         static Renderer& getInstance ();
@@ -54,7 +56,7 @@ namespace PAG {
         std::vector<std::pair<PAG::Model, GLuint>> *getModelList() const;
         void setUniformMVP(GLuint IdSp);
         void drawModel(std::pair<PAG::Model, GLuint> model);
-        void setUniformMVP(Model model, GLuint IdSp);
+        void setUniformMVandMVP(Model model, GLuint IdSp);
         void deleteModel(int modelId);
         void setUniformMaterial(Material material, GLuint IdSp);
         void createModel(std::string modelName, modelVisualizationTypes modelVisualizationType, const glm::vec3 &ambient,
@@ -62,6 +64,19 @@ namespace PAG {
         void processUiModelTransform(int modelId, modelTransformType modelTransformType, glm::vec3 modelTranslate,
                                      glm::vec3 modelRotateAxis, float modelRotateAngle, glm::vec3 modelScale,
                                      glm::vec3 modelAmbientTransform, bool isWireframe);
+
+        void drawModel(std::pair<PAG::Model, GLuint> model, int lightId);
+
+        void setUniformLight(Light light);
+
+        void setUniformLight(Light light, GLuint IdSp);
+
+        void
+        createLight(lightTypes lightType, glm::vec3 Ia, glm::vec3 Is, glm::vec3 Id, glm::vec3 pos, glm::vec3 d,
+                    float gamma,
+                    float s);
+
+        std::vector<PAG::Light> *getLightList() const;
     };
 
 } // PAG

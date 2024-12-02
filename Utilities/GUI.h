@@ -9,6 +9,7 @@
 #include "Camera.h"
 #include "../imgui/imfilebrowser.h"
 #include "Model.h"
+#include "Light.h"
 
 namespace PAG {
 
@@ -16,7 +17,6 @@ namespace PAG {
     private:
         static GUI* gui_instance;
         GUI();
-        bool shaderLoadButtonPressed; //dice si el botón está pulsado o no
         std::string shaderLoadInputText; //Texto con el nombre del shader
         std::stringstream messageBuffer; //Buffer de los mensajes que salen por pantalla
         int cameraControlSelectedItem; //Control elegido en el combo de la camara
@@ -43,11 +43,31 @@ namespace PAG {
         glm::vec3 modelScale;
         bool modelTransformApplyPressed;
         bool modelDeletePressed;
-        //PRÁCTICA 7
+        //Material
         bool modelVisualizationTypeFillPressed;
-        float modelAmbientColor[3] = {1,0,0};
-        float modelAmbientColorTransform[3] = {1,0,0};
+        float modelAmbientColor[3] = {0,0,0};
+        float modelDiffuseColor[3] = {1,0,0};
+        float modelSpecularColor[3] = {1,1,1};
+        float modelSpecularExponent = 1.5;
+        float modelAmbientColorTransform[3] = {0,0,0};
+        float modelDiffuseColorTransform[3] = {1,0,0};
+        float modelSpecularColorTransform[3] = {1,1,1};
+        float modelSpecularExponentTransform = 1.5;
         bool modelVIsualizationTypeFillPressedTransform;
+        //Luces
+        int createLightSelectedItem;
+        PAG::lightTypes createLightType;
+        float lightAmbientColor[3] = {0,0,0};
+        float lightDiffuseColor[3] = {1,1,1};
+        float lightSpecularColor[3] = {1,1,1};
+        glm::vec3 lightPosition = glm::vec3(0,0,0);
+        glm::vec3 lightDirection = glm::vec3(0,0,0);
+        float lightGamma = 60.0f;
+        float lightS = 1.0f;
+        bool createLightPressed;
+        int currentLightIndex;
+        bool lightDeletePressed;
+
     public:
         virtual ~GUI();
         static GUI& getInstance();
@@ -57,8 +77,6 @@ namespace PAG {
         void render();
         void drawMessage(float posX,float posY,float fontScale,const char *title,const char *text);
         void drawColorWheel(float posX,float posY,float fontScale,float *col,const char *title,const char *text);
-        void drawShaderLoadWindow(float posX,float posY,float fontScale,const char *title);
-        bool isShaderLoadButtonPressed() const;
         const std::string &getShaderLoadInputText() const;
         void messageBufferAdd(std::string text);
         std::string getMessageBufferText();
@@ -82,7 +100,6 @@ namespace PAG {
                                       std::vector<std::pair<PAG::Model, GLuint>> *modelList);
         bool isModelTransformApplyPressed() const;
         int getCurrentModelIndex() const;
-        int getModelTransformSelectedItem() const;
         modelTransformType getModelTransform() const;
         const glm::vec3 &getModelTranslate() const;
         const glm::vec3 &getModelRotateAxis() const;
@@ -94,6 +111,26 @@ namespace PAG {
         const float *getModelAmbientColor() const;
         const float *getModelAmbientColorTransform() const;
         bool isModelVIsualizationTypeFillPressedTransform() const;
+
+        void drawMessageWindow(float posX, float posY, float fontScale);
+
+        void drawControlWindow(float posX, float posY, float fontScale);
+
+        void
+        drawControlWindow(float posX, float posY, float fontScale, std::vector<std::pair<PAG::Model, int>> *modelList,
+                          float *col);
+
+        void drawControlWindow(float posX, float posY, float fontScale,
+                               std::vector<std::pair<PAG::Model, GLuint>> *modelList,
+                               float *col);
+
+        void drawControlWindow(float posX, float posY, float fontScale,
+                               std::vector<std::pair<PAG::Model, GLuint>> *modelList,
+                               std::vector<std::pair<PAG::Model, GLuint>> *lightList, float *col);
+
+        void drawControlWindow(float posX, float posY, float fontScale,
+                               std::vector<std::pair<PAG::Model, GLuint>> *modelList,
+                               std::vector<Light> *lightList, float *col);
     };
 } // PAG
 

@@ -9,15 +9,15 @@ in vec3 normal;
 uniform vec3 Ka;
 uniform vec3 Kd;
 uniform vec3 Ks;
+uniform float exponent; //EL EXPONENTE SPECULAR ES DEL MATERIAL
 
 //Valores iluminación
 uniform vec3 Ia;
 uniform vec3 Id;
 uniform vec3 Is;
-uniform float exponent;
 uniform vec lightPos;
  //IMPORTANTE: PASAR LA DIRECCIÓN NORMALIZADA EN COORDENADAS DE VISIÓN
- //VA DESDE EL ORIGEN HACIA LA ESCENA
+ //VA DESDE EL ORIGEN HACIA LA ESCENA -> preguntar a angel luis
 uniform vec lightDir;
 uniform float spotAngle;
 
@@ -80,7 +80,7 @@ vec4 spotLight ()
 }
 
 subroutine ( getColor )
-vec4 wierframe ()
+vec4 wireframe ()
 { return vec4 ( 0, 0, 0, 1 );
 }
 

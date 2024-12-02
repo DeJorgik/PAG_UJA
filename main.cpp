@@ -260,7 +260,15 @@ int main()
         PAG::GUI::getInstance().newFrame();//Llamadas de la interfaz de usuario
 
         //Dibujar interfaz
-        PAG::GUI::getInstance().drawMessage(10,10,1.0f,"Mensajes",PAG::GUI::getInstance().getMessageBufferText().c_str());
+
+        PAG::GUI::getInstance().drawMessageWindow(10,10,1.0f);
+        PAG::GUI::getInstance().drawControlWindow(10,200,1.0f,
+                                                  PAG::Renderer::getInstance().getModelList(),
+                                                  PAG::Renderer::getInstance().getLightList(),
+                                                  reinterpret_cast<float *>(PAG::Renderer::getInstance().getBgColor()));
+        PAG::Renderer::getInstance().updateBgColor(); //Poner esto aquí para la función de cambiar color de fondo
+
+        /*
 
         PAG::GUI::getInstance().drawColorWheel(500, 10, 1.0f,
                                                reinterpret_cast<float *>(PAG::Renderer::getInstance().getBgColor()), "Fondo", "Actual");
@@ -269,7 +277,6 @@ int main()
         PAG::GUI::getInstance().drawCameraControls(500, 450,1.0f,"Camera");
 
         //Cargar modelos
-
         PAG::GUI::getInstance().drawModelLoaderWindow(10,350,1.0f,"Model load");
 
         if(PAG::GUI::getInstance().getFileBrowserWindow().HasSelected())
@@ -315,6 +322,8 @@ int main()
                 }
             }
         }
+
+         */
 
         //Dibujar escena
         PAG::GUI::getInstance().render();//Renderizar interfaz

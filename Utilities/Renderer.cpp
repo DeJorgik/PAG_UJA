@@ -19,6 +19,7 @@ namespace PAG {
         camera = new Camera(glm::vec3(5,5,5),glm::vec3(0,0,0),glm::vec3(0,1,0),
                             60.f,0.5f,100.f,viewportWidth/viewportHeight,glm::vec3(0,1,0));
         modelList = new std::vector<std::pair<PAG::Model,GLuint>>();
+        lightList = new std::vector<PAG::Light>();
     }
 
     Renderer::~Renderer() {
@@ -40,17 +41,25 @@ namespace PAG {
     void Renderer::rendererInit() {
         glEnable(GL_DEPTH_TEST);
         glEnable (GL_MULTISAMPLE);
+        glEnable(GL_BLEND); //activar blending
         updateBgColor();
     }
 
+    /**
+     * Bucle for enlazado: para cada luz para cada modelo -> rendering multipasada
+     */
     void Renderer::windowRefresh() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
-        //Recorre lista de modelos, usando el par modelo/id
-        //first es model, second es el int del shader program
-        if(!modelList->empty()){
-            for (auto &model:*modelList) {
-                drawModel(model);
+        if(!lightList->empty()){
+            for (int i = 0; i < lightList->size(); ++i) {
+                if(!modelList->empty()){
+                    for (auto &model:*modelList) {
+                        //Recorre lista de modelos, usando el par modelo/id
+                        //first es model, second es el int del shader program
+                        drawModel(model,i);
+                    }
+                }
             }
         }
     }
@@ -58,28 +67,56 @@ namespace PAG {
     /**
      * Función para dibujar el modelo con su shaderprogram correspondiente
      */
-    void Renderer::drawModel(std::pair<PAG::Model,GLuint> model){
+    void Renderer::drawModel(std::pair<PAG::Model,GLuint> model, int lightId){
+        //Activar para cada luz
+        if(lightId==0){
+            //primera luz
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        } else{
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        }
+
         //Dibujar los modelos de la lista
         glBindVertexArray(model.first.getIdVao());
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model.first.getIdIbo());
         glUseProgram(model.second); //usar el shader program del modelo
+
         //Elegir subrutina
         GLuint subroutineIndex;
         switch (model.first.getModelVisualizationType()) {
             case PAG::modelVisualizationTypes::FILL:
                 glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-                subroutineIndex = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "colorMaterial");
+                //Dentro del modeo de FILL hay que elegir una de las subrutinas segun el tipo de luz
+                switch (lightList->at(lightId).getLightType()) {
+                    case PAG::lightTypes::AMBIENT:
+                        subroutineIndex = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "ambientLight");
+                        break;
+                    case PAG::lightTypes::DIRECTION:
+                        subroutineIndex = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "directionLight");
+                        break;
+                    case PAG::lightTypes::POINT:
+                        subroutineIndex = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "pointLight");
+                        break;
+                    case PAG::lightTypes::SPOT:
+                        subroutineIndex = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "spotLight");
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case PAG::modelVisualizationTypes::WIREFRAME:
                 glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-                subroutineIndex = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "colorWireframe");
+                subroutineIndex = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "wireframe");
                 break;
             default:
                 break;
         }
         glUniformSubroutinesuiv ( GL_FRAGMENT_SHADER, 1, &subroutineIndex );
-        setUniformMVP(model.first,model.second); //aplicar cámara
-        setUniformMaterial(*model.first.getMaterial(),model.second);//aplicar material
+
+        setUniformMVandMVP(model.first,model.second); //Enviar MV y MVP al shader
+        setUniformLight(lightList->at(lightId),model.second); //Enviar datos de la luz
+        setUniformMaterial(*model.first.getMaterial(),model.second);//Enviar datos del material
+
         glDrawElements(GL_TRIANGLES, model.first.getIndices()->size(), GL_UNSIGNED_INT,
                        nullptr); //dibujar elementos
     }
@@ -188,6 +225,41 @@ namespace PAG {
         shaderProgram->createShaderProgram(shaderProgramName);
     }
 
+    void Renderer::createLight(PAG::lightTypes lightType,
+                              glm::vec3 Ia,glm::vec3 Is,glm::vec3 Id,
+                              glm::vec3 pos, glm::vec3 d,
+                              float gamma, float s){
+
+        //Crear luz por defecto
+        Light light = Light();
+
+        //cambiar tipo de luz
+        switch (lightType) {
+            case AMBIENT:
+                light.setAmbientLight("ambient_"+std::to_string(lightList->size()),
+                                      Ia);
+                break;
+            case DIRECTION:
+                light.setDirectionLight("direction_"+std::to_string(lightList->size()),
+                                        Id,Is,
+                                        d);
+                break;
+            case POINT:
+                light.setPointLight("point_"+std::to_string(lightList->size()),
+                                    Id,Is,
+                                    pos);
+                break;
+            case SPOT:
+                light.setSpotLight("spot_"+std::to_string(lightList->size()),
+                                    Id,Is,
+                                    pos,d,
+                                    gamma,s);
+                break;
+            default:
+                break;
+        }
+    }
+
     bool Renderer::operator==(const Renderer &rhs) const {
         return camera == rhs.camera;
     }
@@ -208,14 +280,21 @@ namespace PAG {
         camera->updateAspectRatio(width,height);//actualizar aspect ratio de la camara;
     }
 
-    void Renderer::setUniformMVP(PAG::Model model,GLuint IdSp)
+    /**
+     * Ahora esta función también manda MV como uniform
+     * @param model
+     * @param IdSp
+     */
+    void Renderer::setUniformMVandMVP(PAG::Model model,GLuint IdSp)
     {
-        //Cuando el shaderprogram no sea 0
-            GLint mvpLoc = glGetUniformLocation(IdSp, "mModelViewProj");
-            glm::mat4 p = camera->calculateProjectionMatrix();
-            glm::mat4 v = camera->calculateViewMatrix();
-            glm::mat4 mvp = p*v*model.getModelMatrix();
-            glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, glm::value_ptr(mvp));
+        GLint mvLoc = glGetUniformLocation(IdSp, "mModelView");
+        GLint mvpLoc = glGetUniformLocation(IdSp, "mModelViewProj");
+        glm::mat4 p = camera->calculateProjectionMatrix();
+        glm::mat4 v = camera->calculateViewMatrix();
+        glm::mat4 mv = v*model.getModelMatrix();
+        glm::mat4 mvp = p*v*model.getModelMatrix();
+        glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mv));
+        glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, glm::value_ptr(mvp));
     }
 
     /**
@@ -223,27 +302,67 @@ namespace PAG {
      * @param material
      */
     void Renderer::setUniformMaterial(PAG::Material material, GLuint IdSp){
-        GLint ambientLoc = glGetUniformLocation(IdSp, "matAmbient");
-        GLint diffuseLoc = glGetUniformLocation(IdSp, "matDiffuse");
-        GLint specularLoc = glGetUniformLocation(IdSp, "matSpecular");
-        GLint exponentLoc = glGetUniformLocation(IdSp, "matExponent");
+        GLint ambientLoc = glGetUniformLocation(IdSp, "Ka");
+        GLint diffuseLoc = glGetUniformLocation(IdSp, "Kd");
+        GLint specularLoc = glGetUniformLocation(IdSp, "Ks");
+        GLint exponentLoc = glGetUniformLocation(IdSp, "exponent");
 
         //Si no se utiliza el uniform, no lo enlaza, poniendo la localizazión en -1
         if(ambientLoc!=-1){
             float ambientColor[] = {material.getAmbient().x, material.getAmbient().y, material.getAmbient().z};
             glUniform3fv(ambientLoc, 1,ambientColor);
         }
-        //TODO HACER ESTO BIEN
-        /*
         if(diffuseLoc!=-1){
-            glUniform3fv(diffuseLoc, 1,material.getMaterialDiffuse());
+            float diffuseColor[] = {material.getDiffuse().x, material.getDiffuse().y, material.getDiffuse().z};
+            glUniform3fv(diffuseLoc, 1,diffuseColor);
         }
         if(specularLoc!=-1){
-            glUniform3fv(specularLoc, 1,material.getMaterialSpecular());
-        }*/
-        //if(exponentLoc!=-1){
-          //  glUniform1f(exponentLoc,material.getExponent());
-        //}
+            float specularColor[] = {material.getSpecular().x, material.getSpecular().y, material.getSpecular().z};
+            glUniform3fv(specularLoc, 1,specularColor);
+        }
+        if(exponentLoc!=-1){
+            float exponent = material.getExponent();
+            glUniform1fv(exponentLoc, 1,&exponent);
+        }
+    }
+
+    /**
+     * Lo mismo pero para la luz
+     * @param light
+     * @param IdSp
+     */
+    void Renderer::setUniformLight(PAG::Light light,  GLuint IdSp){
+        GLint ambientLoc = glGetUniformLocation(IdSp, "Ia");
+        GLint diffuseLoc = glGetUniformLocation(IdSp, "Id");
+        GLint specularLoc = glGetUniformLocation(IdSp, "Is");
+        GLint positionLoc = glGetUniformLocation(IdSp, "lightPos");
+        GLint directionLoc = glGetUniformLocation(IdSp, "lightDir");
+        GLint spotAngleLoc = glGetUniformLocation(IdSp, "spotAngle");
+
+        if(ambientLoc!=-1){
+            float ambientColor[] = {light.getIa().x, light.getIa().y, light.getIa().z};
+            glUniform3fv(ambientLoc, 1,ambientColor);
+        }
+        if(diffuseLoc!=-1){
+            float diffuseColor[] = {light.getId().x, light.getId().y, light.getId().z};
+            glUniform3fv(diffuseLoc, 1,diffuseColor);
+        }
+        if(specularLoc!=-1){
+            float specularColor[] = {light.getIs().x, light.getIs().y, light.getIs().z};
+            glUniform3fv(specularLoc, 1,specularColor);
+        }
+        if(positionLoc!=-1){
+            float position[] = {light.getPos().x, light.getPos().y, light.getPos().z};
+            glUniform3fv(positionLoc, 1,position);
+        }
+        if(directionLoc!=-1){
+            float direction[] = {light.getD().x, light.getD().y, light.getD().z};
+            glUniform3fv(directionLoc, 1,direction);
+        }
+        if(spotAngleLoc!=-1){
+            float angle = light.getGamma();
+            glUniform1fv(spotAngleLoc, 1,&angle);
+        }
     }
 
     Camera *Renderer::getCamera() const {
@@ -371,6 +490,10 @@ namespace PAG {
 
     std::vector<std::pair<PAG::Model, GLuint>> *Renderer::getModelList() const {
         return modelList;
+    }
+
+    std::vector<PAG::Light> *Renderer::getLightList() const {
+        return lightList;
     }
 
 
