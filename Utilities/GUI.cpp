@@ -37,6 +37,7 @@ namespace PAG {
         createLightSelectedItem = 0;
         currentLightIndex = 0;
         deleteLightPressed = false;
+        modelMaterialApplyPressed = false;
     }
 
     GUI::~GUI() {
@@ -88,81 +89,76 @@ namespace PAG {
     void GUI::drawControlWindow(float posX,float posY,float fontScale,
                                 std::vector<std::pair<PAG::Model,GLuint>>* modelList,
                                 std::vector<PAG::Light>* lightList,
-                                float *col){
+                                float *col,
+                                int lightCount){
         ImGui::SetNextWindowPos(ImVec2 (posX, posY), ImGuiCond_Once );
         if ( ImGui::Begin ("Controls")){
             ImGui::SetWindowFontScale (fontScale);
+            if(ImGui::BeginTabBar("")){
 
-            //Control Modelos
-            if (ImGui::CollapsingHeader("Models")){
-                if(ImGui::TreeNode("Model Load")){
-                    ImGui::SeparatorText("Shader");
-                    ImGui::InputText ( "##", &shaderLoadInputText, ImGuiInputTextFlags_AutoSelectAll );
-                    ImGui::SeparatorText("Material");
-                    ImGui::ColorPicker3("Ambient Color",modelAmbientColor,ImGuiColorEditFlags_PickerHueBar);
-                    ImGui::ColorPicker3("Diffuse Color",modelDiffuseColor,ImGuiColorEditFlags_PickerHueBar);
-                    ImGui::ColorPicker3("Specular Color",modelSpecularColor,ImGuiColorEditFlags_PickerHueBar);
-                    ImGui::InputFloat("Specular Exponent", &modelSpecularExponent);
-                    ImGui::Checkbox("Fill Model",&modelVisualizationTypeFillPressed);
-                    ImGui::SeparatorText("Model");
-                    if(ImGui::Button("Select Model")){
-                        fileBrowserWindow.Open();    //Abrir ventana al pulsar el botón
-                    }
-                    fileBrowserWindow.Display();
-                    ImGui::TreePop();
-                }
-                if(ImGui::TreeNode("Model Transform")){
-                    ImGui::SeparatorText("Model Transform");
-                    if(!modelList->empty()){
-                        if(ImGui::BeginCombo("Model List",modelList->at(currentModelIndex).first.getModelName()->c_str())){
-                            for (int i = 0; i < modelList->size(); ++i) {
-                                bool isSelected = currentModelIndex == i;
-                                if (ImGui::Selectable(modelList->at(i).first.getModelName()->c_str(), isSelected)){
-                                    currentModelIndex = i;
-                                }
-                                if (isSelected) {
-                                    ImGui::SetItemDefaultFocus();
-                                }
-                            }
-                            ImGui::EndCombo();
+                //Control Modelos
+                if (ImGui::BeginTabItem("Models")){
+                    if(ImGui::TreeNode("Model Load")){
+                        ImGui::SeparatorText("Shader");
+                        ImGui::InputText ( "##", &shaderLoadInputText, ImGuiInputTextFlags_AutoSelectAll );
+                        ImGui::SeparatorText("Material");
+                        ImGui::ColorEdit3("Ambient Color",modelAmbientColor);
+                        ImGui::ColorEdit3("Diffuse Color",modelDiffuseColor);
+                        ImGui::ColorEdit3("Specular Color",modelSpecularColor);
+                        ImGui::InputFloat("Specular Exponent", &modelSpecularExponent);
+                        ImGui::Checkbox("Fill Model",&modelVisualizationTypeFillPressed);
+                        ImGui::SeparatorText("Model");
+                        if(ImGui::Button("Select Model")){
+                            fileBrowserWindow.Open();    //Abrir ventana al pulsar el botón
                         }
-                    } else {
-                        ImGui::Text("No models loaded.");
+                        fileBrowserWindow.Display();
+                        ImGui::TreePop();
                     }
-                    const char* items[] = {"Translate", "Rotate", "Scale", "Material"};
-                    ImGui::Combo("Transformation", &modelTransformSelectedItem, items, 4);
-                    switch (modelTransformSelectedItem) {
-                        case 0:
-                            modelTransform = PAG::modelTransformType::TRANSLATE;
-                            ImGui::InputFloat("X", &modelTranslate.x);
-                            ImGui::InputFloat("Y", &modelTranslate.y);
-                            ImGui::InputFloat("Z", &modelTranslate.z);
-                            break;
-                        case 1:
-                            modelTransform = PAG::modelTransformType::ROTATE;
-                            ImGui::InputFloat("X Axis", &modelRotateAxis.x);
-                            ImGui::InputFloat("Y Axis", &modelRotateAxis.y);
-                            ImGui::InputFloat("Z Axis", &modelRotateAxis.z);
-                            ImGui::InputFloat("Angle", &modelRotateAngle);
-                            break;
-                        case 2:
-                            modelTransform = PAG::modelTransformType::SCALE;
-                            ImGui::InputFloat("X", &modelScale.x);
-                            ImGui::InputFloat("Y", &modelScale.y);
-                            ImGui::InputFloat("Z", &modelScale.z);
-                            break;
-                        case 3:
-                            modelTransform = PAG::modelTransformType::MATERIAL;
-                            ImGui::ColorPicker3("Ambient Color",modelAmbientColorTransform,ImGuiColorEditFlags_PickerHueBar);
-                            ImGui::ColorPicker3("Diffuse Color",modelDiffuseColorTransform,ImGuiColorEditFlags_PickerHueBar);
-                            ImGui::ColorPicker3("Specular Color",modelSpecularColorTransform,ImGuiColorEditFlags_PickerHueBar);
-                            ImGui::InputFloat("Specular Exponent", &modelSpecularExponentTransform);
-                            break;
-                        default:
-                            break;
-                    }
-                    modelTransformApplyPressed = ImGui::Button("Apply");
-                    if(modelTransform != PAG::modelTransformType::MATERIAL){
+                    if(ImGui::TreeNode("Model Edit")){
+                        ImGui::SeparatorText("Model Transform");
+                        if(!modelList->empty()){
+                            if(ImGui::BeginCombo("Model List",modelList->at(currentModelIndex).first.getModelName()->c_str())){
+                                for (int i = 0; i < modelList->size(); ++i) {
+                                    bool isSelected = currentModelIndex == i;
+                                    if (ImGui::Selectable(modelList->at(i).first.getModelName()->c_str(), isSelected)){
+                                        currentModelIndex = i;
+                                    }
+                                    if (isSelected) {
+                                        ImGui::SetItemDefaultFocus();
+                                    }
+                                }
+                                ImGui::EndCombo();
+                            }
+                        } else {
+                            ImGui::Text("No models loaded.");
+                        }
+                        const char* items[] = {"Translate", "Rotate", "Scale"};
+                        ImGui::Combo("Transformation", &modelTransformSelectedItem, items, 3);
+                        switch (modelTransformSelectedItem) {
+                            case 0:
+                                modelTransform = PAG::modelTransformType::TRANSLATE;
+                                ImGui::InputFloat("X", &modelTranslate.x);
+                                ImGui::InputFloat("Y", &modelTranslate.y);
+                                ImGui::InputFloat("Z", &modelTranslate.z);
+                                break;
+                            case 1:
+                                modelTransform = PAG::modelTransformType::ROTATE;
+                                ImGui::InputFloat("X Axis", &modelRotateAxis.x);
+                                ImGui::InputFloat("Y Axis", &modelRotateAxis.y);
+                                ImGui::InputFloat("Z Axis", &modelRotateAxis.z);
+                                ImGui::InputFloat("Angle", &modelRotateAngle);
+                                break;
+                            case 2:
+                                modelTransform = PAG::modelTransformType::SCALE;
+                                ImGui::InputFloat("X", &modelScale.x);
+                                ImGui::InputFloat("Y", &modelScale.y);
+                                ImGui::InputFloat("Z", &modelScale.z);
+                                break;
+                            default:
+                                break;
+                        }
+
+                        modelTransformApplyPressed = ImGui::Button("Apply");
                         ImGui::SameLine();
                         if(ImGui::Button("Reset")){
                             modelTranslate = glm::vec3(0.f);
@@ -170,60 +166,69 @@ namespace PAG {
                             modelRotateAngle = .0f;
                             modelScale = glm::vec3(1,1,1);
                         }
-                    }
-                    ImGui::SeparatorText("Model Manegment");
-                    modelDeletePressed = ImGui::Button("Delete Model");
-                    ImGui::TreePop();
-                }
-            }
 
-            //Control Luces
-            if(ImGui::CollapsingHeader("Lights")){
-                if(ImGui::TreeNode("Light Add")){
-                    const char* items[] = {"Ambient", "Direction", "Point", "Spot"};
-                    ImGui::Combo("Light Type", &createLightSelectedItem, items, 4);
-                    switch (createLightSelectedItem) {
-                        case 0:
-                            createLightType = PAG::lightTypes::AMBIENT;
-                            ImGui::ColorPicker3("Ambient Color",lightAmbientColor,ImGuiColorEditFlags_PickerHueBar);
-                            break;
-                        case 1:
-                            createLightType = PAG::lightTypes::DIRECTION;
-                            ImGui::ColorPicker3("Diffuse Color",lightDiffuseColor,ImGuiColorEditFlags_PickerHueBar);
-                            ImGui::ColorPicker3("Specular Color",lightSpecularColor,ImGuiColorEditFlags_PickerHueBar);
-                            ImGui::InputFloat("X Direction", &lightDirection.x);
-                            ImGui::InputFloat("Y Direction", &lightDirection.y);
-                            ImGui::InputFloat("Z Direction", &lightDirection.z);
-                            break;
-                        case 2:
-                            createLightType = PAG::lightTypes::POINT;
-                            ImGui::ColorPicker3("Diffuse Color",lightDiffuseColor,ImGuiColorEditFlags_PickerHueBar);
-                            ImGui::ColorPicker3("Specular Color",lightSpecularColor,ImGuiColorEditFlags_PickerHueBar);
-                            ImGui::InputFloat("X Position", &lightPosition.x);
-                            ImGui::InputFloat("Y Position", &lightPosition.y);
-                            ImGui::InputFloat("Z Position", &lightPosition.z);
-                            break;
-                        case 3:
-                            createLightType = PAG::lightTypes::SPOT;
-                            ImGui::ColorPicker3("Diffuse Color",lightDiffuseColor,ImGuiColorEditFlags_PickerHueBar);
-                            ImGui::ColorPicker3("Specular Color",lightSpecularColor,ImGuiColorEditFlags_PickerHueBar);
-                            ImGui::InputFloat("X Position", &lightPosition.x);
-                            ImGui::InputFloat("Y Position", &lightPosition.y);
-                            ImGui::InputFloat("Z Position", &lightPosition.z);
-                            ImGui::InputFloat("X Direction", &lightDirection.x);
-                            ImGui::InputFloat("Y Direction", &lightDirection.y);
-                            ImGui::InputFloat("Z Direction", &lightDirection.z);
-                            ImGui::InputFloat("Gamma", &lightGamma);
-                            ImGui::InputFloat("Smooth factor", &lightS);
-                            break;
-                        default:
-                            break;
+                        //Aparte para cambiar material
+                        ImGui::SeparatorText("Material Edit");
+                        ImGui::ColorEdit3("Ambient Color",modelAmbientColorTransform);
+                        ImGui::ColorEdit3("Diffuse Color",modelDiffuseColorTransform);
+                        ImGui::ColorEdit3("Specular Color",modelSpecularColorTransform);
+                        ImGui::InputFloat("Specular Exponent", &modelSpecularExponentTransform);
+                        ImGui::Checkbox("Fill Model",&modelVIsualizationTypeFillPressedTransform);
+                        modelMaterialApplyPressed = ImGui::Button("Apply");
+
+                        ImGui::SeparatorText("Model Delete");
+                        modelDeletePressed = ImGui::Button("Delete Model");
+                        ImGui::TreePop();
                     }
-                    createLightPressed = ImGui::Button("Create Light");
-                    ImGui::TreePop();
+                    ImGui::EndTabItem();
                 }
-                if(ImGui::TreeNode("Light Delete")){
-                    if(!lightList->empty()){
+
+                //Control Luces
+                if(ImGui::BeginTabItem("Lights")){
+                    if(ImGui::TreeNode("Light Add")){
+                        const char* items[] = {"Ambient", "Direction", "Point", "Spot"};
+                        ImGui::Combo("Light Type", &createLightSelectedItem, items, 4);
+                        switch (createLightSelectedItem) {
+                            case 0:
+                                createLightType = PAG::lightTypes::AMBIENT;
+                                ImGui::ColorEdit3("Ambient Color",lightAmbientColor);
+                                break;
+                            case 1:
+                                createLightType = PAG::lightTypes::DIRECTION;
+                                ImGui::ColorEdit3("Diffuse Color",lightDiffuseColor);
+                                ImGui::ColorEdit3("Specular Color",lightSpecularColor);
+                                ImGui::InputFloat("X Direction", &lightDirection.x);
+                                ImGui::InputFloat("Y Direction", &lightDirection.y);
+                                ImGui::InputFloat("Z Direction", &lightDirection.z);
+                                break;
+                            case 2:
+                                createLightType = PAG::lightTypes::POINT;
+                                ImGui::ColorEdit3("Diffuse Color",lightDiffuseColor);
+                                ImGui::ColorEdit3("Specular Color",lightSpecularColor);
+                                ImGui::InputFloat("X Position", &lightPosition.x);
+                                ImGui::InputFloat("Y Position", &lightPosition.y);
+                                ImGui::InputFloat("Z Position", &lightPosition.z);
+                                break;
+                            case 3:
+                                createLightType = PAG::lightTypes::SPOT;
+                                ImGui::ColorEdit3("Diffuse Color",lightDiffuseColor);
+                                ImGui::ColorEdit3("Specular Color",lightSpecularColor);
+                                ImGui::InputFloat("X Position", &lightPosition.x);
+                                ImGui::InputFloat("Y Position", &lightPosition.y);
+                                ImGui::InputFloat("Z Position", &lightPosition.z);
+                                ImGui::InputFloat("X Direction", &lightDirection.x);
+                                ImGui::InputFloat("Y Direction", &lightDirection.y);
+                                ImGui::InputFloat("Z Direction", &lightDirection.z);
+                                ImGui::InputFloat("Gamma", &lightGamma);
+                                ImGui::InputFloat("Smooth factor", &lightS);
+                                break;
+                            default:
+                                break;
+                        }
+                        createLightPressed = ImGui::Button("Create Light");
+                        ImGui::TreePop();
+                    }
+                    if(ImGui::TreeNode("Light Delete")){
                         if(ImGui::BeginCombo("Light List",lightList->at(currentLightIndex).getLightName().c_str())){
                             for (int i = 0; i < lightList->size(); ++i) {
                                 bool isSelected = currentLightIndex == i;
@@ -236,253 +241,89 @@ namespace PAG {
                             }
                             ImGui::EndCombo();
                         }
-                        deleteLightPressed = ImGui::Button("Delete Light");
-                    } else {
-                        ImGui::Text("No lights created.");
+                        if(lightCount>1) {
+                            deleteLightPressed = ImGui::Button("Delete Light");
+                        }
+                        ImGui::TreePop();
                     }
-                    ImGui::TreePop();
+                    ImGui::EndTabItem();
                 }
-            }
 
-            //Control Cámara
-            if(ImGui::CollapsingHeader("Camera")){
-                ImGui::SeparatorText("Camera Controls");
+                //Control Cámara
+                if(ImGui::BeginTabItem("Camera")){
+                    ImGui::SeparatorText("Camera Controls");
 
-                const char* items[] = {"Zoom", "Pan", "Tilt","Dolly","Crane","Orbit"};
-                ImGui::Combo("Controls", &cameraControlSelectedItem, items, 6);
+                    const char* items[] = {"Zoom", "Pan", "Tilt","Dolly","Crane","Orbit"};
+                    ImGui::Combo("Controls", &cameraControlSelectedItem, items, 6);
 
-                switch (cameraControlSelectedItem) {
-                    case 0:
-                        cameraMovement = PAG::cameraMovementType::ZOOM;
-                        ImGui::SliderFloat("Zoom",&cameraZoomValue,1.f,120.f);
-                        break;
-                    case 1:
-                        cameraMovement = PAG::cameraMovementType::PAN;
-                        ImGui::SliderFloat("Pan",&panAngle,-0.1f,0.1f);
-                        if (!ImGui::IsItemActive()) {
-                            panAngle = 0.0f;
-                        }
-                        break;
-                    case 2:
-                        cameraMovement = PAG::cameraMovementType::TILT;
-                        ImGui::SliderFloat("Tilt",&tiltAngle,-0.1f,0.1f);
-                        if (!ImGui::IsItemActive()) {
-                            tiltAngle = 0.0f;
-                        }
-                        break;
-                    case 3:
-                        cameraMovement = PAG::cameraMovementType::DOLLY;
-                        dollyForwardPressed = ImGui::Button("Forward");
-                        ImGui::SameLine();
-                        dollyBackwardPressed = ImGui::Button("Backward");
-                        dollyLeftPressed = ImGui::Button("Left");
-                        ImGui::SameLine();
-                        dollyRightPressed = ImGui::Button("Right");
-                        break;
-                    case 4:
-                        cameraMovement = PAG::cameraMovementType::CRANE;
-                        craneUpPressed = ImGui::Button("Up");
-                        ImGui::SameLine();
-                        craneDownPressed = ImGui::Button("Down");
-                        break;
-                    case 5:
-                        cameraMovement = PAG::cameraMovementType::ORBIT;
-                        ImGui::SliderFloat("Longitude",&longitudeAngle,-0.1f,0.1f);
-                        if (!ImGui::IsItemActive()) {
-                            longitudeAngle = 0.0f;
-                        }
-                        ImGui::SliderFloat("Latitude",&latitudeAngle,-0.1f,0.1f);
-                        if (!ImGui::IsItemActive()) {
-                            latitudeAngle = 0.0f;
-                        }
-                        break;
-                    default:
-                        break;
+                    switch (cameraControlSelectedItem) {
+                        case 0:
+                            cameraMovement = PAG::cameraMovementType::ZOOM;
+                            ImGui::SliderFloat("Zoom",&cameraZoomValue,1.f,120.f);
+                            break;
+                        case 1:
+                            cameraMovement = PAG::cameraMovementType::PAN;
+                            ImGui::SliderFloat("Pan",&panAngle,-0.1f,0.1f);
+                            if (!ImGui::IsItemActive()) {
+                                panAngle = 0.0f;
+                            }
+                            break;
+                        case 2:
+                            cameraMovement = PAG::cameraMovementType::TILT;
+                            ImGui::SliderFloat("Tilt",&tiltAngle,-0.1f,0.1f);
+                            if (!ImGui::IsItemActive()) {
+                                tiltAngle = 0.0f;
+                            }
+                            break;
+                        case 3:
+                            cameraMovement = PAG::cameraMovementType::DOLLY;
+                            dollyForwardPressed = ImGui::Button("Forward");
+                            ImGui::SameLine();
+                            dollyBackwardPressed = ImGui::Button("Backward");
+                            dollyLeftPressed = ImGui::Button("Left");
+                            ImGui::SameLine();
+                            dollyRightPressed = ImGui::Button("Right");
+                            break;
+                        case 4:
+                            cameraMovement = PAG::cameraMovementType::CRANE;
+                            craneUpPressed = ImGui::Button("Up");
+                            ImGui::SameLine();
+                            craneDownPressed = ImGui::Button("Down");
+                            break;
+                        case 5:
+                            cameraMovement = PAG::cameraMovementType::ORBIT;
+                            ImGui::SliderFloat("Longitude",&longitudeAngle,-0.1f,0.1f);
+                            if (!ImGui::IsItemActive()) {
+                                longitudeAngle = 0.0f;
+                            }
+                            ImGui::SliderFloat("Latitude",&latitudeAngle,-0.1f,0.1f);
+                            if (!ImGui::IsItemActive()) {
+                                latitudeAngle = 0.0f;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                    ImGui::EndTabItem();
                 }
-            }
 
-            //Color del fondo
-            if(ImGui::CollapsingHeader("Background")){
-                ImGui::SeparatorText("Background Color");
-                ImGui::ColorPicker3("Current",col,ImGuiColorEditFlags_PickerHueWheel);
+                //Color del fondo
+                if(ImGui::BeginTabItem("Background")){
+                    ImGui::SeparatorText("Background Color");
+                    ImGui::ColorPicker3("Current",col,ImGuiColorEditFlags_PickerHueWheel);
+                    ImGui::EndTabItem();
+                }
+
+                ImGui::EndTabBar();
             }
         }
         ImGui::End ();
-    }
-
-    void GUI::drawMessage(float posX,float posY,float fontScale,const char *title,const char *text) {
-        ImGui::SetNextWindowPos(ImVec2 (posX, posY), ImGuiCond_Once );
-        if ( ImGui::Begin (title)){
-            ImGui::SetWindowFontScale (fontScale);
-            ImGui::TextUnformatted(text);
-        }
-        ImGui::End ();
-    }
-
-    void GUI::drawColorWheel(float posX,float posY,float fontScale,float *col,const char *title,const char *text) {
-        ImGui::SetNextWindowPos ( ImVec2 (posX, posY), ImGuiCond_Once );
-        if (ImGui::Begin(title)){
-            ImGui::SetWindowFontScale ( fontScale );
-            ImGui::ColorPicker3(text,col,ImGuiColorEditFlags_PickerHueWheel);
-        }
-        ImGui::End();
-    }
-
-    void GUI::drawCameraControls(float posX, float posY, float fontScale, const char *title) {
-        ImGui::SetNextWindowPos ( ImVec2 (posX, posY), ImGuiCond_Once );
-        if (ImGui::Begin(title)){
-            ImGui::SetWindowFontScale ( fontScale );
-            const char* items[] = {"Zoom", "Pan", "Tilt","Dolly","Crane","Orbit"};
-            ImGui::Combo("Controls", &cameraControlSelectedItem, items, 6);
-
-            switch (cameraControlSelectedItem) {
-                case 0:
-                    cameraMovement = PAG::cameraMovementType::ZOOM;
-                    ImGui::SliderFloat("Zoom",&cameraZoomValue,1.f,120.f);
-                    break;
-                case 1:
-                    cameraMovement = PAG::cameraMovementType::PAN;
-                    ImGui::SliderFloat("Pan",&panAngle,-0.1f,0.1f);
-                    if (!ImGui::IsItemActive()) {
-                        panAngle = 0.0f;
-                    }
-                    break;
-                case 2:
-                    cameraMovement = PAG::cameraMovementType::TILT;
-                    ImGui::SliderFloat("Tilt",&tiltAngle,-0.1f,0.1f);
-                    if (!ImGui::IsItemActive()) {
-                        tiltAngle = 0.0f;
-                    }
-                    break;
-                case 3:
-                    cameraMovement = PAG::cameraMovementType::DOLLY;
-                    dollyForwardPressed = ImGui::Button("Forward");
-                    ImGui::SameLine();
-                    dollyBackwardPressed = ImGui::Button("Backward");
-                    dollyLeftPressed = ImGui::Button("Left");
-                    ImGui::SameLine();
-                    dollyRightPressed = ImGui::Button("Right");
-                    break;
-                case 4:
-                    cameraMovement = PAG::cameraMovementType::CRANE;
-                    craneUpPressed = ImGui::Button("Up");
-                    ImGui::SameLine();
-                    craneDownPressed = ImGui::Button("Down");
-                    break;
-                case 5:
-                    cameraMovement = PAG::cameraMovementType::ORBIT;
-                    ImGui::SliderFloat("Longitude",&longitudeAngle,-0.1f,0.1f);
-                    if (!ImGui::IsItemActive()) {
-                        longitudeAngle = 0.0f;
-                    }
-                    ImGui::SliderFloat("Latitude",&latitudeAngle,-0.1f,0.1f);
-                    if (!ImGui::IsItemActive()) {
-                        latitudeAngle = 0.0f;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        ImGui::End();
-    }
-
-    //Ventana de carga de modelo
-    void GUI::drawModelLoaderWindow(float posX, float posY, float fontScale, const char *title){
-        ImGui::SetNextWindowPos ( ImVec2 (posX, posY), ImGuiCond_Once );
-        if (ImGui::Begin(title)){
-            ImGui::SeparatorText("Shader");
-            ImGui::SetWindowFontScale ( fontScale );
-            ImGui::InputText ( "##", &shaderLoadInputText, ImGuiInputTextFlags_AutoSelectAll );
-            ImGui::SeparatorText("Material");
-            ImGui::ColorPicker3("Ambient Color",modelAmbientColor,ImGuiColorEditFlags_PickerHueWheel);
-            ImGui::Checkbox("Fill Model",&modelVisualizationTypeFillPressed);
-            ImGui::SeparatorText("Model");
-            if(ImGui::Button("Select Model")){
-                fileBrowserWindow.Open();    //Abrir ventana al pulsar el botón
-            }
-        }
-        ImGui::End();
-        fileBrowserWindow.Display();
     }
 
     //Función para borrar el buffer del file browser
     void GUI::clearModelLoader(){
         fileBrowserWindow.ClearSelected();
     }
-
-    /**
-     * Función que lista los modelos que actualmente están en la escena, al igual que
-     * las operaciones que se pueden realizar con estos
-     * Contiene un puntero a la lista con los modelos del Renderer
-     */
-    void GUI::drawModelTransformWindow(float posX, float posY, float fontScale, const char *title,
-                                       std::vector<std::pair<PAG::Model,GLuint>>* modelList){
-        ImGui::SetNextWindowPos ( ImVec2 (posX, posY), ImGuiCond_Once );
-        if (ImGui::Begin(title)){
-            ImGui::SeparatorText("Model Transform");
-            if(!modelList->empty()){
-                if(ImGui::BeginCombo("Model List",modelList->at(currentModelIndex).first.getModelName()->c_str())){
-                    for (int i = 0; i < modelList->size(); ++i) {
-                        bool isSelected = currentModelIndex == i;
-                        if (ImGui::Selectable(modelList->at(i).first.getModelName()->c_str(), isSelected)){
-                            currentModelIndex = i;
-                        }
-                        if (isSelected) {
-                            ImGui::SetItemDefaultFocus();
-                        }
-                    }
-                    ImGui::EndCombo();
-                }
-            } else {
-                ImGui::Text("No models loaded.");
-            }
-            const char* items[] = {"Translate", "Rotate", "Scale", "Material"};
-            ImGui::Combo("Transformation", &modelTransformSelectedItem, items, 4);
-            switch (modelTransformSelectedItem) {
-                case 0:
-                    modelTransform = PAG::modelTransformType::TRANSLATE;
-                    ImGui::InputFloat("X", &modelTranslate.x);
-                    ImGui::InputFloat("Y", &modelTranslate.y);
-                    ImGui::InputFloat("Z", &modelTranslate.z);
-                    break;
-                case 1:
-                    modelTransform = PAG::modelTransformType::ROTATE;
-                    ImGui::InputFloat("X Axis", &modelRotateAxis.x);
-                    ImGui::InputFloat("Y Axis", &modelRotateAxis.y);
-                    ImGui::InputFloat("Z Axis", &modelRotateAxis.z);
-                    ImGui::InputFloat("Angle", &modelRotateAngle);
-                    break;
-                case 2:
-                    modelTransform = PAG::modelTransformType::SCALE;
-                    ImGui::InputFloat("X", &modelScale.x);
-                    ImGui::InputFloat("Y", &modelScale.y);
-                    ImGui::InputFloat("Z", &modelScale.z);
-                    break;
-                case 3:
-                    modelTransform = PAG::modelTransformType::MATERIAL;
-                    ImGui::ColorPicker3("Ambient Color",modelAmbientColorTransform,ImGuiColorEditFlags_PickerHueWheel);
-                    ImGui::Checkbox("Fill Model",&modelVIsualizationTypeFillPressedTransform);
-                    break;
-                default:
-                    break;
-            }
-            modelTransformApplyPressed = ImGui::Button("Apply");
-            if(modelTransform != PAG::modelTransformType::MATERIAL){
-                ImGui::SameLine();
-                if(ImGui::Button("Reset")){
-                    modelTranslate = glm::vec3(0.f);
-                    modelRotateAxis = glm::vec3(0,1,0);
-                    modelRotateAngle = .0f;
-                    modelScale = glm::vec3(1,1,1);
-                }
-            }
-            ImGui::SeparatorText("Model Manegment");
-            modelDeletePressed = ImGui::Button("Delete Model");
-        }
-        ImGui::End();
-    }
-
 
     //GETTERS Y SETTERS
 
@@ -678,6 +519,18 @@ namespace PAG {
 
     float GUI::getModelSpecularExponentTransform() const {
         return modelSpecularExponentTransform;
+    }
+
+    int GUI::getCurrentLightIndex() const {
+        return currentLightIndex;
+    }
+
+    void GUI::setCurrentLightIndex(int currentLightIndex) {
+        GUI::currentLightIndex = currentLightIndex;
+    }
+
+    bool GUI::isModelMaterialApplyPressed() const {
+        return modelMaterialApplyPressed;
     }
 
 

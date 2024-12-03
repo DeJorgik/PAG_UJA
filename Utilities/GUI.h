@@ -42,6 +42,7 @@ namespace PAG {
         float modelRotateAngle;
         glm::vec3 modelScale;
         bool modelTransformApplyPressed;
+        bool modelMaterialApplyPressed;
         bool modelDeletePressed;
         //Material
         bool modelVisualizationTypeFillPressed;
@@ -118,29 +119,26 @@ namespace PAG {
         float getModelSpecularExponentTransform() const;
         bool isModelVisualizationTypeFillPressedTransform() const;
 
+        bool isModelMaterialApplyPressed() const;
+
         bool isCreateLightPressed() const;
         bool isDeleteLightPressed() const;
 
         lightTypes getCreateLightType() const;
-
         const float *getLightAmbientColor() const;
-
         const float *getLightDiffuseColor() const;
-
         const float *getLightSpecularColor() const;
-
         const glm::vec3 &getLightPosition() const;
-
         const glm::vec3 &getLightDirection() const;
-
         float getLightGamma() const;
-
         float getLightS() const;
+        int getCurrentLightIndex() const;
+        void setCurrentLightIndex(int currentLightIndex);
 
         void drawMessageWindow(float posX, float posY, float fontScale);
         void drawControlWindow(float posX, float posY, float fontScale,
                                std::vector<std::pair<PAG::Model, GLuint>> *modelList,
-                               std::vector<Light> *lightList, float *col);
+                               std::vector<Light> *lightList, float *col,int lightCount);
     };
 } // PAG
 

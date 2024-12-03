@@ -18,7 +18,7 @@
 
 namespace PAG {
     //Tipo de transformación del modelo
-    enum modelTransformType{TRANSLATE,ROTATE,SCALE,MATERIAL};
+    enum modelTransformType{TRANSLATE,ROTATE,SCALE};
 
     //Tipo de visualización del modelo
     enum modelVisualizationTypes{WIREFRAME,FILL};

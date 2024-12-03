@@ -63,7 +63,11 @@ namespace PAG {
                     const glm::vec3 &diffuse, const glm::vec3 &specular, GLfloat exponent);
         void processUiModelTransform(int modelId, modelTransformType modelTransformType, glm::vec3 modelTranslate,
                                      glm::vec3 modelRotateAxis, float modelRotateAngle, glm::vec3 modelScale,
-                                     glm::vec3 modelAmbientTransform, bool isWireframe);
+                                     glm::vec3 modelAmbientTransform,
+                                     glm::vec3 modelDiffuseTransform,
+                                     glm::vec3 modelSpecularTransform,
+                                     float modelExponentTransform,
+                                     bool isWireframe);
 
         void drawModel(std::pair<PAG::Model, GLuint> model, int lightId);
 
@@ -78,6 +82,16 @@ namespace PAG {
                     float s);
 
         std::vector<PAG::Light> *getLightList() const;
+
+        void deleteLight(int lightId);
+
+        void processUiModelTransform(int modelId, modelTransformType modelTransformType, glm::vec3 modelTranslate,
+                                     glm::vec3 modelRotateAxis, float modelRotateAngle, glm::vec3 modelScale);
+
+        void
+        processUiModelMaterial(int modelId, bool isWireframe, glm::vec3 modelAmbientTransform,
+                               glm::vec3 modelDiffuseTransform,
+                               glm::vec3 modelSpecularTransform, float modelExponentTransform);
     };
 
 } // PAG

@@ -42,6 +42,7 @@ namespace PAG {
         glEnable(GL_DEPTH_TEST);
         glEnable (GL_MULTISAMPLE);
         glEnable(GL_BLEND); //activar blending
+        glDepthFunc(GL_LEQUAL);
         updateBgColor();
     }
 
@@ -72,7 +73,7 @@ namespace PAG {
         if(lightId==0){
             //primera luz
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        } else{
+        } else if (lightId==1){
             glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         }
 
@@ -237,21 +238,21 @@ namespace PAG {
         //cambiar tipo de luz
         switch (lightType) {
             case AMBIENT:
-                light.setAmbientLight("ambient_"+std::to_string(lightList->size()),
+                light.setAmbientLight("ambient_"+std::to_string(lightList->size()+1),
                                       Ia);
                 break;
             case DIRECTION:
-                light.setDirectionLight("direction_"+std::to_string(lightList->size()),
+                light.setDirectionLight("direction_"+std::to_string(lightList->size()+1),
                                         Id,Is,
                                         d);
                 break;
             case POINT:
-                light.setPointLight("point_"+std::to_string(lightList->size()),
+                light.setPointLight("point_"+std::to_string(lightList->size()+1),
                                     Id,Is,
                                     pos);
                 break;
             case SPOT:
-                light.setSpotLight("spot_"+std::to_string(lightList->size()),
+                light.setSpotLight("spot_"+std::to_string(lightList->size()+1),
                                     Id,Is,
                                     pos,d,
                                     gamma,s);
@@ -259,7 +260,21 @@ namespace PAG {
             default:
                 break;
         }
+
+        //Cambiar nombre si hay un modelo con el mismo nombre
+        for (auto &_light : *lightList) {
+            if (light.getLightName() == _light.getLightName()){
+                light.setLightName(_light.getLightName()+"_copy");
+            }
+        }
+
         lightList->push_back(light);
+    }
+
+    void Renderer::deleteLight(int lightId){
+        if(lightList->size()>1){
+            lightList->erase(lightList->begin()+lightId);
+        }
     }
 
     bool Renderer::operator==(const Renderer &rhs) const {
@@ -447,9 +462,7 @@ namespace PAG {
                                            glm::vec3 modelTranslate,
                                            glm::vec3 modelRotateAxis,
                                            float modelRotateAngle,
-                                           glm::vec3 modelScale,
-                                           glm::vec3 modelAmbientTransform,
-                                           bool isWireframe){
+                                           glm::vec3 modelScale){
         switch (modelTransformType) {
             case PAG::modelTransformType::TRANSLATE:
                 modelList->at(modelId).first.modelTranslate(modelTranslate);
@@ -460,14 +473,23 @@ namespace PAG {
             case PAG::modelTransformType::SCALE:
                 modelList->at(modelId).first.modelScale(modelScale);
                 break;
-            case PAG::modelTransformType::MATERIAL:
-                //Cambiar material del modelo
-                modelList->at(modelId).first.setWireframe(!isWireframe);
-                modelList->at(modelId).first.getMaterial()->setAmbient(modelAmbientTransform);
-                break;
             default:
                 break;
         }
+    }
+
+    void Renderer::processUiModelMaterial(int modelId,
+                                          bool isWireframe,
+                                          glm::vec3 modelAmbientTransform,
+                                          glm::vec3 modelDiffuseTransform,
+                                          glm::vec3 modelSpecularTransform,
+                                          float modelExponentTransform){
+        //Cambiar material del modelo
+        modelList->at(modelId).first.setWireframe(!isWireframe);
+        modelList->at(modelId).first.getMaterial()->setAmbient(modelAmbientTransform);
+        modelList->at(modelId).first.getMaterial()->setDiffuse(modelDiffuseTransform);
+        modelList->at(modelId).first.getMaterial()->setSpecular(modelSpecularTransform);
+        modelList->at(modelId).first.getMaterial()->setExponent(modelExponentTransform);
     }
 
     void Renderer::processMouseCameraMovement(double diffX, double diffY) {

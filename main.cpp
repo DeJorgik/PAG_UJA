@@ -220,13 +220,22 @@ int main()
 
     PAG::Renderer::getInstance().createModel("",PAG::modelVisualizationTypes::FILL,glm::vec3(1,0,0),glm::vec3(1,0,0),glm::vec3(1,0,0),1);
 
+    //Crear luz ambiente por defecto
+    PAG::Renderer::getInstance().createLight(PAG::lightTypes::POINT,
+                                             glm::vec3(0,0,0),
+                                             glm::vec3(1,1,1),
+                                             glm::vec3(1,1,1),
+                                             glm::vec3(1,1,1),
+                                             glm::vec3(0,0,0),
+                                             1.0f,
+                                             1.0f);
+
     //PAG::Renderer::getInstance().getViewportSizes(width,height);
 
     //CICLO DE EVENTOS
     while ( !glfwWindowShouldClose ( window ) ) //Repetir hasta que se cierre la ventana
     {
-
-        //El renderer captura la info de GUI desde el main para hacer el movimiento de la cámara
+        //Camara
         PAG::Renderer::getInstance().processUiCameraMovement(
                 PAG::GUI::getInstance().getCameraMovement(),
                 PAG::GUI::getInstance().getCameraZoomValue(),
@@ -240,33 +249,6 @@ int main()
                 PAG::GUI::getInstance().isCraneDownPressed(),
                 PAG::GUI::getInstance().getLongitudeAngle(),
                 PAG::GUI::getInstance().getLatitudeAngle());
-
-        //Aplicar transformación del modelo actual cuando se pulse aplicar
-        if (PAG::GUI::getInstance().isModelTransformApplyPressed()){
-            PAG::Renderer::getInstance().processUiModelTransform(
-                    PAG::GUI::getInstance().getCurrentModelIndex(),
-                    PAG::GUI::getInstance().getModelTransform(),
-                    PAG::GUI::getInstance().getModelTranslate(),
-                    PAG::GUI::getInstance().getModelRotateAxis(),
-                    PAG::GUI::getInstance().getModelRotateAngle(),
-                    PAG::GUI::getInstance().getModelScale(),
-                    glm::vec3(PAG::GUI::getInstance().getModelAmbientColorTransform()[0],
-                              PAG::GUI::getInstance().getModelAmbientColorTransform()[1],
-                              PAG::GUI::getInstance().getModelAmbientColorTransform()[2]),
-                    PAG::GUI::getInstance().isModelVisualizationTypeFillPressedTransform());
-        }
-
-        PAG::Renderer::getInstance().windowRefresh(); //Refrescar ventana constantemente
-        PAG::GUI::getInstance().newFrame();//Llamadas de la interfaz de usuario
-
-        //Dibujar interfaz
-
-        PAG::GUI::getInstance().drawMessageWindow(10,10,1.0f);
-        PAG::GUI::getInstance().drawControlWindow(10,200,1.0f,
-                                                  PAG::Renderer::getInstance().getModelList(),
-                                                  PAG::Renderer::getInstance().getLightList(),
-                                                  reinterpret_cast<float *>(PAG::Renderer::getInstance().getBgColor()));
-        PAG::Renderer::getInstance().updateBgColor(); //Poner esto aquí para la función de cambiar color de fondo
 
         //Cargar modelos
         if(PAG::GUI::getInstance().getFileBrowserWindow().HasSelected())
@@ -282,8 +264,7 @@ int main()
                     }catch (const std::exception& e){ //capturar excepción en caso de error
                         PAG::GUI::getInstance().messageBufferAdd(e.what());
                     }
-                    //Crear material co
-                    //Crear modelo
+                    //Crear modelo (con el material)
                     PAG::Renderer::getInstance().createModel(PAG::GUI::getInstance().getFileBrowserWindow().GetSelected().string(),
                                                              PAG::GUI::getInstance().getModelVisualizationType(),
                                                              glm::vec3 (PAG::GUI::getInstance().getModelAmbientColor()[0],
@@ -305,7 +286,33 @@ int main()
             PAG::GUI::getInstance().clearModelLoader();
         }
 
-        //Transformar Modelos
+        //Transform
+        if (PAG::GUI::getInstance().isModelTransformApplyPressed()){
+            PAG::Renderer::getInstance().processUiModelTransform(
+                    PAG::GUI::getInstance().getCurrentModelIndex(),
+                    PAG::GUI::getInstance().getModelTransform(),
+                    PAG::GUI::getInstance().getModelTranslate(),
+                    PAG::GUI::getInstance().getModelRotateAxis(),
+                    PAG::GUI::getInstance().getModelRotateAngle(),
+                    PAG::GUI::getInstance().getModelScale());
+        }
+        if(PAG::GUI::getInstance().isModelMaterialApplyPressed()){
+            PAG::Renderer::getInstance().processUiModelMaterial(
+                    PAG::GUI::getInstance().getCurrentModelIndex(),
+                    PAG::GUI::getInstance().isModelVisualizationTypeFillPressedTransform(),
+                    glm::vec3(PAG::GUI::getInstance().getModelAmbientColorTransform()[0],
+                              PAG::GUI::getInstance().getModelAmbientColorTransform()[1],
+                              PAG::GUI::getInstance().getModelAmbientColorTransform()[2]),
+                    glm::vec3(PAG::GUI::getInstance().getModelDiffuseColorTransform()[0],
+                              PAG::GUI::getInstance().getModelDiffuseColorTransform()[1],
+                              PAG::GUI::getInstance().getModelDiffuseColorTransform()[2]),
+                    glm::vec3(PAG::GUI::getInstance().getModelSpecularColorTransform()[0],
+                              PAG::GUI::getInstance().getModelSpecularColorTransform()[1],
+                              PAG::GUI::getInstance().getModelSpecularColorTransform()[2]),
+                    PAG::GUI::getInstance().getModelSpecularExponentTransform());
+        }
+
+        //Borrar Modelos
         if(PAG::GUI::getInstance().isModelDeletePressed()){
             PAG::Renderer::getInstance().deleteModel(PAG::GUI::getInstance().getCurrentModelIndex());
             if(!PAG::Renderer::getInstance().getModelList()->empty()){
@@ -315,22 +322,44 @@ int main()
             }
         }
 
+        //Luces
         if(PAG::GUI::getInstance().isCreateLightPressed()){
             PAG::Renderer::getInstance().createLight(PAG::GUI::getInstance().getCreateLightType(),
                                                      glm::vec3(PAG::GUI::getInstance().getLightAmbientColor()[0],
                                                                 PAG::GUI::getInstance().getLightAmbientColor()[1],
                                                                PAG::GUI::getInstance().getLightAmbientColor()[2]),
-                                                     glm::vec3(PAG::GUI::getInstance().getLightDiffuseColor()[0],
-                                                                 PAG::GUI::getInstance().getLightDiffuseColor()[1],
-                                                                 PAG::GUI::getInstance().getLightDiffuseColor()[2]),
                                                      glm::vec3(PAG::GUI::getInstance().getLightSpecularColor()[0],
                                                                PAG::GUI::getInstance().getLightSpecularColor()[1],
                                                                PAG::GUI::getInstance().getLightSpecularColor()[2]),
+                                                     glm::vec3(PAG::GUI::getInstance().getLightDiffuseColor()[0],
+                                                               PAG::GUI::getInstance().getLightDiffuseColor()[1],
+                                                               PAG::GUI::getInstance().getLightDiffuseColor()[2]),
                                                      PAG::GUI::getInstance().getLightPosition(),
                                                      PAG::GUI::getInstance().getLightDirection(),
                                                      PAG::GUI::getInstance().getLightGamma(),
                                                      PAG::GUI::getInstance().getLightS());
         }
+
+        if(PAG::GUI::getInstance().isDeleteLightPressed()){
+            PAG::Renderer::getInstance().deleteLight(PAG::GUI::getInstance().getCurrentLightIndex());
+            if(!PAG::Renderer::getInstance().getLightList()->empty()){
+                if((PAG::GUI::getInstance().getCurrentLightIndex()==PAG::Renderer::getInstance().getLightList()->size())){
+                    PAG::GUI::getInstance().setCurrentLightIndex(PAG::GUI::getInstance().getCurrentLightIndex()-1);
+                }
+            }
+        }
+
+        PAG::Renderer::getInstance().windowRefresh(); //Refrescar ventana constantemente
+
+        //Dibujar interfaz
+        PAG::GUI::getInstance().newFrame();//Llamadas de la interfaz de usuario
+        PAG::GUI::getInstance().drawMessageWindow(10,10,1.0f);
+        PAG::GUI::getInstance().drawControlWindow(10,200,1.0f,
+                                                  PAG::Renderer::getInstance().getModelList(),
+                                                  PAG::Renderer::getInstance().getLightList(),
+                                                  reinterpret_cast<float *>(PAG::Renderer::getInstance().getBgColor()),
+                                                  PAG::Renderer::getInstance().getLightList()->size());
+        PAG::Renderer::getInstance().updateBgColor(); //Poner esto aquí para la función de cambiar color de fondo
 
         //Dibujar escena
         PAG::GUI::getInstance().render();//Renderizar interfaz
