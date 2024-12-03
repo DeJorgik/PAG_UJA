@@ -36,7 +36,7 @@ namespace PAG {
         createLightPressed = false;
         createLightSelectedItem = 0;
         currentLightIndex = 0;
-        lightDeletePressed = false;
+        deleteLightPressed = false;
     }
 
     GUI::~GUI() {
@@ -108,6 +108,7 @@ namespace PAG {
                     if(ImGui::Button("Select Model")){
                         fileBrowserWindow.Open();    //Abrir ventana al pulsar el botón
                     }
+                    fileBrowserWindow.Display();
                     ImGui::TreePop();
                 }
                 if(ImGui::TreeNode("Model Transform")){
@@ -235,7 +236,7 @@ namespace PAG {
                             }
                             ImGui::EndCombo();
                         }
-                        lightDeletePressed = ImGui::Button("Delete Light");
+                        deleteLightPressed = ImGui::Button("Delete Light");
                     } else {
                         ImGui::Text("No lights created.");
                     }
@@ -611,8 +612,72 @@ namespace PAG {
         return modelAmbientColorTransform;
     }
 
-    bool GUI::isModelVIsualizationTypeFillPressedTransform() const {
+    bool GUI::isModelVisualizationTypeFillPressedTransform() const {
         return modelVIsualizationTypeFillPressedTransform;
+    }
+
+    bool GUI::isCreateLightPressed() const {
+        return createLightPressed;
+    }
+
+    bool GUI::isDeleteLightPressed() const {
+        return deleteLightPressed;
+    }
+
+    lightTypes GUI::getCreateLightType() const {
+        return createLightType;
+    }
+
+    const float *GUI::getLightAmbientColor() const {
+        return lightAmbientColor;
+    }
+
+    const float *GUI::getLightDiffuseColor() const {
+        return lightDiffuseColor;
+    }
+
+    const float *GUI::getLightSpecularColor() const {
+        return lightSpecularColor;
+    }
+
+    const glm::vec3 &GUI::getLightPosition() const {
+        return lightPosition;
+    }
+
+    const glm::vec3 &GUI::getLightDirection() const {
+        return lightDirection;
+    }
+
+    float GUI::getLightGamma() const {
+        return lightGamma;
+    }
+
+    float GUI::getLightS() const {
+        return lightS;
+    }
+
+    const float *GUI::getModelDiffuseColor() const {
+        return modelDiffuseColor;
+    }
+
+    const float *GUI::getModelSpecularColor() const {
+        return modelSpecularColor;
+    }
+
+    float GUI::getModelSpecularExponent() const {
+        return modelSpecularExponent;
+    }
+
+    const float *GUI::getModelDiffuseColorTransform() const {
+        return modelDiffuseColorTransform;
+    }
+
+    const float *GUI::getModelSpecularColorTransform() const {
+        return modelSpecularColorTransform;
+    }
+
+    float GUI::getModelSpecularExponentTransform() const {
+        return modelSpecularExponentTransform;
     }
 
 

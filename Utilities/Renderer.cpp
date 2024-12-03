@@ -160,8 +160,9 @@ namespace PAG {
      * PRACTICA 8
      * ahora tambien se le pasan los atributos de su material
      */
-    void Renderer::createModel(std::string modelName,modelVisualizationTypes modelVisualizationType,const glm::vec3 &ambient, const glm::vec3 &diffuse,
-                               const glm::vec3 &specular, GLfloat exponent) {
+    void Renderer::createModel(std::string modelName,modelVisualizationTypes modelVisualizationType,
+                               const glm::vec3 &ambient, const glm::vec3 &diffuse,const glm::vec3 &specular,
+                               GLfloat exponent) {
 
         PAG::Model model = PAG::Model(modelName,modelVisualizationType); //crear modelo
         model.createMaterial(ambient,diffuse,specular,exponent); //crear y aplicar material
@@ -258,6 +259,7 @@ namespace PAG {
             default:
                 break;
         }
+        lightList->push_back(light);
     }
 
     bool Renderer::operator==(const Renderer &rhs) const {

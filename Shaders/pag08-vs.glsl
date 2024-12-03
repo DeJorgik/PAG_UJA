@@ -8,6 +8,6 @@ out vec3 pos;
 out vec3 normal;
 void main () {
     normal = vec3(mModelView*vec4(vNormal,0.0)); 
-    pos = vec3(mModelView*vec4(vPosition,1.0));
+    pos = vec3(mModelView*vec4(vPos,1.0));
     gl_Position = mModelViewProj * vec4 ( vPos, 1.0 );
 }

@@ -64,9 +64,9 @@ namespace PAG {
         glm::vec3 lightDirection = glm::vec3(0,0,0);
         float lightGamma = 60.0f;
         float lightS = 1.0f;
-        bool createLightPressed;
         int currentLightIndex;
-        bool lightDeletePressed;
+        bool createLightPressed;
+        bool deleteLightPressed;
 
     public:
         virtual ~GUI();
@@ -110,24 +110,34 @@ namespace PAG {
         PAG::modelVisualizationTypes getModelVisualizationType() const;
         const float *getModelAmbientColor() const;
         const float *getModelAmbientColorTransform() const;
-        bool isModelVIsualizationTypeFillPressedTransform() const;
+        const float *getModelDiffuseColor() const;
+        const float *getModelSpecularColor() const;
+        float getModelSpecularExponent() const;
+        const float *getModelDiffuseColorTransform() const;
+        const float *getModelSpecularColorTransform() const;
+        float getModelSpecularExponentTransform() const;
+        bool isModelVisualizationTypeFillPressedTransform() const;
+
+        bool isCreateLightPressed() const;
+        bool isDeleteLightPressed() const;
+
+        lightTypes getCreateLightType() const;
+
+        const float *getLightAmbientColor() const;
+
+        const float *getLightDiffuseColor() const;
+
+        const float *getLightSpecularColor() const;
+
+        const glm::vec3 &getLightPosition() const;
+
+        const glm::vec3 &getLightDirection() const;
+
+        float getLightGamma() const;
+
+        float getLightS() const;
 
         void drawMessageWindow(float posX, float posY, float fontScale);
-
-        void drawControlWindow(float posX, float posY, float fontScale);
-
-        void
-        drawControlWindow(float posX, float posY, float fontScale, std::vector<std::pair<PAG::Model, int>> *modelList,
-                          float *col);
-
-        void drawControlWindow(float posX, float posY, float fontScale,
-                               std::vector<std::pair<PAG::Model, GLuint>> *modelList,
-                               float *col);
-
-        void drawControlWindow(float posX, float posY, float fontScale,
-                               std::vector<std::pair<PAG::Model, GLuint>> *modelList,
-                               std::vector<std::pair<PAG::Model, GLuint>> *lightList, float *col);
-
         void drawControlWindow(float posX, float posY, float fontScale,
                                std::vector<std::pair<PAG::Model, GLuint>> *modelList,
                                std::vector<Light> *lightList, float *col);

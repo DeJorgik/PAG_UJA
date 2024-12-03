@@ -72,7 +72,8 @@ namespace PAG {
         void setUniformLight(Light light, GLuint IdSp);
 
         void
-        createLight(lightTypes lightType, glm::vec3 Ia, glm::vec3 Is, glm::vec3 Id, glm::vec3 pos, glm::vec3 d,
+        createLight(lightTypes lightType, glm::vec3 Ia, glm::vec3 Is, glm::vec3 Id,
+                    glm::vec3 pos, glm::vec3 d,
                     float gamma,
                     float s);
 

@@ -212,7 +212,7 @@ int main()
     //Crear shader program y cargar modelo
 
     try{
-        PAG::Renderer::getInstance().createShaderProgram("pag07");
+        PAG::Renderer::getInstance().createShaderProgram("pag08");
     }
     catch (const std::exception& e){ //capturar excepción en caso de error
         PAG::GUI::getInstance().messageBufferAdd( e.what());
@@ -253,7 +253,7 @@ int main()
                     glm::vec3(PAG::GUI::getInstance().getModelAmbientColorTransform()[0],
                               PAG::GUI::getInstance().getModelAmbientColorTransform()[1],
                               PAG::GUI::getInstance().getModelAmbientColorTransform()[2]),
-                    PAG::GUI::getInstance().isModelVIsualizationTypeFillPressedTransform());
+                    PAG::GUI::getInstance().isModelVisualizationTypeFillPressedTransform());
         }
 
         PAG::Renderer::getInstance().windowRefresh(); //Refrescar ventana constantemente
@@ -268,17 +268,7 @@ int main()
                                                   reinterpret_cast<float *>(PAG::Renderer::getInstance().getBgColor()));
         PAG::Renderer::getInstance().updateBgColor(); //Poner esto aquí para la función de cambiar color de fondo
 
-        /*
-
-        PAG::GUI::getInstance().drawColorWheel(500, 10, 1.0f,
-                                               reinterpret_cast<float *>(PAG::Renderer::getInstance().getBgColor()), "Fondo", "Actual");
-        PAG::Renderer::getInstance().updateBgColor();
-        //PAG::GUI::getInstance().drawShaderLoadWindow(10,450,1.0f,"Shader load");
-        PAG::GUI::getInstance().drawCameraControls(500, 450,1.0f,"Camera");
-
         //Cargar modelos
-        PAG::GUI::getInstance().drawModelLoaderWindow(10,350,1.0f,"Model load");
-
         if(PAG::GUI::getInstance().getFileBrowserWindow().HasSelected())
         {
             //Añadir cuando el archivo sea .obj
@@ -299,9 +289,13 @@ int main()
                                                              glm::vec3 (PAG::GUI::getInstance().getModelAmbientColor()[0],
                                                                         PAG::GUI::getInstance().getModelAmbientColor()[1],
                                                                         PAG::GUI::getInstance().getModelAmbientColor()[2]),
-                                                             glm::vec3 (),
-                                                             glm::vec3 (),
-                                                             1);
+                                                             glm::vec3 (PAG::GUI::getInstance().getModelDiffuseColor()[0],
+                                                                        PAG::GUI::getInstance().getModelDiffuseColor()[1],
+                                                                        PAG::GUI::getInstance().getModelDiffuseColor()[2]),
+                                                             glm::vec3 (PAG::GUI::getInstance().getModelSpecularColor()[0],
+                                                                        PAG::GUI::getInstance().getModelSpecularColor()[1],
+                                                                        PAG::GUI::getInstance().getModelSpecularColor()[2]),
+                                                             PAG::GUI::getInstance().getModelSpecularExponent());
                 } else{
                     PAG::GUI::getInstance().messageBufferAdd("ERROR: No shader selected.");
                 }
@@ -312,8 +306,6 @@ int main()
         }
 
         //Transformar Modelos
-        PAG::GUI::getInstance().drawModelTransformWindow(500,300,1.0f,"Model Transform",PAG::Renderer::getInstance().getModelList());
-
         if(PAG::GUI::getInstance().isModelDeletePressed()){
             PAG::Renderer::getInstance().deleteModel(PAG::GUI::getInstance().getCurrentModelIndex());
             if(!PAG::Renderer::getInstance().getModelList()->empty()){
@@ -323,7 +315,22 @@ int main()
             }
         }
 
-         */
+        if(PAG::GUI::getInstance().isCreateLightPressed()){
+            PAG::Renderer::getInstance().createLight(PAG::GUI::getInstance().getCreateLightType(),
+                                                     glm::vec3(PAG::GUI::getInstance().getLightAmbientColor()[0],
+                                                                PAG::GUI::getInstance().getLightAmbientColor()[1],
+                                                               PAG::GUI::getInstance().getLightAmbientColor()[2]),
+                                                     glm::vec3(PAG::GUI::getInstance().getLightDiffuseColor()[0],
+                                                                 PAG::GUI::getInstance().getLightDiffuseColor()[1],
+                                                                 PAG::GUI::getInstance().getLightDiffuseColor()[2]),
+                                                     glm::vec3(PAG::GUI::getInstance().getLightSpecularColor()[0],
+                                                               PAG::GUI::getInstance().getLightSpecularColor()[1],
+                                                               PAG::GUI::getInstance().getLightSpecularColor()[2]),
+                                                     PAG::GUI::getInstance().getLightPosition(),
+                                                     PAG::GUI::getInstance().getLightDirection(),
+                                                     PAG::GUI::getInstance().getLightGamma(),
+                                                     PAG::GUI::getInstance().getLightS());
+        }
 
         //Dibujar escena
         PAG::GUI::getInstance().render();//Renderizar interfaz
