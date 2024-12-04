@@ -92,6 +92,14 @@ namespace PAG {
         processUiModelMaterial(int modelId, bool isWireframe, glm::vec3 modelAmbientTransform,
                                glm::vec3 modelDiffuseTransform,
                                glm::vec3 modelSpecularTransform, float modelExponentTransform);
+
+        void
+        processUiLightEdit(int lightId, lightTypes lightType, glm::vec3 Ia, glm::vec3 Is, glm::vec3 Id, glm::vec3 pos,
+                           glm::vec3 d, float gamma, float s);
+
+        void processUiLightEdit(int lightId, glm::vec3 Ia, glm::vec3 Is, glm::vec3 Id, glm::vec3 pos, glm::vec3 d,
+                                float gamma,
+                                float s);
     };
 
 } // PAG

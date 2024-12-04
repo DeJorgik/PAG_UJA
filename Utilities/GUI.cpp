@@ -38,6 +38,7 @@ namespace PAG {
         currentLightIndex = 0;
         deleteLightPressed = false;
         modelMaterialApplyPressed = false;
+        editLightPressed = false;
     }
 
     GUI::~GUI() {
@@ -174,7 +175,7 @@ namespace PAG {
                         ImGui::ColorEdit3("Specular Color",modelSpecularColorTransform);
                         ImGui::InputFloat("Specular Exponent", &modelSpecularExponentTransform);
                         ImGui::Checkbox("Fill Model",&modelVIsualizationTypeFillPressedTransform);
-                        modelMaterialApplyPressed = ImGui::Button("Apply");
+                        modelMaterialApplyPressed = ImGui::Button("Apply Material");
 
                         ImGui::SeparatorText("Model Delete");
                         modelDeletePressed = ImGui::Button("Delete Model");
@@ -219,8 +220,9 @@ namespace PAG {
                                 ImGui::InputFloat("X Direction", &lightDirection.x);
                                 ImGui::InputFloat("Y Direction", &lightDirection.y);
                                 ImGui::InputFloat("Z Direction", &lightDirection.z);
-                                ImGui::InputFloat("Gamma", &lightGamma);
-                                ImGui::InputFloat("Smooth factor", &lightS);
+                                ImGui::SliderFloat("Gamma",&lightGamma,0.f,90.f);
+
+                                //ImGui::InputFloat("Smooth factor", &lightS);
                                 break;
                             default:
                                 break;
@@ -228,7 +230,7 @@ namespace PAG {
                         createLightPressed = ImGui::Button("Create Light");
                         ImGui::TreePop();
                     }
-                    if(ImGui::TreeNode("Light Delete")){
+                    if(ImGui::TreeNode("Light Edit")){
                         if(ImGui::BeginCombo("Light List",lightList->at(currentLightIndex).getLightName().c_str())){
                             for (int i = 0; i < lightList->size(); ++i) {
                                 bool isSelected = currentLightIndex == i;
@@ -241,8 +243,49 @@ namespace PAG {
                             }
                             ImGui::EndCombo();
                         }
+                        //Editar luz
+                        switch (lightList->at(currentLightIndex).getLightType()) {
+                            case 0:
+                                ImGui::ColorEdit3("Ambient Color",lightAmbientColorEdit);
+                                break;
+                            case 1:
+                                ImGui::ColorEdit3("Diffuse Color",lightDiffuseColorEdit);
+                                ImGui::ColorEdit3("Specular Color",lightSpecularColorEdit);
+                                ImGui::InputFloat("X Direction", &lightDirectionEdit.x);
+                                ImGui::InputFloat("Y Direction", &lightDirectionEdit.y);
+                                ImGui::InputFloat("Z Direction", &lightDirectionEdit.z);
+                                break;
+                            case 2:
+                                ImGui::ColorEdit3("Diffuse Color",lightDiffuseColorEdit);
+                                ImGui::ColorEdit3("Specular Color",lightSpecularColorEdit);
+                                ImGui::InputFloat("X Position", &lightPositionEdit.x);
+                                ImGui::InputFloat("Y Position", &lightPositionEdit.y);
+                                ImGui::InputFloat("Z Position", &lightPositionEdit.z);
+                                break;
+                            case 3:
+                                ImGui::ColorEdit3("Diffuse Color",lightDiffuseColorEdit);
+                                ImGui::ColorEdit3("Specular Color",lightSpecularColorEdit);
+                                ImGui::InputFloat("X Position", &lightPositionEdit.x);
+                                ImGui::InputFloat("Y Position", &lightPositionEdit.y);
+                                ImGui::InputFloat("Z Position", &lightPositionEdit.z);
+                                ImGui::InputFloat("X Direction", &lightDirectionEdit.x);
+                                ImGui::InputFloat("Y Direction", &lightDirectionEdit.y);
+                                ImGui::InputFloat("Z Direction", &lightDirectionEdit.z);
+                                ImGui::SliderFloat("Gamma",&lightGammaEdit,0.f,90.f);
+
+                                //ImGui::InputFloat("Smooth factor", &lightSEdit);
+                                break;
+                            default:
+                                break;
+                        }
+
+                        editLightPressed = ImGui::Button("Apply");
+
+                        //Borrar luz
                         if(lightCount>1) {
                             deleteLightPressed = ImGui::Button("Delete Light");
+                        }else{
+                            deleteLightPressed = false;
                         }
                         ImGui::TreePop();
                     }
@@ -531,6 +574,38 @@ namespace PAG {
 
     bool GUI::isModelMaterialApplyPressed() const {
         return modelMaterialApplyPressed;
+    }
+
+    const float *GUI::getLightAmbientColorEdit() const {
+        return lightAmbientColorEdit;
+    }
+
+    const float *GUI::getLightDiffuseColorEdit() const {
+        return lightDiffuseColorEdit;
+    }
+
+    const float *GUI::getLightSpecularColorEdit() const {
+        return lightSpecularColorEdit;
+    }
+
+    const glm::vec3 &GUI::getLightPositionEdit() const {
+        return lightPositionEdit;
+    }
+
+    const glm::vec3 &GUI::getLightDirectionEdit() const {
+        return lightDirectionEdit;
+    }
+
+    float GUI::getLightGammaEdit() const {
+        return lightGammaEdit;
+    }
+
+    float GUI::getLightSEdit() const {
+        return lightSEdit;
+    }
+
+    bool GUI::isEditLightPressed() const {
+        return editLightPressed;
     }
 
 

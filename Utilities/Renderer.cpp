@@ -233,7 +233,7 @@ namespace PAG {
                               float gamma, float s){
 
         //Crear luz por defecto
-        Light light = Light();
+        PAG::Light light = Light();
 
         //cambiar tipo de luz
         switch (lightType) {
@@ -490,6 +490,30 @@ namespace PAG {
         modelList->at(modelId).first.getMaterial()->setDiffuse(modelDiffuseTransform);
         modelList->at(modelId).first.getMaterial()->setSpecular(modelSpecularTransform);
         modelList->at(modelId).first.getMaterial()->setExponent(modelExponentTransform);
+    }
+
+    void Renderer::processUiLightEdit(int lightId,
+                                      glm::vec3 Ia,glm::vec3 Is,glm::vec3 Id,
+                                      glm::vec3 pos, glm::vec3 d,
+                                      float gamma, float s){
+
+        //Editar segun tipo de luz
+        switch (lightList->at(lightId).getLightType()) {
+            case AMBIENT:
+                lightList->at(lightId).setAmbientLight(Ia);
+                break;
+            case DIRECTION:
+                lightList->at(lightId).setDirectionLight(Id,Is,d);
+                break;
+            case POINT:
+                lightList->at(lightId).setPointLight(Id,Is,pos);
+                break;
+            case SPOT:
+                lightList->at(lightId).setSpotLight(Id,Is,pos,d,gamma,s);
+                break;
+            default:
+                break;
+        }
     }
 
     void Renderer::processMouseCameraMovement(double diffX, double diffY) {

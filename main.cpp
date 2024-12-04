@@ -221,8 +221,8 @@ int main()
     PAG::Renderer::getInstance().createModel("",PAG::modelVisualizationTypes::FILL,glm::vec3(1,0,0),glm::vec3(1,0,0),glm::vec3(1,0,0),1);
 
     //Crear luz ambiente por defecto
-    PAG::Renderer::getInstance().createLight(PAG::lightTypes::POINT,
-                                             glm::vec3(0,0,0),
+    PAG::Renderer::getInstance().createLight(PAG::lightTypes::AMBIENT,
+                                             glm::vec3(0.5,0.5,0.5),
                                              glm::vec3(1,1,1),
                                              glm::vec3(1,1,1),
                                              glm::vec3(1,1,1),
@@ -338,6 +338,23 @@ int main()
                                                      PAG::GUI::getInstance().getLightDirection(),
                                                      PAG::GUI::getInstance().getLightGamma(),
                                                      PAG::GUI::getInstance().getLightS());
+        }
+
+        if(PAG::GUI::getInstance().isEditLightPressed()){
+            PAG::Renderer::getInstance().processUiLightEdit(PAG::GUI::getInstance().getCurrentLightIndex(),
+                                                     glm::vec3(PAG::GUI::getInstance().getLightAmbientColorEdit()[0],
+                                                               PAG::GUI::getInstance().getLightAmbientColorEdit()[1],
+                                                               PAG::GUI::getInstance().getLightAmbientColorEdit()[2]),
+                                                     glm::vec3(PAG::GUI::getInstance().getLightSpecularColorEdit()[0],
+                                                               PAG::GUI::getInstance().getLightSpecularColorEdit()[1],
+                                                               PAG::GUI::getInstance().getLightSpecularColorEdit()[2]),
+                                                     glm::vec3(PAG::GUI::getInstance().getLightDiffuseColorEdit()[0],
+                                                               PAG::GUI::getInstance().getLightDiffuseColorEdit()[1],
+                                                               PAG::GUI::getInstance().getLightDiffuseColorEdit()[2]),
+                                                     PAG::GUI::getInstance().getLightPositionEdit(),
+                                                     PAG::GUI::getInstance().getLightDirectionEdit(),
+                                                     PAG::GUI::getInstance().getLightGammaEdit(),
+                                                     PAG::GUI::getInstance().getLightSEdit());
         }
 
         if(PAG::GUI::getInstance().isDeleteLightPressed()){

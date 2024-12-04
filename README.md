@@ -217,3 +217,113 @@ PAG::Model --* PAG::Material : contiene
 PAG::ShaderProgram --* PAG::ShaderObject : contiene 2
 PAG::Model ..|> Assimp : usa
 ````
+
+## PRÁCTICA 8
+
+En esta práctica se realiza encapsulamiento de las Luces en la nueva clase **PAG::Luz**. Para poder diferenciar el tipo de luces se hace uso de un nuevo enum: *PAG::lightTypes*. El Renderer incluye ahora una lista con todas las luces de la escena, junto a funciones para enviar como uniform los datos de estas. El nuevo shader, *pag08*, contiene 5 implementaciones de la subrutuna *getColor*. Una para el renderizado en modo malla (Color plano) y otras cuatro para cada tipo de luz.
+Ha habido un rediseño de la interfaz, ahora todos los controles se sitúan en una misma ventana con diferentes pestañas para los modelos, las luces, la cámara y el color de fondo.
+
+Entre los atributos de la luz se ecuentran:
+- El tipo de luz, el cual es de tipo *LightTypes*
+- Los colores ambient, diffuse y specular: **ambient, diffuse, specular**.
+- La posición y la dirección: **p, d**
+
+### Instrucciones
+En la pestaña de luces, se pueden añadir nuevas luces o eliminar luces creadas previmente, siempre y cuando haya al menos una luz en la escena. Primero se elige el tipo de luz y sólo se introducen los datos necesarios para el tipo de luz a añadir. Por ejemplo, una luz ambiente solo requiere introducir el color ambiente mientras que una direccional requiere los colores especular, difuso y la dirección.
+
+### Funcionamiento
+El renderer recorre la lista de luces, y para cada luz recorre la lista de modelos. Si el modelo actual está en modo malla llama a la implementación de la subrutina del shader program para aplicar un color plano, sino llama a la subrutina necesaria según el tipo de luz actual.
+
+### UML
+
+````plantuml
+class OpenGL
+class ImGui
+class Assimp
+
+class PAG::Renderer{
+static Renderer* rederer_instance
+glm::vec3 bg_color
+ShaderProgram* shaderProgram
+Camera* camera
+int viewportWidth
+int viewportHeight
+std::vector<std::pair<PAG::Model,GLuint>>* modelList
+std::vector<PAG::Light>* lightList
+}
+class PAG::GUI{
+static GUI* gui_instance;
+        std::string shaderLoadInputText
+        std::stringstream messageBuffer
+        [...]
+}
+class PAG::ShaderProgram{
+ std::string name
+        GLuint idSP
+PAG::ShaderObject* vertexShader
+PAG::ShaderObject* fragmentShader
+}
+class PAG::ShaderObject{
+        GLuint id
+        shaderType type
+}
+class PAG::Camera{
+glm::vec3 u
+        glm::vec3 v
+        glm::vec3 n
+        glm::vec3 Y
+        glm::vec3 cameraPos
+        glm::vec3 lookAtPoint
+        glm::vec3 up
+        float fovY
+        float zNear
+        float zFar
+        float aspectRatio
+}
+class PAG::Model{
+std::string name        
+modelVisualizationTypes modelVisualizationType
+        int vertexCount
+        std::vector<GLfloat> *vertices
+        std::vector<GLuint> *indices
+        std::vector<GLfloat> *normals
+        glm::mat4 modelMatrix
+        GLuint idVAO
+        GLuint idVBO_pos
+        GLuint idVBO_normals
+        GLuint idVBO_materialColors
+        GLuint idIBO
+        Material* material
+}
+class PAG::Material{
+std::string materialName
+        glm::vec3 ambient
+        glm::vec3 diffuse
+        glm::vec3 specular
+        GLfloat exponent
+}
+class PAG::Light{
+std::string lightName;
+        lightTypes lightType
+        glm::vec3 Ia
+        glm::vec3 Id
+        glm::vec3 Is
+        glm::vec3 pos
+        glm::vec3 d
+        float gamma
+        float s
+}
+
+PAG::GUI - PAG::Renderer : se comunican por el main
+PAG::GUI ..> ImGui : usa
+
+PAG::Renderer ..> OpenGL : usa
+PAG::Renderer *-- PAG::ShaderProgram : contiene
+PAG::Renderer *-- PAG::Camera : contiene
+PAG::Renderer *-- PAG::Model : contiene varios
+PAG::Renderer *-- PAG::Light : contiene varias
+PAG::Model *-- PAG::Material : contiene
+
+PAG::ShaderProgram *-- PAG::ShaderObject : contiene 2
+PAG::Model ..> Assimp : usa
+````

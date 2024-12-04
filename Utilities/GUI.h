@@ -68,7 +68,14 @@ namespace PAG {
         int currentLightIndex;
         bool createLightPressed;
         bool deleteLightPressed;
-
+        float lightAmbientColorEdit[3] = {0,0,0};
+        float lightDiffuseColorEdit[3] = {1,1,1};
+        float lightSpecularColorEdit[3] = {1,1,1};
+        glm::vec3 lightPositionEdit = glm::vec3(0,0,0);
+        glm::vec3 lightDirectionEdit = glm::vec3(0,0,0);
+        float lightGammaEdit = 60.0f;
+        float lightSEdit = 1.0f;
+        bool editLightPressed;
     public:
         virtual ~GUI();
         static GUI& getInstance();
@@ -134,6 +141,23 @@ namespace PAG {
         float getLightS() const;
         int getCurrentLightIndex() const;
         void setCurrentLightIndex(int currentLightIndex);
+
+        const float *getLightAmbientColorEdit() const;
+
+        const float *getLightDiffuseColorEdit() const;
+
+        const float *getLightSpecularColorEdit() const;
+
+        const glm::vec3 &getLightPositionEdit() const;
+
+        const glm::vec3 &getLightDirectionEdit() const;
+
+        float getLightGammaEdit() const;
+
+        float getLightSEdit() const;
+
+        bool isEditLightPressed() const;
+
 
         void drawMessageWindow(float posX, float posY, float fontScale);
         void drawControlWindow(float posX, float posY, float fontScale,

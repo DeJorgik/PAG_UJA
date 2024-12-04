@@ -70,10 +70,8 @@ vec4 spotLight ()
   float cosGamma = cos(spotAngle*180.0/PI);
   float spotFactor = 1.0;
 
-  if(dot(-l,d)<cosGamma){
-  spotFactor=0.0;
-  }
-  
+  if(dot(-l,d)<cosGamma){ spotFactor=0.0; }
+
   vec3 n = normalize (normal);
   vec3 v = normalize (-pos);
   vec3 r = reflect(-l,n);
