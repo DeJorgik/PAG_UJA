@@ -229,7 +229,7 @@ Entre los atributos de la luz se ecuentran:
 - La posición y la dirección: **p, d**
 
 ### Instrucciones
-En la pestaña de luces, se pueden añadir nuevas luces o eliminar luces creadas previmente, siempre y cuando haya al menos una luz en la escena. Primero se elige el tipo de luz y sólo se introducen los datos necesarios para el tipo de luz a añadir. Por ejemplo, una luz ambiente solo requiere introducir el color ambiente mientras que una direccional requiere los colores especular, difuso y la dirección.
+En la pestaña de luces, se pueden añadir nuevas luces o editar y eliminar luces creadas previmente, siempre y cuando haya al menos una luz en la escena. Primero se elige el tipo de luz y sólo se introducen los datos necesarios para el tipo de luz a añadir. Por ejemplo, una luz ambiente solo requiere introducir el color ambiente mientras que una direccional requiere los colores especular, difuso y la dirección.
 
 ### Funcionamiento
 El renderer recorre la lista de luces, y para cada luz recorre la lista de modelos. Si el modelo actual está en modo malla llama a la implementación de la subrutina del shader program para aplicar un color plano, sino llama a la subrutina necesaria según el tipo de luz actual.

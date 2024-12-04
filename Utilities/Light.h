@@ -45,13 +45,19 @@ namespace PAG{
         void setS(float s);
 
         void setAmbientLight(std::string _lightName, glm::vec3 _Ia);
+        void setAmbientLight(glm::vec3 _Ia);
 
         void setDirectionLight(std::string _lightName, glm::vec3 _Id, glm::vec3 _Is, glm::vec3 _d);
+        void setDirectionLight(glm::vec3 _Id, glm::vec3 _Is, glm::vec3 _d);
 
         void setPointLight(std::string _lightName, glm::vec3 _Id, glm::vec3 _Is, glm::vec3 _pos);
+        void setPointLight(glm::vec3 _Id, glm::vec3 _Is, glm::vec3 _pos);
 
         void
         setSpotLight(std::string _lightName, glm::vec3 _Id, glm::vec3 _Is, glm::vec3 _pos, glm::vec3 _d, float _gamma,
+                     float _s);
+        void
+        setSpotLight(glm::vec3 _Id, glm::vec3 _Is, glm::vec3 _pos, glm::vec3 _d, float _gamma,
                      float _s);
     };
 
