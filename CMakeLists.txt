@@ -28,6 +28,8 @@ add_executable(PAG_1 glad/src/glad.c
         Utilities/Material.h
         Utilities/Light.cpp
         Utilities/Light.h
+        lodepng/lodepng.h
+        lodepng/lodepng.cpp
 )
 
 target_include_directories(PAG_1 PUBLIC glad/include)

@@ -45,7 +45,6 @@ namespace PAG {
         bool modelMaterialApplyPressed;
         bool modelDeletePressed;
         //Material
-        bool modelVisualizationTypeFillPressed;
         float modelAmbientColor[3] = {0,0,0};
         float modelDiffuseColor[3] = {1,0,0};
         float modelSpecularColor[3] = {1,1,1};
@@ -54,7 +53,6 @@ namespace PAG {
         float modelDiffuseColorTransform[3] = {1,0,0};
         float modelSpecularColorTransform[3] = {1,1,1};
         float modelSpecularExponentTransform = 1.5;
-        bool modelVIsualizationTypeFillPressedTransform;
         //Luces
         int createLightSelectedItem;
         PAG::lightTypes createLightType;
@@ -76,6 +74,10 @@ namespace PAG {
         float lightGammaEdit = 60.0f;
         float lightSEdit = 1.0f;
         bool editLightPressed;
+        //Variable para elegir el tipo de visualización del modelo
+        int createModelVisualizationTypeIndex;
+        int editModelVisualizationTypeIndex;
+
     public:
         virtual ~GUI();
         static GUI& getInstance();
@@ -163,6 +165,8 @@ namespace PAG {
         void drawControlWindow(float posX, float posY, float fontScale,
                                std::vector<std::pair<PAG::Model, GLuint>> *modelList,
                                std::vector<Light> *lightList, float *col,int lightCount);
+
+        modelVisualizationTypes getEditModelVisualizationType() const;
     };
 } // PAG
 

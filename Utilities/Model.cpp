@@ -121,6 +121,45 @@ namespace PAG {
         }
     }
 
+    void Model::loadTexture(std::string filename){
+
+        //Decodificar
+        lodepng::decode (texturePixels,
+                         textureWidth,
+                         textureHeight,
+                         filename);
+
+        //Gestion de errores TODO PONER TMB PA QUE EL FORMATO SEA PNG/JPG
+        /*
+        unsigned error = lodepng::decode (imagen, ancho, alto, rutaDeFichero);
+        if (error)
+        { std::string mensaje = rutaDeFichero + " no se pudo cargar"
+            throw std::runtime_error ( mensaje );
+        }*/
+
+        //variables auxiliares
+        unsigned char *texturePtr = &texturePixels[0];
+        int textureColorComponents = 4;
+        int widthIncrement = textureWidth * textureColorComponents; // Ancho en bytes
+        unsigned char* top = nullptr;
+        unsigned char* bot = nullptr;
+        unsigned char temp = 0;
+
+        //Cargar textura y dar la vuelta
+        for (int i = 0; i < textureHeight / 2; i++){
+            top = texturePtr + i * widthIncrement;
+            bot = texturePtr + (textureHeight - i - 1) * widthIncrement;
+            for (int j = 0; j < widthIncrement; j++){
+                temp = *top;
+                *top = *bot;
+                *bot = temp;
+                ++top;
+                ++bot;
+            }
+        }
+    }
+
+
     /**
      * Aplica una transformación de traslación a la matriz de modelado
      * @param transform
@@ -241,6 +280,30 @@ namespace PAG {
     void Model::setWireframe(bool isWireframe) {
         if(isWireframe) modelVisualizationType = modelVisualizationTypes::WIREFRAME;
         else  modelVisualizationType = modelVisualizationTypes::FILL;
+    }
+
+    const std::vector<unsigned char> &Model::getTexturePixels() const {
+        return texturePixels;
+    }
+
+    void Model::setTexturePixels(const std::vector<unsigned char> &texturePixels) {
+        Model::texturePixels = texturePixels;
+    }
+
+    unsigned int Model::getTextureWidth() const {
+        return textureWidth;
+    }
+
+    void Model::setTextureWidth(unsigned int textureWidth) {
+        Model::textureWidth = textureWidth;
+    }
+
+    unsigned int Model::getTextureHeight() const {
+        return textureHeight;
+    }
+
+    void Model::setTextureHeight(unsigned int textureHeight) {
+        Model::textureHeight = textureHeight;
     }
 
 

@@ -16,12 +16,14 @@
 #include <assimp/postprocess.h>
 #include "Material.h"
 
+#include "../lodepng/lodepng.h"
+
 namespace PAG {
     //Tipo de transformación del modelo
     enum modelTransformType{TRANSLATE,ROTATE,SCALE};
 
     //Tipo de visualización del modelo
-    enum modelVisualizationTypes{WIREFRAME,FILL};
+    enum modelVisualizationTypes{WIREFRAME,FILL,TEXTURED};
 
     class Model {
     private:
@@ -36,11 +38,13 @@ namespace PAG {
         GLuint idVAO = 0;
         GLuint idVBO_pos = 0;
         GLuint idVBO_normals = 0;
-        GLuint idVBO_materialColors = 0; //VBO ENTRELAZADO DE LOS COLORES DEL MATERIAL
-        //GLuint idVBO_textureCoordinates = 0;
+        GLuint idVBO_textureCoordinates = 0;
         GLuint idIBO = 0;
         //PRACTICA 7
         Material* material;
+        //PRACTICA 9
+        std::vector<unsigned char> texturePixels;
+        unsigned textureWidth, textureHeight;
         void drawDefaultTriangle();
     public:
         //Model(); //Crea el modelo del triángulo por defecto
@@ -81,6 +85,17 @@ namespace PAG {
 
         void createMaterial(const glm::vec3 &ambient, const glm::vec3 &diffuse, const glm::vec3 &specular, GLfloat exponent);
         Material *getMaterial() const;
+
+
+
+        const std::vector<unsigned char> &getTexturePixels() const;
+        void setTexturePixels(const std::vector<unsigned char> &texturePixels);
+        unsigned int getTextureWidth() const;
+        void setTextureWidth(unsigned int textureWidth);
+        unsigned int getTextureHeight() const;
+        void setTextureHeight(unsigned int textureHeight);
+
+        void loadTexture(std::string filename);
     };
 } // PAG
 

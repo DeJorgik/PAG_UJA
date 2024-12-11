@@ -271,6 +271,17 @@ namespace PAG {
         lightList->push_back(light);
     }
 
+    /**
+     * Función que carga la textura para un modelo
+     * las texturas se cargan en la carpeta Textures
+     * @param textureName
+     * @param idModel
+     */
+    void Renderer::loadTexture(std::string textureName,int idModel) {
+
+        modelList->at(idModel).first.loadTexture("")
+    }
+
     void Renderer::deleteLight(int lightId){
         if(lightList->size()>1){
             lightList->erase(lightList->begin()+lightId);
@@ -479,13 +490,13 @@ namespace PAG {
     }
 
     void Renderer::processUiModelMaterial(int modelId,
-                                          bool isWireframe,
                                           glm::vec3 modelAmbientTransform,
                                           glm::vec3 modelDiffuseTransform,
                                           glm::vec3 modelSpecularTransform,
-                                          float modelExponentTransform){
+                                          float modelExponentTransform,
+                                          PAG::modelVisualizationTypes modelVisualizationTypes){
         //Cambiar material del modelo
-        modelList->at(modelId).first.setWireframe(!isWireframe);
+        modelList->at(modelId).first.setModelVisualizationType(modelVisualizationTypes);
         modelList->at(modelId).first.getMaterial()->setAmbient(modelAmbientTransform);
         modelList->at(modelId).first.getMaterial()->setDiffuse(modelDiffuseTransform);
         modelList->at(modelId).first.getMaterial()->setSpecular(modelSpecularTransform);

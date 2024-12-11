@@ -31,14 +31,14 @@ namespace PAG {
         modelScale = glm::vec3(1,1,1);
         modelTransformApplyPressed = false;
         modelDeletePressed = false;
-        modelVisualizationTypeFillPressed = true;
-        modelVIsualizationTypeFillPressedTransform = true;
         createLightPressed = false;
         createLightSelectedItem = 0;
         currentLightIndex = 0;
         deleteLightPressed = false;
         modelMaterialApplyPressed = false;
         editLightPressed = false;
+        createModelVisualizationTypeIndex = 0;
+        editModelVisualizationTypeIndex = 0;
     }
 
     GUI::~GUI() {
@@ -102,12 +102,26 @@ namespace PAG {
                     if(ImGui::TreeNode("Model Load")){
                         ImGui::SeparatorText("Shader");
                         ImGui::InputText ( "##", &shaderLoadInputText, ImGuiInputTextFlags_AutoSelectAll );
-                        ImGui::SeparatorText("Material");
-                        ImGui::ColorEdit3("Ambient Color",modelAmbientColor);
-                        ImGui::ColorEdit3("Diffuse Color",modelDiffuseColor);
-                        ImGui::ColorEdit3("Specular Color",modelSpecularColor);
-                        ImGui::InputFloat("Specular Exponent", &modelSpecularExponent);
-                        ImGui::Checkbox("Fill Model",&modelVisualizationTypeFillPressed);
+                        ImGui::SeparatorText("Visualization Type");
+                        ImGui::RadioButton("Texture", &createModelVisualizationTypeIndex, 0); ImGui::SameLine();
+                        ImGui::RadioButton("Material", &createModelVisualizationTypeIndex, 1); ImGui::SameLine();
+                        ImGui::RadioButton("Wireframe", &createModelVisualizationTypeIndex, 2);
+
+                        switch (createModelVisualizationTypeIndex) {
+                            case 0:
+                                ImGui::Text("Poner para cargar");
+                                break;
+                            case 1:
+                                ImGui::SeparatorText("Material");
+                                ImGui::ColorEdit3("Ambient Color",modelAmbientColor);
+                                ImGui::ColorEdit3("Diffuse Color",modelDiffuseColor);
+                                ImGui::ColorEdit3("Specular Color",modelSpecularColor);
+                                ImGui::InputFloat("Specular Exponent", &modelSpecularExponent);
+                                break;
+                            case 2:
+                                break;
+                        }
+
                         ImGui::SeparatorText("Model");
                         if(ImGui::Button("Select Model")){
                             fileBrowserWindow.Open();    //Abrir ventana al pulsar el botón
@@ -168,14 +182,28 @@ namespace PAG {
                             modelScale = glm::vec3(1,1,1);
                         }
 
+                        ImGui::SeparatorText("Visualization Type");
+                        ImGui::RadioButton("Texture", &editModelVisualizationTypeIndex, 0); ImGui::SameLine();
+                        ImGui::RadioButton("Material", &editModelVisualizationTypeIndex, 1); ImGui::SameLine();
+                        ImGui::RadioButton("Wireframe", &editModelVisualizationTypeIndex, 2);
+                        switch (editModelVisualizationTypeIndex) {
+                            case 0:
+                                ImGui::Text("Poner para cargar");
+                                break;
+                            case 1:
+                                ImGui::SeparatorText("Material Edit");
+                                ImGui::ColorEdit3("Ambient Color",modelAmbientColorTransform);
+                                ImGui::ColorEdit3("Diffuse Color",modelDiffuseColorTransform);
+                                ImGui::ColorEdit3("Specular Color",modelSpecularColorTransform);
+                                ImGui::InputFloat("Specular Exponent", &modelSpecularExponentTransform);
+                                break;
+                            case 2:
+                                break;
+                        }
+
                         //Aparte para cambiar material
-                        ImGui::SeparatorText("Material Edit");
-                        ImGui::ColorEdit3("Ambient Color",modelAmbientColorTransform);
-                        ImGui::ColorEdit3("Diffuse Color",modelDiffuseColorTransform);
-                        ImGui::ColorEdit3("Specular Color",modelSpecularColorTransform);
-                        ImGui::InputFloat("Specular Exponent", &modelSpecularExponentTransform);
-                        ImGui::Checkbox("Fill Model",&modelVIsualizationTypeFillPressedTransform);
-                        modelMaterialApplyPressed = ImGui::Button("Apply Material");
+
+                        modelMaterialApplyPressed = ImGui::Button("Apply Visualization Type");
 
                         ImGui::SeparatorText("Model Delete");
                         modelDeletePressed = ImGui::Button("Delete Model");
@@ -187,6 +215,7 @@ namespace PAG {
                 //Control Luces
                 if(ImGui::BeginTabItem("Lights")){
                     if(ImGui::TreeNode("Light Add")){
+                        ImGui::SeparatorText("Create Light");
                         const char* items[] = {"Ambient", "Direction", "Point", "Spot"};
                         ImGui::Combo("Light Type", &createLightSelectedItem, items, 4);
                         switch (createLightSelectedItem) {
@@ -231,6 +260,7 @@ namespace PAG {
                         ImGui::TreePop();
                     }
                     if(ImGui::TreeNode("Light Edit")){
+                        ImGui::SeparatorText("Edit Light");
                         if(ImGui::BeginCombo("Light List",lightList->at(currentLightIndex).getLightName().c_str())){
                             for (int i = 0; i < lightList->size(); ++i) {
                                 bool isSelected = currentLightIndex == i;
@@ -282,10 +312,12 @@ namespace PAG {
                         editLightPressed = ImGui::Button("Apply");
 
                         //Borrar luz
+                        ImGui::SeparatorText("Delete Light");
                         if(lightCount>1) {
                             deleteLightPressed = ImGui::Button("Delete Light");
                         }else{
                             deleteLightPressed = false;
+                            ImGui::Text("There has to be at least one light.");
                         }
                         ImGui::TreePop();
                     }
@@ -484,8 +516,31 @@ namespace PAG {
     }
 
     modelVisualizationTypes GUI::getModelVisualizationType() const {
-        if(modelVisualizationTypeFillPressed) return modelVisualizationTypes::FILL;
-        else return modelVisualizationTypes::WIREFRAME;
+        switch (createModelVisualizationTypeIndex) {
+            case 0:
+                return modelVisualizationTypes::TEXTURED;
+                break;
+            case 1:
+                return modelVisualizationTypes::FILL;
+                break;
+            case 2:
+                return modelVisualizationTypes::WIREFRAME;
+                break;
+        }
+    }
+
+    modelVisualizationTypes GUI::getEditModelVisualizationType() const {
+        switch (editModelVisualizationTypeIndex) {
+            case 0:
+                return modelVisualizationTypes::TEXTURED;
+                break;
+            case 1:
+                return modelVisualizationTypes::FILL;
+                break;
+            case 2:
+                return modelVisualizationTypes::WIREFRAME;
+                break;
+        }
     }
 
     const float *GUI::getModelAmbientColor() const {
@@ -494,10 +549,6 @@ namespace PAG {
 
     const float *GUI::getModelAmbientColorTransform() const {
         return modelAmbientColorTransform;
-    }
-
-    bool GUI::isModelVisualizationTypeFillPressedTransform() const {
-        return modelVIsualizationTypeFillPressedTransform;
     }
 
     bool GUI::isCreateLightPressed() const {

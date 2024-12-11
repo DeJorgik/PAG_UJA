@@ -100,6 +100,18 @@ namespace PAG {
         void processUiLightEdit(int lightId, glm::vec3 Ia, glm::vec3 Is, glm::vec3 Id, glm::vec3 pos, glm::vec3 d,
                                 float gamma,
                                 float s);
+
+        void
+        processUiModelMaterial(int modelId, bool isWireframe, glm::vec3 modelAmbientTransform,
+                               glm::vec3 modelDiffuseTransform,
+                               glm::vec3 modelSpecularTransform, float modelExponentTransform,
+                               modelVisualizationTypes modelVisualizationTypes);
+
+        void processUiModelMaterial(int modelId, glm::vec3 modelAmbientTransform, glm::vec3 modelDiffuseTransform,
+                                    glm::vec3 modelSpecularTransform, float modelExponentTransform,
+                                    modelVisualizationTypes modelVisualizationTypes);
+
+        void loadTexture(std::string textureName, int idModel);
     };
 
 } // PAG

@@ -299,7 +299,6 @@ int main()
         if(PAG::GUI::getInstance().isModelMaterialApplyPressed()){
             PAG::Renderer::getInstance().processUiModelMaterial(
                     PAG::GUI::getInstance().getCurrentModelIndex(),
-                    PAG::GUI::getInstance().isModelVisualizationTypeFillPressedTransform(),
                     glm::vec3(PAG::GUI::getInstance().getModelAmbientColorTransform()[0],
                               PAG::GUI::getInstance().getModelAmbientColorTransform()[1],
                               PAG::GUI::getInstance().getModelAmbientColorTransform()[2]),
@@ -309,7 +308,8 @@ int main()
                     glm::vec3(PAG::GUI::getInstance().getModelSpecularColorTransform()[0],
                               PAG::GUI::getInstance().getModelSpecularColorTransform()[1],
                               PAG::GUI::getInstance().getModelSpecularColorTransform()[2]),
-                    PAG::GUI::getInstance().getModelSpecularExponentTransform());
+                    PAG::GUI::getInstance().getModelSpecularExponentTransform(),
+                    PAG::GUI::getInstance().getEditModelVisualizationType());
         }
 
         //Borrar Modelos
