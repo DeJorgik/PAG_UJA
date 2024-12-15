@@ -7,6 +7,7 @@
 //Datos VS
 in vec3 pos;
 in vec3 normal;
+in vec2 textureCoordinate;
 
 //Reflexión Material
 uniform vec3 Ka;
@@ -14,17 +15,34 @@ uniform vec3 Kd;
 uniform vec3 Ks;
 uniform float exponent; //EL EXPONENTE SPECULAR ES DEL MATERIAL
 
+//Textura
+uniform sampler2D sampler;
+
 //Valores iluminación
 uniform vec3 Ia;
 uniform vec3 Id;
 uniform vec3 Is;
 uniform vec3 lightPos;
-//IMPORTANTE: PASAR LA DIRECCIÓN NORMALIZADA EN COORDENADAS DE VISIÓN
-//VA DESDE EL ORIGEN HACIA LA ESCENA -> preguntar a angel luis
 uniform vec3 lightDir;
 uniform float spotAngle;
 
 out vec4 fragColor;
+
+
+//Una subrutina con dos implementaciones que devuelve el color de la superficie
+//puede ser la del material o la de la textura
+subroutine vec3 getDiffuseColor();
+subroutine uniform getDiffuseColor getDiffuseColorMethod;
+
+subroutine ( getDiffuseColor )
+vec3 materialColor()
+{ return Kd;
+}
+
+subroutine ( getDiffuseColor )
+vec3 textureColor()
+{ return texture(sampler,textureCoordinate).rgb;
+}
 
 //Una subrutina para multiplicar cada tipo de luz
 //una implementación extra para el modo wireframe
@@ -44,7 +62,7 @@ vec4 pointLight ()
   vec3 v = normalize (-pos);
   vec3 r = reflect (-l,n);
 
-  vec3 diffuse = (Id*Kd*max(dot(l,n),0.0));
+  vec3 diffuse = (Id*getDiffuseColorMethod()*max(dot(l,n),0.0));
   vec3 specular = (Is*Ks*pow(max(dot(r,v),0.0),exponent));
   return vec4 (diffuse+specular, 1.0);
 }
@@ -57,7 +75,7 @@ vec4 directionLight ()
   vec3 v = normalize (-pos);
   vec3 r = reflect (-l,n);
 
-  vec3 diffuse = (Id*Kd*max(dot(l,n),0.0));
+  vec3 diffuse = (Id*getDiffuseColorMethod()*max(dot(l,n),0.0));
   vec3 specular = (Is*Ks*pow(max(dot(r,v),0.0),exponent));
   return vec4 ( diffuse+specular, 1.0 );
 }
@@ -76,10 +94,11 @@ vec4 spotLight ()
   vec3 v = normalize (-pos);
   vec3 r = reflect(-l,n);
 
-  vec3 diffuse = (Id*Kd*max(dot(l,n),0.0));
+  vec3 diffuse = (Id*getDiffuseColorMethod()*max(dot(l,n),0.0));
   vec3 specular = (Is*Ks*pow(max(dot(r,v),0.0),exponent));
   return vec4 (spotFactor*(diffuse+specular), 1.0);
 }
+
 
 subroutine ( getColor )
 vec4 wireframe ()

@@ -78,29 +78,38 @@ namespace PAG {
             glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         }
 
-        //Dibujar los modelos de la lista
-        glBindVertexArray(model.first.getIdVao());
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model.first.getIdIbo());
         glUseProgram(model.second); //usar el shader program del modelo
 
-        //Elegir subrutina
-        GLuint subroutineIndex;
+        //Lista de índices de subrutinas
+        //La el primer indice es para la subrutina de color difuso y el segundo para el cálculo de las luces
+        GLuint subroutineIndex[] = {0,0};
+        int indexTexSubroutine = glGetSubroutineUniformLocation(model.second,GL_FRAGMENT_SHADER, "getDiffuseColorMethod");
+        int indexLightSubroutine = glGetSubroutineUniformLocation(model.second,GL_FRAGMENT_SHADER, "getColorMethod");
+
+        //Elegir subrutina de textura
+        if(model.first.getModelVisualizationType()==PAG::modelVisualizationTypes::TEXTURED){
+            subroutineIndex[indexTexSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "textureColor");
+        } else {
+            subroutineIndex[indexTexSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "materialColor");
+        }
+
+        //Elegir subrutina de luz
         switch (model.first.getModelVisualizationType()) {
             case PAG::modelVisualizationTypes::FILL:
                 glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
                 //Dentro del modeo de FILL hay que elegir una de las subrutinas segun el tipo de luz
                 switch (lightList->at(lightId).getLightType()) {
                     case PAG::lightTypes::AMBIENT:
-                        subroutineIndex = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "ambientLight");
+                        subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "ambientLight");
                         break;
                     case PAG::lightTypes::DIRECTION:
-                        subroutineIndex = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "directionLight");
+                        subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "directionLight");
                         break;
                     case PAG::lightTypes::POINT:
-                        subroutineIndex = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "pointLight");
+                        subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "pointLight");
                         break;
                     case PAG::lightTypes::SPOT:
-                        subroutineIndex = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "spotLight");
+                        subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "spotLight");
                         break;
                     default:
                         break;
@@ -108,17 +117,31 @@ namespace PAG {
                 break;
             case PAG::modelVisualizationTypes::WIREFRAME:
                 glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-                subroutineIndex = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "wireframe");
+                subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "wireframe");
                 break;
             default:
                 break;
         }
-        glUniformSubroutinesuiv ( GL_FRAGMENT_SHADER, 1, &subroutineIndex );
+        glUniformSubroutinesuiv ( GL_FRAGMENT_SHADER, 2, subroutineIndex );
 
         setUniformMVandMVP(model.first,model.second); //Enviar MV y MVP al shader
         setUniformLight(lightList->at(lightId),model.second); //Enviar datos de la luz
         setUniformMaterial(*model.first.getMaterial(),model.second);//Enviar datos del material
 
+        //Texturas
+        // Asignamos el muestreador del shader program a la unidad de textura 0
+        GLint samplerPos = glGetUniformLocation ( model.second, "sampler" );
+        glUniform1i ( samplerPos, 0 );
+
+        //Activar unidad de textura si se necesita
+        if(model.first.getModelVisualizationType()==PAG::modelVisualizationTypes::TEXTURED){
+            glActiveTexture ( GL_TEXTURE0 );
+            glBindTexture ( GL_TEXTURE_2D, *model.first.getIdTexture() );
+        }
+
+        //Dibujar los modelos de la lista
+        glBindVertexArray(model.first.getIdVao());
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model.first.getIdIbo());
         glDrawElements(GL_TRIANGLES, model.first.getIndices()->size(), GL_UNSIGNED_INT,
                        nullptr); //dibujar elementos
     }
