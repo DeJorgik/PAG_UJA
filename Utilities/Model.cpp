@@ -14,6 +14,9 @@ namespace PAG {
         vertices = nullptr;
         indices = nullptr;
         normals = nullptr;
+        textureCoodrinates = nullptr;
+        if(idTexture!=0){glDeleteTextures(1,idTexture);} //Destruir textura del modelo
+        idTexture = nullptr;
     }
 
     void Model::drawDefaultTriangle(){
@@ -45,6 +48,8 @@ namespace PAG {
         normals->push_back(0);
         normals->push_back(0);
         normals->push_back(1);
+
+        textureCoodrinates = new std::vector<GLfloat>();
     }
 
     /**
@@ -78,12 +83,16 @@ namespace PAG {
             vertices = new std::vector<GLfloat>();
             indices = new std::vector<GLuint>();
             normals = new std::vector<GLfloat>();
+            textureCoodrinates = new std::vector<GLfloat>();
 
             //Procesar la escena para guardar vertices y normales
             sceneProcess(assimpScene);
 
             //Crear material por defecto
             //createDefaultMaterial();
+
+            //Crear id de textura
+            idTexture = new GLuint();
         }
     }
 
@@ -109,6 +118,15 @@ namespace PAG {
             normals->push_back(normal.x);
             normals->push_back(normal.y);
             normals->push_back(normal.z);
+            //Procesar coordenadas de textura
+            if(mesh->mTextureCoords[0]){ //si hay texturas
+                //auto textureCoordinte = mesh->mTextureCoords[0][i];
+                textureCoodrinates->push_back(mesh->mTextureCoords[0][i].x);
+                textureCoodrinates->push_back(mesh->mTextureCoords[0][i].y);
+            }else{
+                textureCoodrinates->push_back(0);
+                textureCoodrinates->push_back(0);
+            }
         }
 
         //Procesar indices
@@ -124,18 +142,12 @@ namespace PAG {
     void Model::loadTexture(std::string filename){
 
         //Decodificar
-        lodepng::decode (texturePixels,
-                         textureWidth,
-                         textureHeight,
-                         filename);
-
-        //Gestion de errores TODO PONER TMB PA QUE EL FORMATO SEA PNG/JPG
-        /*
-        unsigned error = lodepng::decode (imagen, ancho, alto, rutaDeFichero);
-        if (error)
-        { std::string mensaje = rutaDeFichero + " no se pudo cargar"
-            throw std::runtime_error ( mensaje );
-        }*/
+        unsigned error = lodepng::decode (texturePixels,
+                                          textureWidth,textureHeight,
+                                          "../Textures/"+filename+".png");
+        if (error){
+            throw std::runtime_error("ERROR: ../Textures/"+filename+".png cannot be loaded.");
+        }
 
         //variables auxiliares
         unsigned char *texturePtr = &texturePixels[0];
@@ -226,6 +238,14 @@ namespace PAG {
         return &idVBO_normals;
     }
 
+    GLuint Model::getIdVboTextureCoodrinates() {
+        return idVBO_textureCoordinates;
+    }
+
+    GLuint *Model::getIdVboTextureCoodrinatesPointer() {
+        return &idVBO_textureCoordinates;
+    }
+
     GLuint Model::getIdIbo() {
         return idIBO;
     }
@@ -246,6 +266,11 @@ namespace PAG {
         return arr;
     }
 
+    GLuint *Model::getTextureCoordinatesArray() {
+        auto * arr = new GLuint [textureCoodrinates->size()];
+        std::copy(textureCoodrinates->begin(), textureCoodrinates->end(), arr);
+        return arr;
+    }
 
     GLuint *Model::getIndicesArray() {
         auto * arr = new GLuint [indices->size()];
@@ -304,6 +329,14 @@ namespace PAG {
 
     void Model::setTextureHeight(unsigned int textureHeight) {
         Model::textureHeight = textureHeight;
+    }
+
+    std::vector<GLfloat> *Model::getTextureCoodrinates() const {
+        return textureCoodrinates;
+    }
+
+    GLuint * Model::getIdTexture() const {
+        return idTexture;
     }
 
 

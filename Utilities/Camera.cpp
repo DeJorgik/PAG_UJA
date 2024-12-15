@@ -55,6 +55,16 @@ namespace PAG {
         fovY = zoom;
     }
 
+    void Camera::addZoom(float zoom){
+        fovY += zoom;
+        if(fovY<1){
+            fovY=1;
+        }
+        if(fovY>120){
+            fovY=120;
+        }
+    }
+
     /**
      * Movimiento de PAN: Rotación del punto lookat alrededor del eje v
      * @param angle

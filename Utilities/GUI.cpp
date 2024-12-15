@@ -39,6 +39,12 @@ namespace PAG {
         editLightPressed = false;
         createModelVisualizationTypeIndex = 0;
         editModelVisualizationTypeIndex = 0;
+        textureLoadInputText = "";
+        textureEditLoadInputText = "";
+        controlBgColor = false;
+        controlCameraKey = false;
+        controlCameraMouse = true;
+        controlZoom = false;
     }
 
     GUI::~GUI() {
@@ -101,6 +107,7 @@ namespace PAG {
                 if (ImGui::BeginTabItem("Models")){
                     if(ImGui::TreeNode("Model Load")){
                         ImGui::SeparatorText("Shader");
+                        ImGui::Text("Shaders are stored in the ../Shaders/ folder.");
                         ImGui::InputText ( "##", &shaderLoadInputText, ImGuiInputTextFlags_AutoSelectAll );
                         ImGui::SeparatorText("Visualization Type");
                         ImGui::RadioButton("Texture", &createModelVisualizationTypeIndex, 0); ImGui::SameLine();
@@ -109,7 +116,8 @@ namespace PAG {
 
                         switch (createModelVisualizationTypeIndex) {
                             case 0:
-                                ImGui::Text("Poner para cargar");
+                                ImGui::Text("Textures are stored in the ../Textures/ folder.");
+                                ImGui::InputText ( "###", &textureLoadInputText, ImGuiInputTextFlags_AutoSelectAll );
                                 break;
                             case 1:
                                 ImGui::SeparatorText("Material");
@@ -188,7 +196,8 @@ namespace PAG {
                         ImGui::RadioButton("Wireframe", &editModelVisualizationTypeIndex, 2);
                         switch (editModelVisualizationTypeIndex) {
                             case 0:
-                                ImGui::Text("Poner para cargar");
+                                ImGui::Text("Textures are stored in the ../Textures/ folder.");
+                                ImGui::InputText ( "###", &textureEditLoadInputText, ImGuiInputTextFlags_AutoSelectAll );
                                 break;
                             case 1:
                                 ImGui::SeparatorText("Material Edit");
@@ -386,6 +395,30 @@ namespace PAG {
                 if(ImGui::BeginTabItem("Background")){
                     ImGui::SeparatorText("Background Color");
                     ImGui::ColorPicker3("Current",col,ImGuiColorEditFlags_PickerHueWheel);
+                    ImGui::EndTabItem();
+                }
+
+                //Control por teclaod y ratón
+                if(ImGui::BeginTabItem("Controls")){
+                    ImGui::SeparatorText("Background Color");
+                    ImGui::Checkbox("Background Color Control",&controlBgColor);
+                    ImGui::Text("Use the R,G,B keys to choose each color component.");
+                    ImGui::Text("Use the mouse wheel to change the intensity of that component.");
+
+                    ImGui::SeparatorText("Camera");
+                    ImGui::Checkbox("Camera Zoom Control",&controlZoom);
+                    ImGui::Text("Use the mouse wheel to zoom in and out.");
+                    if(cameraControlSelectedItem==0){
+                        ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255,255,0,255));
+                        ImGui::Text("WARNING: The camera control UI is set to Zoom,so this function does not work currently.");
+                        ImGui::PopStyleColor();
+                    }
+                    ImGui::Checkbox("Camera Direction Control",&controlCameraMouse);
+                    ImGui::Text("Use the mouse left button and drag to move the camera direction.");
+                    ImGui::Checkbox("Camera Position Control",&controlCameraKey);
+                    ImGui::Text("Use the W,A,S,D keys to move in a Dolly pattern.");
+                    ImGui::Text("Use the Q,E keys to move in a Crane pattern.");
+
                     ImGui::EndTabItem();
                 }
 
@@ -657,6 +690,30 @@ namespace PAG {
 
     bool GUI::isEditLightPressed() const {
         return editLightPressed;
+    }
+
+    const std::string &GUI::getTextureLoadInputText() const {
+        return textureLoadInputText;
+    }
+
+    const std::string &GUI::getTextureEditLoadInputText() const {
+        return textureEditLoadInputText;
+    }
+
+    bool GUI::isControlBgColor() const {
+        return controlBgColor;
+    }
+
+    bool GUI::isControlZoom() const {
+        return controlZoom;
+    }
+
+    bool GUI::isControlCameraMouse() const {
+        return controlCameraMouse;
+    }
+
+    bool GUI::isControlCameraKey() const {
+        return controlCameraKey;
     }
 
 

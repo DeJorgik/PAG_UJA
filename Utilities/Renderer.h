@@ -59,8 +59,11 @@ namespace PAG {
         void setUniformMVandMVP(Model model, GLuint IdSp);
         void deleteModel(int modelId);
         void setUniformMaterial(Material material, GLuint IdSp);
-        void createModel(std::string modelName, modelVisualizationTypes modelVisualizationType, const glm::vec3 &ambient,
-                    const glm::vec3 &diffuse, const glm::vec3 &specular, GLfloat exponent);
+        /*void createModel(std::string modelName, modelVisualizationTypes modelVisualizationType, const glm::vec3 &ambient,
+                    const glm::vec3 &diffuse, const glm::vec3 &specular, GLfloat exponent);*/
+        void createModel(std::string modelName, std::string textureName, modelVisualizationTypes modelVisualizationType,
+                         const glm::vec3 &ambient, const glm::vec3 &diffuse, const glm::vec3 &specular,
+                         GLfloat exponent);
         void processUiModelTransform(int modelId, modelTransformType modelTransformType, glm::vec3 modelTranslate,
                                      glm::vec3 modelRotateAxis, float modelRotateAngle, glm::vec3 modelScale,
                                      glm::vec3 modelAmbientTransform,
@@ -112,6 +115,11 @@ namespace PAG {
                                     modelVisualizationTypes modelVisualizationTypes);
 
         void loadTexture(std::string textureName, int idModel);
+
+
+        void processMouseCameraZoom(double yoffset);
+
+        void processKeyCameraMovement(glm::vec3 ammount);
     };
 
 } // PAG

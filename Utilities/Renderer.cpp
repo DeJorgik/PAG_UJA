@@ -29,6 +29,7 @@ namespace PAG {
         }
         //delete &shaderProgram; //destruir shader program
         delete &camera;
+        //Destruir Textiras
     }
 
     Renderer &Renderer::getInstance() {
@@ -161,7 +162,8 @@ namespace PAG {
      * PRACTICA 8
      * ahora tambien se le pasan los atributos de su material
      */
-    void Renderer::createModel(std::string modelName,modelVisualizationTypes modelVisualizationType,
+    void Renderer::createModel(std::string modelName, std::string textureName,
+                               modelVisualizationTypes modelVisualizationType,
                                const glm::vec3 &ambient, const glm::vec3 &diffuse,const glm::vec3 &specular,
                                GLfloat exponent) {
 
@@ -186,6 +188,13 @@ namespace PAG {
         glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),nullptr);
         glEnableVertexAttribArray(1);
 
+        //VBO Coordenadas de Textura
+        glGenBuffers(1, model.getIdVboTextureCoodrinatesPointer());
+        glBindBuffer(GL_ARRAY_BUFFER, model.getIdVboTextureCoodrinates());
+        glBufferData(GL_ARRAY_BUFFER, model.getTextureCoodrinates()->size() * sizeof(GLfloat), model.getTextureCoordinatesArray(), GL_STATIC_DRAW);
+        glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE,2*sizeof(GLfloat),nullptr);
+        glEnableVertexAttribArray(2);
+
         //Generar IBO
         glGenBuffers(1, model.getIdIboPointer());
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,model.getIdIbo());
@@ -204,6 +213,11 @@ namespace PAG {
         //Guarda el shader actual con el modelo
         if(shaderProgram->getIdSp()!=0){ //guarda modelo cuando el shader program no es erróneo
             modelList->emplace_back(model,shaderProgram->getIdSp());
+        }
+
+        //Aplicar textura
+        if(modelVisualizationType==PAG::modelVisualizationTypes::TEXTURED){
+            loadTexture(textureName,modelList->size()-1); //cargar textura
         }
     }
 
@@ -278,8 +292,29 @@ namespace PAG {
      * @param idModel
      */
     void Renderer::loadTexture(std::string textureName,int idModel) {
+        modelList->at(idModel).first.loadTexture(textureName);
 
-        modelList->at(idModel).first.loadTexture("")
+        //Cargar textura en openGL
+        glGenTextures(1,modelList->at(idModel).first.getIdTexture());
+
+        glBindTexture(GL_TEXTURE_2D,*modelList->at(idModel).first.getIdTexture());
+        // Cómo resolver la minificación.
+        glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+        // Cómo resolver la magnificación.
+        glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+        // Cómo pasar de coordenadas de textura a coordenadas en el espacio de la textura en horizontal
+        glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+        // Cómo pasar de coordenadas de textura a coordenadas en el espacio de la textura en vertical
+        glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+        // Transferimos la información de la imagen. En este caso, la imagen está guardada en std::vector<unsigned char> _pixels;
+        glTexImage2D ( GL_TEXTURE_2D, 0, GL_RGBA,
+                       modelList->at(idModel).first.getTextureWidth(),
+                       modelList->at(idModel).first.getTextureHeight(),
+                       0, GL_RGBA, GL_UNSIGNED_BYTE,
+                       (GLvoid*) modelList->at(idModel).first.getTexturePixels().data () );
+
+        //Generar mipmap finalmente
+        glGenerateMipmap( *modelList->at(idModel).first.getIdTexture());
     }
 
     void Renderer::deleteLight(int lightId){
@@ -545,6 +580,20 @@ namespace PAG {
         } else {
             camera->tiltMovement(0);
         }
+    }
+
+    void Renderer::processKeyCameraMovement(glm::vec3 ammount) {
+        camera->dollyCraneMovement(ammount);
+    }
+
+    void Renderer::processMouseCameraZoom(double yoffset) {
+        double ammount=0;
+        if(yoffset>0){
+            ammount=-1;
+        }else if(yoffset<0){
+            ammount=1;
+        }
+        camera->addZoom(ammount);
     }
 
     std::vector<std::pair<PAG::Model, GLuint>> *Renderer::getModelList() const {

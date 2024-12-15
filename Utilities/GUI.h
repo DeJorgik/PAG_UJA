@@ -77,6 +77,14 @@ namespace PAG {
         //Variable para elegir el tipo de visualización del modelo
         int createModelVisualizationTypeIndex;
         int editModelVisualizationTypeIndex;
+        //Texturas
+        std::string textureLoadInputText; //Texto con el nombre del shader
+        std::string textureEditLoadInputText;
+        //Variables para controlar con el ratón y el teclado
+        bool controlBgColor;
+        bool controlZoom;
+        bool controlCameraMouse;
+        bool controlCameraKey;
 
     public:
         virtual ~GUI();
@@ -167,6 +175,18 @@ namespace PAG {
                                std::vector<Light> *lightList, float *col,int lightCount);
 
         modelVisualizationTypes getEditModelVisualizationType() const;
+
+        const std::string &getTextureLoadInputText() const;
+
+        const std::string &getTextureEditLoadInputText() const;
+
+        bool isControlBgColor() const;
+
+        bool isControlZoom() const;
+
+        bool isControlCameraMouse() const;
+
+        bool isControlCameraKey() const;
     };
 } // PAG
 

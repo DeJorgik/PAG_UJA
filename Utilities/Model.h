@@ -33,6 +33,7 @@ namespace PAG {
         std::vector<GLfloat> *vertices;
         std::vector<GLuint> *indices;
         std::vector<GLfloat> *normals;
+        std::vector<GLfloat> *textureCoodrinates;
         glm::mat4 modelMatrix;
         //PAG::modelType modelType;
         GLuint idVAO = 0;
@@ -45,6 +46,7 @@ namespace PAG {
         //PRACTICA 9
         std::vector<unsigned char> texturePixels;
         unsigned textureWidth, textureHeight;
+        GLuint *idTexture = nullptr;
         void drawDefaultTriangle();
     public:
         //Model(); //Crea el modelo del triángulo por defecto
@@ -96,6 +98,16 @@ namespace PAG {
         void setTextureHeight(unsigned int textureHeight);
 
         void loadTexture(std::string filename);
+
+        GLuint *getTextureCoordinatesArray();
+
+        GLuint getIdVboTextureCoodrinates();
+
+        GLuint *getIdVboTextureCoodrinatesPointer();
+
+        std::vector<GLfloat> *getTextureCoodrinates() const;
+
+        GLuint * getIdTexture() const;
     };
 } // PAG
 

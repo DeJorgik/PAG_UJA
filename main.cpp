@@ -10,7 +10,7 @@
 #include "Utilities/GUI.h"
 
 //PRÁCTICA 1: variable global del modo de cambiar de fondo
-//int mode = -1; //Modo, rojo, verde, azul
+int mode = -1; //Modo, rojo, verde, azul
 //PRÁCTICA 2 buffer con el texto que aparecerá por patalla
 
 //PRÁCTICA 5 variables para la dimensión del viewport
@@ -69,7 +69,7 @@ void key_callback(GLFWwindow *window, int key, int action, int mods){
     }
     //PRACTICA 1
     //Elige el modo según la última tecla que toca
-    /*
+
     switch (key) {
         case GLFW_KEY_R:
             mode=0;
@@ -83,7 +83,33 @@ void key_callback(GLFWwindow *window, int key, int action, int mods){
         default:
             mode=-1;
             break;
-    }*/
+    }
+
+    //Control de camara por teclado
+    if(PAG::GUI::getInstance().isControlCameraKey()){
+        switch (key) {
+            case GLFW_KEY_W:
+                PAG::Renderer::getInstance().processKeyCameraMovement(glm::vec3(0,0,0.1));
+                break;
+            case GLFW_KEY_A:
+                PAG::Renderer::getInstance().processKeyCameraMovement(glm::vec3(0.1,0,0));
+                break;
+            case GLFW_KEY_S:
+                PAG::Renderer::getInstance().processKeyCameraMovement(glm::vec3(0,0,-0.1));
+                break;
+            case GLFW_KEY_D:
+                PAG::Renderer::getInstance().processKeyCameraMovement(glm::vec3(-0.1,0,0));
+                break;
+            case GLFW_KEY_Q:
+                PAG::Renderer::getInstance().processKeyCameraMovement(glm::vec3(0,0.1,0));
+                break;
+            case GLFW_KEY_E:
+                PAG::Renderer::getInstance().processKeyCameraMovement(glm::vec3(0,-0.1,0));
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 /**
@@ -114,7 +140,7 @@ void mouse_callback(GLFWwindow *window, int button, int action, int mods){
  */
 void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
-    if(mouseCameraCtr){
+    if(mouseCameraCtr && PAG::GUI::getInstance().isControlCameraMouse()){ //funciona si está seleccionado
 
         //Diferencia de posiciones
         double diffX = xpos-mousePosX;
@@ -134,15 +160,15 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
  * @param yoffset
  */
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset){
-    /*
-    buffer << "SCROLL CALLBACK X POS: " << xoffset
-              << "  Y POS: " << yoffset << std::endl;
     //PRACTICA 1
     //Depende de la tecla pulsada cambia un valor u otro
-    /*if (mode!=-1){
+    if (mode!=-1 && PAG::GUI::getInstance().isControlBgColor()){
         PAG::Renderer::getInstance().addBgColor(mode,yoffset);//Suma el yoffset actual para que sea gradual
         glfwSwapBuffers(window);
-    }*/
+    }
+    if (PAG::GUI::getInstance().isControlZoom()){
+        PAG::Renderer::getInstance().processMouseCameraZoom(yoffset);
+    }
 }
 
 
@@ -218,7 +244,7 @@ int main()
         PAG::GUI::getInstance().messageBufferAdd( e.what());
     }
 
-    PAG::Renderer::getInstance().createModel("",PAG::modelVisualizationTypes::FILL,glm::vec3(1,0,0),glm::vec3(1,0,0),glm::vec3(1,0,0),1);
+    PAG::Renderer::getInstance().createModel("","",PAG::modelVisualizationTypes::FILL,glm::vec3(1,0,0),glm::vec3(1,0,0),glm::vec3(1,0,0),1);
 
     //Crear luz ambiente por defecto
     PAG::Renderer::getInstance().createLight(PAG::lightTypes::AMBIENT,
@@ -264,24 +290,39 @@ int main()
                     }catch (const std::exception& e){ //capturar excepción en caso de error
                         PAG::GUI::getInstance().messageBufferAdd(e.what());
                     }
-                    //Crear modelo (con el material)
-                    PAG::Renderer::getInstance().createModel(PAG::GUI::getInstance().getFileBrowserWindow().GetSelected().string(),
-                                                             PAG::GUI::getInstance().getModelVisualizationType(),
-                                                             glm::vec3 (PAG::GUI::getInstance().getModelAmbientColor()[0],
-                                                                        PAG::GUI::getInstance().getModelAmbientColor()[1],
-                                                                        PAG::GUI::getInstance().getModelAmbientColor()[2]),
-                                                             glm::vec3 (PAG::GUI::getInstance().getModelDiffuseColor()[0],
-                                                                        PAG::GUI::getInstance().getModelDiffuseColor()[1],
-                                                                        PAG::GUI::getInstance().getModelDiffuseColor()[2]),
-                                                             glm::vec3 (PAG::GUI::getInstance().getModelSpecularColor()[0],
-                                                                        PAG::GUI::getInstance().getModelSpecularColor()[1],
-                                                                        PAG::GUI::getInstance().getModelSpecularColor()[2]),
-                                                             PAG::GUI::getInstance().getModelSpecularExponent());
-                } else{
+                    //Crear modelo
+                    //mensaje de error de textura
+                    if(PAG::GUI::getInstance().getModelVisualizationType()==PAG::modelVisualizationTypes::TEXTURED
+                    &&PAG::GUI::getInstance().getTextureLoadInputText()==""){
+                        PAG::GUI::getInstance().messageBufferAdd("ERROR: No texture selected.");
+                    }
+
+                    if((PAG::GUI::getInstance().getModelVisualizationType()==PAG::modelVisualizationTypes::TEXTURED
+                        &&PAG::GUI::getInstance().getTextureLoadInputText()!="")
+                       ||(PAG::GUI::getInstance().getModelVisualizationType()!=PAG::modelVisualizationTypes::TEXTURED)){
+                        PAG::Renderer::getInstance().createModel(PAG::GUI::getInstance().getFileBrowserWindow().GetSelected().string(),
+                                                                 PAG::GUI::getInstance().getTextureLoadInputText(),
+                                                                 PAG::GUI::getInstance().getModelVisualizationType(),
+                                                                 glm::vec3 (PAG::GUI::getInstance().getModelAmbientColor()[0],
+                                                                            PAG::GUI::getInstance().getModelAmbientColor()[1],
+                                                                            PAG::GUI::getInstance().getModelAmbientColor()[2]),
+                                                                 glm::vec3 (PAG::GUI::getInstance().getModelDiffuseColor()[0],
+                                                                            PAG::GUI::getInstance().getModelDiffuseColor()[1],
+                                                                            PAG::GUI::getInstance().getModelDiffuseColor()[2]),
+                                                                 glm::vec3 (PAG::GUI::getInstance().getModelSpecularColor()[0],
+                                                                            PAG::GUI::getInstance().getModelSpecularColor()[1],
+                                                                            PAG::GUI::getInstance().getModelSpecularColor()[2]),
+                                                                 PAG::GUI::getInstance().getModelSpecularExponent());
+
+                    }
+
+                } else {
                     PAG::GUI::getInstance().messageBufferAdd("ERROR: No shader selected.");
                 }
-            } else{
-                PAG::GUI::getInstance().messageBufferAdd("ERROR: Unsupported format.");
+            }
+            else
+            {
+                PAG::GUI::getInstance().messageBufferAdd("ERROR: Unsupported model format.");
             }
             PAG::GUI::getInstance().clearModelLoader();
         }
@@ -310,6 +351,19 @@ int main()
                               PAG::GUI::getInstance().getModelSpecularColorTransform()[2]),
                     PAG::GUI::getInstance().getModelSpecularExponentTransform(),
                     PAG::GUI::getInstance().getEditModelVisualizationType());
+
+            if(PAG::GUI::getInstance().getEditModelVisualizationType()==PAG::modelVisualizationTypes::TEXTURED){
+                if (PAG::GUI::getInstance().getTextureEditLoadInputText() !=""){
+                    try {
+                        PAG::Renderer::getInstance().loadTexture(PAG::GUI::getInstance().getTextureEditLoadInputText(),
+                                                                 PAG::GUI::getInstance().getCurrentModelIndex()); //Añadir textura al último
+                    } catch (const std::exception& e) {
+                        PAG::GUI::getInstance().messageBufferAdd(e.what());
+                    }
+                } else{
+                    PAG::GUI::getInstance().messageBufferAdd("ERROR: No texture selected.");
+                }
+            }
         }
 
         //Borrar Modelos
