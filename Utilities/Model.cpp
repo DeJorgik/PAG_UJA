@@ -266,8 +266,8 @@ namespace PAG {
         return arr;
     }
 
-    GLuint *Model::getTextureCoordinatesArray() {
-        auto * arr = new GLuint [textureCoodrinates->size()];
+    GLfloat *Model::getTextureCoordinatesArray() {
+        auto * arr = new GLfloat [textureCoodrinates->size()];
         std::copy(textureCoodrinates->begin(), textureCoodrinates->end(), arr);
         return arr;
     }

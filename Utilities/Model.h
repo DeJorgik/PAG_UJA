@@ -99,7 +99,7 @@ namespace PAG {
 
         void loadTexture(std::string filename);
 
-        GLuint *getTextureCoordinatesArray();
+        GLfloat * getTextureCoordinatesArray();
 
         GLuint getIdVboTextureCoodrinates();
 

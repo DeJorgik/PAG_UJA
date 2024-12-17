@@ -41,7 +41,7 @@ vec3 materialColor()
 
 subroutine ( getDiffuseColor )
 vec3 textureColor()
-{ return texture(sampler,textureCoordinate).rgb;
+{ return texture2D(sampler,textureCoordinate.xy).rgb;
 }
 
 //Una subrutina para multiplicar cada tipo de luz
@@ -106,5 +106,5 @@ vec4 wireframe ()
 }
 
 void main ()
-{ fragColor = getColorMethod();
+{ fragColor = vec4(texture(sampler,textureCoordinate.xy).rgb,1.0);
 }

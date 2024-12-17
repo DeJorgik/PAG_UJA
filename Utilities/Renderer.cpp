@@ -334,10 +334,10 @@ namespace PAG {
                        modelList->at(idModel).first.getTextureWidth(),
                        modelList->at(idModel).first.getTextureHeight(),
                        0, GL_RGBA, GL_UNSIGNED_BYTE,
-                       (GLvoid*) modelList->at(idModel).first.getTexturePixels().data () );
+                       modelList->at(idModel).first.getTexturePixels().data());
 
         //Generar mipmap finalmente
-        glGenerateMipmap( *modelList->at(idModel).first.getIdTexture());
+        glGenerateMipmap( GL_TEXTURE_2D);
     }
 
     void Renderer::deleteLight(int lightId){

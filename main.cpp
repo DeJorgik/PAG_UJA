@@ -244,11 +244,19 @@ int main()
         PAG::GUI::getInstance().messageBufferAdd( e.what());
     }
 
-    PAG::Renderer::getInstance().createModel("","",PAG::modelVisualizationTypes::FILL,glm::vec3(1,0,0),glm::vec3(1,0,0),glm::vec3(1,0,0),1);
+//PAG::Renderer::getInstance().createModel("","",PAG::modelVisualizationTypes::FILL,glm::vec3(1,0,0),glm::vec3(1,0,0),glm::vec3(1,0,0),1);
 
-    //Crear luz ambiente por defecto
+    //Crear luz ambiente y puntual por defecto
     PAG::Renderer::getInstance().createLight(PAG::lightTypes::AMBIENT,
                                              glm::vec3(0.5,0.5,0.5),
+                                             glm::vec3(1,1,1),
+                                             glm::vec3(1,1,1),
+                                             glm::vec3(1,1,1),
+                                             glm::vec3(0,0,0),
+                                             1.0f,
+                                             1.0f);
+    PAG::Renderer::getInstance().createLight(PAG::lightTypes::POINT,
+                                             glm::vec3(1,1,1),
                                              glm::vec3(1,1,1),
                                              glm::vec3(1,1,1),
                                              glm::vec3(1,1,1),
