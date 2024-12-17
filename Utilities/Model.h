@@ -44,6 +44,7 @@ namespace PAG {
         //PRACTICA 7
         Material* material;
         //PRACTICA 9
+        std::string textureName = "";
         std::vector<unsigned char> texturePixels;
         unsigned textureWidth, textureHeight;
         GLuint *idTexture = nullptr;

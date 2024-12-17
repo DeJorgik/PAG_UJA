@@ -118,6 +118,8 @@ namespace PAG {
                             case 0:
                                 ImGui::Text("Textures are stored in the ../Textures/ folder.");
                                 ImGui::InputText ( "###", &textureLoadInputText, ImGuiInputTextFlags_AutoSelectAll );
+                                ImGui::ColorEdit3("Specular Color",modelSpecularColor);
+                                ImGui::InputFloat("Specular Exponent", &modelSpecularExponent);
                                 break;
                             case 1:
                                 ImGui::SeparatorText("Material");
@@ -198,6 +200,8 @@ namespace PAG {
                             case 0:
                                 ImGui::Text("Textures are stored in the ../Textures/ folder.");
                                 ImGui::InputText ( "###", &textureEditLoadInputText, ImGuiInputTextFlags_AutoSelectAll );
+                                ImGui::ColorEdit3("Specular Color",modelSpecularColorTransform);
+                                ImGui::InputFloat("Specular Exponent", &modelSpecularExponentTransform);
                                 break;
                             case 1:
                                 ImGui::SeparatorText("Material Edit");

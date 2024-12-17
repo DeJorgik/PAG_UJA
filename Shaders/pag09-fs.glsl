@@ -106,5 +106,5 @@ vec4 wireframe ()
 }
 
 void main ()
-{ fragColor = vec4(texture(sampler,textureCoordinate.xy).rgb,1.0);
+{ fragColor = getColorMethod();
 }

@@ -15,7 +15,7 @@ namespace PAG {
         indices = nullptr;
         normals = nullptr;
         textureCoodrinates = nullptr;
-        if(idTexture!=0){glDeleteTextures(1,idTexture);} //Destruir textura del modelo
+        //if(idTexture!=0){glDeleteTextures(1,idTexture);} //Destruir textura del modelo
         idTexture = nullptr;
     }
 
@@ -141,33 +141,58 @@ namespace PAG {
 
     void Model::loadTexture(std::string filename){
 
-        //Decodificar
-        unsigned error = lodepng::decode (texturePixels,
-                                          textureWidth,textureHeight,
-                                          "../Textures/"+filename+".png");
-        if (error){
-            throw std::runtime_error("ERROR: ../Textures/"+filename+".png cannot be loaded.");
-        }
-
-        //variables auxiliares
-        unsigned char *texturePtr = &texturePixels[0];
-        int textureColorComponents = 4;
-        int widthIncrement = textureWidth * textureColorComponents; // Ancho en bytes
-        unsigned char* top = nullptr;
-        unsigned char* bot = nullptr;
-        unsigned char temp = 0;
-
-        //Cargar textura y dar la vuelta
-        for (int i = 0; i < textureHeight / 2; i++){
-            top = texturePtr + i * widthIncrement;
-            bot = texturePtr + (textureHeight - i - 1) * widthIncrement;
-            for (int j = 0; j < widthIncrement; j++){
-                temp = *top;
-                *top = *bot;
-                *bot = temp;
-                ++top;
-                ++bot;
+        if(filename!=textureName){
+            textureName = filename;
+            //Decodificar
+            unsigned error = lodepng::decode (texturePixels,
+                                              textureWidth,textureHeight,
+                                              "../Textures/"+filename+".png");
+            if (error){
+                throw std::runtime_error("ERROR: ../Textures/"+filename+".png cannot be loaded.");
             }
+
+            //variables auxiliares
+            unsigned char *texturePtr = &texturePixels[0];
+            int textureColorComponents = 4;
+            int widthIncrement = textureWidth * textureColorComponents; // Ancho en bytes
+            unsigned char* top = nullptr;
+            unsigned char* bot = nullptr;
+            unsigned char temp = 0;
+
+            //Cargar textura y dar la vuelta
+            for (int i = 0; i < textureHeight / 2; i++){
+                top = texturePtr + i * widthIncrement;
+                bot = texturePtr + (textureHeight - i - 1) * widthIncrement;
+                for (int j = 0; j < widthIncrement; j++){
+                    temp = *top;
+                    *top = *bot;
+                    *bot = temp;
+                    ++top;
+                    ++bot;
+                }
+            }
+
+            //Cargar textura en openGL
+            glGenTextures(1,idTexture);
+
+            glBindTexture(GL_TEXTURE_2D,*idTexture);
+            // Cómo resolver la minificación.
+            glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+            // Cómo resolver la magnificación.
+            glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+            // Cómo pasar de coordenadas de textura a coordenadas en el espacio de la textura en horizontal
+            glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+            // Cómo pasar de coordenadas de textura a coordenadas en el espacio de la textura en vertical
+            glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+            // Transferimos la información de la imagen. En este caso, la imagen está guardada en std::vector<unsigned char> _pixels;
+            glTexImage2D ( GL_TEXTURE_2D, 0, GL_RGBA,
+                           textureWidth,
+                           textureHeight,
+                           0, GL_RGBA, GL_UNSIGNED_BYTE,
+                           texturePixels.data());
+
+            //Generar mipmap finalmente
+            glGenerateMipmap( GL_TEXTURE_2D);
         }
     }
 

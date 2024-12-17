@@ -28,7 +28,7 @@ namespace PAG {
             delete &model;
         }
         //delete &shaderProgram; //destruir shader program
-        delete &camera;
+        delete camera;
         //Destruir Textiras
     }
 
@@ -65,6 +65,7 @@ namespace PAG {
             }
         }
     }
+    //TODO: QUE NO SE PUEDE PASAR MAS DE UNA LUZ AMBIENTE
 
     /**
      * Función para dibujar el modelo con su shaderprogram correspondiente
@@ -94,34 +95,30 @@ namespace PAG {
         }
 
         //Elegir subrutina de luz
-        switch (model.first.getModelVisualizationType()) {
-            case PAG::modelVisualizationTypes::FILL:
-                glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-                //Dentro del modeo de FILL hay que elegir una de las subrutinas segun el tipo de luz
-                switch (lightList->at(lightId).getLightType()) {
-                    case PAG::lightTypes::AMBIENT:
-                        subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "ambientLight");
-                        break;
-                    case PAG::lightTypes::DIRECTION:
-                        subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "directionLight");
-                        break;
-                    case PAG::lightTypes::POINT:
-                        subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "pointLight");
-                        break;
-                    case PAG::lightTypes::SPOT:
-                        subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "spotLight");
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case PAG::modelVisualizationTypes::WIREFRAME:
-                glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-                subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "wireframe");
-                break;
-            default:
-                break;
+        if(model.first.getModelVisualizationType()!=PAG::modelVisualizationTypes::WIREFRAME){
+            glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+            //Dentro del modo de FILL hay que elegir una de las subrutinas segun el tipo de luz
+            switch (lightList->at(lightId).getLightType()) {
+                case PAG::lightTypes::AMBIENT:
+                    subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "ambientLight");
+                    break;
+                case PAG::lightTypes::DIRECTION:
+                    subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "directionLight");
+                    break;
+                case PAG::lightTypes::POINT:
+                    subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "pointLight");
+                    break;
+                case PAG::lightTypes::SPOT:
+                    subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "spotLight");
+                    break;
+                default:
+                    break;
+            }
+        } else{
+            glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+            subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "wireframe");
         }
+
         glUniformSubroutinesuiv ( GL_FRAGMENT_SHADER, 2, subroutineIndex );
 
         setUniformMVandMVP(model.first,model.second); //Enviar MV y MVP al shader
@@ -240,9 +237,11 @@ namespace PAG {
 
         //Aplicar textura
         if(modelVisualizationType==PAG::modelVisualizationTypes::TEXTURED){
-            loadTexture(textureName,modelList->size()-1); //cargar textura
+            model.loadTexture(textureName); //cargar textura
         }
     }
+
+
 
     /**
      * Función que borra un modelo de la lista
@@ -306,38 +305,6 @@ namespace PAG {
         }
 
         lightList->push_back(light);
-    }
-
-    /**
-     * Función que carga la textura para un modelo
-     * las texturas se cargan en la carpeta Textures
-     * @param textureName
-     * @param idModel
-     */
-    void Renderer::loadTexture(std::string textureName,int idModel) {
-        modelList->at(idModel).first.loadTexture(textureName);
-
-        //Cargar textura en openGL
-        glGenTextures(1,modelList->at(idModel).first.getIdTexture());
-
-        glBindTexture(GL_TEXTURE_2D,*modelList->at(idModel).first.getIdTexture());
-        // Cómo resolver la minificación.
-        glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
-        // Cómo resolver la magnificación.
-        glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR );
-        // Cómo pasar de coordenadas de textura a coordenadas en el espacio de la textura en horizontal
-        glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
-        // Cómo pasar de coordenadas de textura a coordenadas en el espacio de la textura en vertical
-        glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
-        // Transferimos la información de la imagen. En este caso, la imagen está guardada en std::vector<unsigned char> _pixels;
-        glTexImage2D ( GL_TEXTURE_2D, 0, GL_RGBA,
-                       modelList->at(idModel).first.getTextureWidth(),
-                       modelList->at(idModel).first.getTextureHeight(),
-                       0, GL_RGBA, GL_UNSIGNED_BYTE,
-                       modelList->at(idModel).first.getTexturePixels().data());
-
-        //Generar mipmap finalmente
-        glGenerateMipmap( GL_TEXTURE_2D);
     }
 
     void Renderer::deleteLight(int lightId){
@@ -625,6 +592,10 @@ namespace PAG {
 
     std::vector<PAG::Light> *Renderer::getLightList() const {
         return lightList;
+    }
+
+    void Renderer::loadTexture(std::string textureName, int idModel) {
+        modelList->at(idModel).first.loadTexture(textureName);
     }
 
 
