@@ -13,7 +13,7 @@ namespace PAG{
     }
 
     ShaderObject::~ShaderObject() {
-        if (id!=0){glDeleteShader(id);}
+        //if (id!=0){glDeleteShader(id);}
     }
 
     /**

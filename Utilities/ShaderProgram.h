@@ -26,6 +26,11 @@ namespace PAG{
 
         const std::string &getName() const;
 
+        ShaderObject *getVertexShader() const;
+
+        ShaderObject *getFragmentShader() const;
+
+        void deleteShaderProgram();
     private:
         void shaderProgramCompileErrorExceptionLauncher(GLuint shaderProgramId);
     };

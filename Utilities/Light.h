@@ -28,21 +28,12 @@ namespace PAG{
         const std::string &getLightName() const;
         void setLightName(const std::string &lightName);
         lightTypes getLightType() const;
-        void setLightType(lightTypes lightType);
         const glm::vec3 &getIa() const;
-        void setIa(const glm::vec3 &ia);
         const glm::vec3 &getId() const;
-        void setId(const glm::vec3 &id);
         const glm::vec3 &getIs() const;
-        void setIs(const glm::vec3 &is);
         const glm::vec3 &getPos() const;
-        void setPos(const glm::vec3 &pos);
         const glm::vec3 &getD() const;
-        void setD(const glm::vec3 &d);
         float getGamma() const;
-        void setGamma(float gamma);
-        float getS() const;
-        void setS(float s);
 
         void setAmbientLight(std::string _lightName, glm::vec3 _Ia);
         void setAmbientLight(glm::vec3 _Ia);

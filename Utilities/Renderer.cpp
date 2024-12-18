@@ -15,21 +15,19 @@ namespace PAG {
         bg_color.y = 0.5f;
         bg_color.z = 0.5f;
         //Inicializa la camara
-        //TODO poner bien
         camera = new Camera(glm::vec3(5,5,5),glm::vec3(0,0,0),glm::vec3(0,1,0),
                             60.f,0.5f,100.f,viewportWidth/viewportHeight,glm::vec3(0,1,0));
-        modelList = new std::vector<std::pair<PAG::Model,GLuint>>();
+        modelList = new std::vector<std::pair<PAG::Model,PAG::ShaderProgram>>();
         lightList = new std::vector<PAG::Light>();
     }
 
     Renderer::~Renderer() {
         //Destruir modelos
-        for (auto &model:*modelList) {
-            delete &model;
+        for (int i = 0; i<modelList->size() ;i++) {
+            deleteModel(i);
         }
-        //delete &shaderProgram; //destruir shader program
+        //Destuir Cámaras
         delete camera;
-        //Destruir Textiras
     }
 
     Renderer &Renderer::getInstance() {
@@ -59,7 +57,7 @@ namespace PAG {
                     for (auto &model:*modelList) {
                         //Recorre lista de modelos, usando el par modelo/id
                         //first es model, second es el int del shader program
-                        drawModel(model,i);
+                        drawModel(&model,i);
                     }
                 }
             }
@@ -70,7 +68,7 @@ namespace PAG {
     /**
      * Función para dibujar el modelo con su shaderprogram correspondiente
      */
-    void Renderer::drawModel(std::pair<PAG::Model,GLuint> model, int lightId){
+    void Renderer::drawModel(std::pair<PAG::Model,PAG::ShaderProgram> *modelPair, int lightId){
         //Activar para cada luz
         if(lightId==0){
             //primera luz
@@ -79,67 +77,67 @@ namespace PAG {
             glBlendFunc(GL_SRC_ALPHA, GL_ONE);
         }
 
-        glUseProgram(model.second); //usar el shader program del modelo
+        glUseProgram(modelPair->second.getIdSp()); //usar el shader program del modelo
 
         //Lista de índices de subrutinas
         //La el primer indice es para la subrutina de color difuso y el segundo para el cálculo de las luces
         GLuint subroutineIndex[] = {0,0};
-        int indexTexSubroutine = glGetSubroutineUniformLocation(model.second,GL_FRAGMENT_SHADER, "getDiffuseColorMethod");
-        int indexLightSubroutine = glGetSubroutineUniformLocation(model.second,GL_FRAGMENT_SHADER, "getColorMethod");
+        int indexTexSubroutine = glGetSubroutineUniformLocation(modelPair->second.getIdSp(),GL_FRAGMENT_SHADER, "getDiffuseColorMethod");
+        int indexLightSubroutine = glGetSubroutineUniformLocation(modelPair->second.getIdSp(),GL_FRAGMENT_SHADER, "getColorMethod");
 
         //Elegir subrutina de textura
-        if(model.first.getModelVisualizationType()==PAG::modelVisualizationTypes::TEXTURED){
-            subroutineIndex[indexTexSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "textureColor");
+        if(modelPair->first.getModelVisualizationType()==PAG::modelVisualizationTypes::TEXTURED){
+            subroutineIndex[indexTexSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "textureColor");
         } else {
-            subroutineIndex[indexTexSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "materialColor");
+            subroutineIndex[indexTexSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "materialColor");
         }
 
         //Elegir subrutina de luz
-        if(model.first.getModelVisualizationType()!=PAG::modelVisualizationTypes::WIREFRAME){
+        if(modelPair->first.getModelVisualizationType()!=PAG::modelVisualizationTypes::WIREFRAME){
             glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
             //Dentro del modo de FILL hay que elegir una de las subrutinas segun el tipo de luz
             switch (lightList->at(lightId).getLightType()) {
                 case PAG::lightTypes::AMBIENT:
-                    subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "ambientLight");
+                    subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "ambientLight");
                     break;
                 case PAG::lightTypes::DIRECTION:
-                    subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "directionLight");
+                    subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "directionLight");
                     break;
                 case PAG::lightTypes::POINT:
-                    subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "pointLight");
+                    subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "pointLight");
                     break;
                 case PAG::lightTypes::SPOT:
-                    subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "spotLight");
+                    subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "spotLight");
                     break;
                 default:
                     break;
             }
         } else{
             glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-            subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(model.second, GL_FRAGMENT_SHADER, "wireframe");
+            subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "wireframe");
         }
 
         glUniformSubroutinesuiv ( GL_FRAGMENT_SHADER, 2, subroutineIndex );
 
-        setUniformMVandMVP(model.first,model.second); //Enviar MV y MVP al shader
-        setUniformLight(lightList->at(lightId),model.second); //Enviar datos de la luz
-        setUniformMaterial(*model.first.getMaterial(),model.second);//Enviar datos del material
+        setUniformMVandMVP(&modelPair->first,modelPair->second.getIdSp()); //Enviar MV y MVP al shader
+        setUniformLight(&lightList->at(lightId),modelPair->second.getIdSp()); //Enviar datos de la luz
+        setUniformMaterial(modelPair->first.getMaterial(),modelPair->second.getIdSp());//Enviar datos del material
 
         //Texturas
         // Asignamos el muestreador del shader program a la unidad de textura 0
-        GLint samplerPos = glGetUniformLocation ( model.second, "sampler" );
+        GLint samplerPos = glGetUniformLocation ( modelPair->second.getIdSp(), "sampler" );
         glUniform1i ( samplerPos, 0 );
 
         //Activar unidad de textura si se necesita
-        if(model.first.getModelVisualizationType()==PAG::modelVisualizationTypes::TEXTURED){
+        if(modelPair->first.getModelVisualizationType()==PAG::modelVisualizationTypes::TEXTURED){
             glActiveTexture ( GL_TEXTURE0 );
-            glBindTexture ( GL_TEXTURE_2D, *model.first.getIdTexture() );
+            glBindTexture ( GL_TEXTURE_2D, *modelPair->first.getIdTexture() );
         }
 
         //Dibujar los modelos de la lista
-        glBindVertexArray(model.first.getIdVao());
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, model.first.getIdIbo());
-        glDrawElements(GL_TRIANGLES, model.first.getIndices()->size(), GL_UNSIGNED_INT,
+        glBindVertexArray(modelPair->first.getIdVao());
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, modelPair->first.getIdIbo());
+        glDrawElements(GL_TRIANGLES, modelPair->first.getIndices()->size(), GL_UNSIGNED_INT,
                        nullptr); //dibujar elementos
     }
 
@@ -151,17 +149,8 @@ namespace PAG {
         glClearColor(bg_color[0],bg_color[1],bg_color[2],1.0f);
     }
 
-    float Renderer::getBgColor(int color_id) {
-        return bg_color[color_id];
-    }
-
     glm::vec3* Renderer::getBgColor() {
         return &bg_color;
-    }
-
-    void Renderer::setBgColor(int color_id, float value) {
-        bg_color[color_id] = value;
-        updateBgColor();
     }
 
     void Renderer::addBgColor(int color_id, double increment) {
@@ -177,51 +166,28 @@ namespace PAG {
         updateBgColor();
     }
 
-    /**Función que crea un modelo, crea el triangulo por defecto si no
-     * se le pasa nombre
-     * PRACTICA 8
-     * ahora tambien se le pasan los atributos de su material
+    /**
+     * Función que crea un modelo y su shader program asociado
+     * Crea el triangulo por defecto si nose le pasa nombre de modelo
      */
-    void Renderer::createModel(std::string modelName, std::string textureName,
+    void Renderer::createModelPair(std::string shaderProgramName,
+                               std::string modelName, std::string textureName,
                                modelVisualizationTypes modelVisualizationType,
                                const glm::vec3 &ambient, const glm::vec3 &diffuse,const glm::vec3 &specular,
                                GLfloat exponent) {
 
+        //Crear Shader Program
+        PAG::ShaderProgram shaderProgram = PAG::ShaderProgram();
+        shaderProgram.createShaderProgram(shaderProgramName);
+
         PAG::Model model = PAG::Model(modelName,modelVisualizationType); //crear modelo
         model.createMaterial(ambient,diffuse,specular,exponent); //crear y aplicar material
 
-        //Generar VAO
-        glGenVertexArrays (1, model.getIdVaoPointer());
-        glBindVertexArray(model.getIdVao());
-
-        //VBO posición
-        glGenBuffers(1, model.getIdVboPosPointer());
-        glBindBuffer(GL_ARRAY_BUFFER,model.getIdVboPos());
-        glBufferData(GL_ARRAY_BUFFER,model.getVertices()->size()*sizeof(GLfloat),model.getVerticesArray(),GL_STATIC_DRAW);
-        glVertexAttribPointer(0,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),nullptr);
-        glEnableVertexAttribArray(0);
-
-        //VBO Normales
-        glGenBuffers(1, model.getIdVboNormalsPointer());
-        glBindBuffer(GL_ARRAY_BUFFER, model.getIdVboNormals());
-        glBufferData(GL_ARRAY_BUFFER, model.getNormals()->size() * sizeof(GLfloat), model.getNormalsArray(), GL_STATIC_DRAW);
-        glVertexAttribPointer(1,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),nullptr);
-        glEnableVertexAttribArray(1);
-
-        //VBO Coordenadas de Textura
-        glGenBuffers(1, model.getIdVboTextureCoodrinatesPointer());
-        glBindBuffer(GL_ARRAY_BUFFER, model.getIdVboTextureCoodrinates());
-        glBufferData(GL_ARRAY_BUFFER, model.getTextureCoodrinates()->size() * sizeof(GLfloat), model.getTextureCoordinatesArray(), GL_STATIC_DRAW);
-        glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE,2*sizeof(GLfloat),nullptr);
-        glEnableVertexAttribArray(2);
-
-        //Generar IBO
-        glGenBuffers(1, model.getIdIboPointer());
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,model.getIdIbo());
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER,model.getIndices()->size()*sizeof(GLfloat),model.getIndicesArray(),GL_STATIC_DRAW);
+        //Aplicar VAO
+        model.createVaoOpenGL();
 
         //Poner shader en el nombre
-        model.setName(*model.getModelName()+"_"+shaderProgram->getName());
+        model.setName(*model.getModelName()+"_"+shaderProgram.getName());
 
         //Cambiar nombre si hay un modelo con el mismo nombre
         for (auto &modelPair : *modelList) {
@@ -231,8 +197,8 @@ namespace PAG {
         }
 
         //Guarda el shader actual con el modelo
-        if(shaderProgram->getIdSp()!=0){ //guarda modelo cuando el shader program no es erróneo
-            modelList->emplace_back(model,shaderProgram->getIdSp());
+        if(shaderProgram.getIdSp()!=0){ //guarda modelo cuando el shader program no es erróneo
+            modelList->emplace_back(model,shaderProgram);
         }
 
         //Aplicar textura
@@ -241,26 +207,26 @@ namespace PAG {
         }
     }
 
-
-
     /**
      * Función que borra un modelo de la lista
      * @param modelId
      */
     void Renderer::deleteModel(int modelId){
         if(!modelList->empty()){
-            modelList->erase(modelList->begin()+modelId);
-        }
-    }
+            //Destruir shader Objects y shader Program
+            if(modelList->at(modelId).second.getIdSp()!=0){
+                glDeleteShader(modelList->at(modelId).second.getVertexShader()->getId());
+                glDeleteShader(modelList->at(modelId).second.getFragmentShader()->getId());
+                glDeleteProgram(modelList->at(modelId).second.getIdSp());
+            }
+            modelList->at(modelId).second.deleteShaderProgram();
 
-    /**
-     * Crea un shader program
-     * @param shaderProgramName
-     */
-    void Renderer::createShaderProgram(std::string shaderProgramName) {
-        //delete &shaderProgram; //Destruye el anterior
-        shaderProgram = new ShaderProgram(); //crea uno nuevo
-        shaderProgram->createShaderProgram(shaderProgramName);
+            //Destruir textura del modelo
+            if(modelList->at(modelId).first.getIdTexture()!=0){
+                glDeleteTextures(1,modelList->at(modelId).first.getIdTexture());}
+
+                modelList->erase(modelList->begin()+modelId);
+        }
     }
 
     void Renderer::createLight(PAG::lightTypes lightType,
@@ -338,14 +304,14 @@ namespace PAG {
      * @param model
      * @param IdSp
      */
-    void Renderer::setUniformMVandMVP(PAG::Model model,GLuint IdSp)
+    void Renderer::setUniformMVandMVP(PAG::Model *model,GLuint IdSp)
     {
         GLint mvLoc = glGetUniformLocation(IdSp, "mModelView");
         GLint mvpLoc = glGetUniformLocation(IdSp, "mModelViewProj");
         glm::mat4 p = camera->calculateProjectionMatrix();
         glm::mat4 v = camera->calculateViewMatrix();
-        glm::mat4 mv = v*model.getModelMatrix();
-        glm::mat4 mvp = p*v*model.getModelMatrix();
+        glm::mat4 mv = v*model->getModelMatrix();
+        glm::mat4 mvp = p*v*model->getModelMatrix();
         glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mv));
         glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, glm::value_ptr(mvp));
     }
@@ -354,7 +320,7 @@ namespace PAG {
      * Función que pasa los colores ambient diffuse y specular como atributos uniform al shader program
      * @param material
      */
-    void Renderer::setUniformMaterial(PAG::Material material, GLuint IdSp){
+    void Renderer::setUniformMaterial(PAG::Material* material, GLuint IdSp){
         GLint ambientLoc = glGetUniformLocation(IdSp, "Ka");
         GLint diffuseLoc = glGetUniformLocation(IdSp, "Kd");
         GLint specularLoc = glGetUniformLocation(IdSp, "Ks");
@@ -362,19 +328,19 @@ namespace PAG {
 
         //Si no se utiliza el uniform, no lo enlaza, poniendo la localizazión en -1
         if(ambientLoc!=-1){
-            float ambientColor[] = {material.getAmbient().x, material.getAmbient().y, material.getAmbient().z};
+            float ambientColor[] = {material->getAmbient().x, material->getAmbient().y, material->getAmbient().z};
             glUniform3fv(ambientLoc, 1,ambientColor);
         }
         if(diffuseLoc!=-1){
-            float diffuseColor[] = {material.getDiffuse().x, material.getDiffuse().y, material.getDiffuse().z};
+            float diffuseColor[] = {material->getDiffuse().x, material->getDiffuse().y, material->getDiffuse().z};
             glUniform3fv(diffuseLoc, 1,diffuseColor);
         }
         if(specularLoc!=-1){
-            float specularColor[] = {material.getSpecular().x, material.getSpecular().y, material.getSpecular().z};
+            float specularColor[] = {material->getSpecular().x, material->getSpecular().y, material->getSpecular().z};
             glUniform3fv(specularLoc, 1,specularColor);
         }
         if(exponentLoc!=-1){
-            float exponent = material.getExponent();
+            float exponent = material->getExponent();
             glUniform1fv(exponentLoc, 1,&exponent);
         }
     }
@@ -384,7 +350,7 @@ namespace PAG {
      * @param light
      * @param IdSp
      */
-    void Renderer::setUniformLight(PAG::Light light,  GLuint IdSp){
+    void Renderer::setUniformLight(PAG::Light* light,  GLuint IdSp){
         GLint ambientLoc = glGetUniformLocation(IdSp, "Ia");
         GLint diffuseLoc = glGetUniformLocation(IdSp, "Id");
         GLint specularLoc = glGetUniformLocation(IdSp, "Is");
@@ -393,27 +359,27 @@ namespace PAG {
         GLint spotAngleLoc = glGetUniformLocation(IdSp, "spotAngle");
 
         if(ambientLoc!=-1){
-            float ambientColor[] = {light.getIa().x, light.getIa().y, light.getIa().z};
+            float ambientColor[] = {light->getIa().x, light->getIa().y, light->getIa().z};
             glUniform3fv(ambientLoc, 1,ambientColor);
         }
         if(diffuseLoc!=-1){
-            float diffuseColor[] = {light.getId().x, light.getId().y, light.getId().z};
+            float diffuseColor[] = {light->getId().x, light->getId().y, light->getId().z};
             glUniform3fv(diffuseLoc, 1,diffuseColor);
         }
         if(specularLoc!=-1){
-            float specularColor[] = {light.getIs().x, light.getIs().y, light.getIs().z};
+            float specularColor[] = {light->getIs().x, light->getIs().y, light->getIs().z};
             glUniform3fv(specularLoc, 1,specularColor);
         }
         if(positionLoc!=-1){
-            float position[] = {light.getPos().x, light.getPos().y, light.getPos().z};
+            float position[] = {light->getPos().x, light->getPos().y, light->getPos().z};
             glUniform3fv(positionLoc, 1,position);
         }
         if(directionLoc!=-1){
-            float direction[] = {light.getD().x, light.getD().y, light.getD().z};
+            float direction[] = {light->getD().x, light->getD().y, light->getD().z};
             glUniform3fv(directionLoc, 1,direction);
         }
         if(spotAngleLoc!=-1){
-            float angle = light.getGamma();
+            float angle = light->getGamma();
             glUniform1fv(spotAngleLoc, 1,&angle);
         }
     }
@@ -586,10 +552,6 @@ namespace PAG {
         camera->addZoom(ammount);
     }
 
-    std::vector<std::pair<PAG::Model, GLuint>> *Renderer::getModelList() const {
-        return modelList;
-    }
-
     std::vector<PAG::Light> *Renderer::getLightList() const {
         return lightList;
     }
@@ -598,5 +560,8 @@ namespace PAG {
         modelList->at(idModel).first.loadTexture(textureName);
     }
 
+    std::vector<std::pair<PAG::Model, PAG::ShaderProgram>> *Renderer::getModelList() const {
+        return modelList;
+    }
 
 } // PAG

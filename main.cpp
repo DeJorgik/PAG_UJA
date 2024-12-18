@@ -237,14 +237,7 @@ int main()
 
     //Crear shader program y cargar modelo
 
-    try{
-        PAG::Renderer::getInstance().createShaderProgram("pag08");
-    }
-    catch (const std::exception& e){ //capturar excepción en caso de error
-        PAG::GUI::getInstance().messageBufferAdd( e.what());
-    }
-
-//PAG::Renderer::getInstance().createModel("","",PAG::modelVisualizationTypes::FILL,glm::vec3(1,0,0),glm::vec3(1,0,0),glm::vec3(1,0,0),1);
+    PAG::Renderer::getInstance().createModelPair("pag09","","",PAG::modelVisualizationTypes::FILL,glm::vec3(1,0,0),glm::vec3(1,0,0),glm::vec3(1,0,0),1);
 
     //Crear luz ambiente y puntual por defecto
     PAG::Renderer::getInstance().createLight(PAG::lightTypes::AMBIENT,
@@ -293,37 +286,35 @@ int main()
                 //Crear Shader del texto
                 if(PAG::GUI::getInstance().getShaderLoadInputText()!=""){
                     try{
-                        //Crear Shader Program
-                        PAG::Renderer::getInstance().createShaderProgram(PAG::GUI::getInstance().getShaderLoadInputText());
+                        //Crear modelo y ShaderProgram
+                        //mensaje de error de textura
+                        if(PAG::GUI::getInstance().getModelVisualizationType()==PAG::modelVisualizationTypes::TEXTURED
+                           &&PAG::GUI::getInstance().getTextureLoadInputText()==""){
+                            PAG::GUI::getInstance().messageBufferAdd("ERROR: No texture selected.");
+                        }
+
+                        if((PAG::GUI::getInstance().getModelVisualizationType()==PAG::modelVisualizationTypes::TEXTURED
+                            &&PAG::GUI::getInstance().getTextureLoadInputText()!="")
+                           ||(PAG::GUI::getInstance().getModelVisualizationType()!=PAG::modelVisualizationTypes::TEXTURED)){
+                            PAG::Renderer::getInstance().createModelPair(PAG::GUI::getInstance().getShaderLoadInputText(),
+                                                                         PAG::GUI::getInstance().getFileBrowserWindow().GetSelected().string(),
+                                                                     PAG::GUI::getInstance().getTextureLoadInputText(),
+                                                                     PAG::GUI::getInstance().getModelVisualizationType(),
+                                                                     glm::vec3 (PAG::GUI::getInstance().getModelAmbientColor()[0],
+                                                                                PAG::GUI::getInstance().getModelAmbientColor()[1],
+                                                                                PAG::GUI::getInstance().getModelAmbientColor()[2]),
+                                                                     glm::vec3 (PAG::GUI::getInstance().getModelDiffuseColor()[0],
+                                                                                PAG::GUI::getInstance().getModelDiffuseColor()[1],
+                                                                                PAG::GUI::getInstance().getModelDiffuseColor()[2]),
+                                                                     glm::vec3 (PAG::GUI::getInstance().getModelSpecularColor()[0],
+                                                                                PAG::GUI::getInstance().getModelSpecularColor()[1],
+                                                                                PAG::GUI::getInstance().getModelSpecularColor()[2]),
+                                                                     PAG::GUI::getInstance().getModelSpecularExponent());
+
+                        }
                     }catch (const std::exception& e){ //capturar excepción en caso de error
                         PAG::GUI::getInstance().messageBufferAdd(e.what());
                     }
-                    //Crear modelo
-                    //mensaje de error de textura
-                    if(PAG::GUI::getInstance().getModelVisualizationType()==PAG::modelVisualizationTypes::TEXTURED
-                    &&PAG::GUI::getInstance().getTextureLoadInputText()==""){
-                        PAG::GUI::getInstance().messageBufferAdd("ERROR: No texture selected.");
-                    }
-
-                    if((PAG::GUI::getInstance().getModelVisualizationType()==PAG::modelVisualizationTypes::TEXTURED
-                        &&PAG::GUI::getInstance().getTextureLoadInputText()!="")
-                       ||(PAG::GUI::getInstance().getModelVisualizationType()!=PAG::modelVisualizationTypes::TEXTURED)){
-                        PAG::Renderer::getInstance().createModel(PAG::GUI::getInstance().getFileBrowserWindow().GetSelected().string(),
-                                                                 PAG::GUI::getInstance().getTextureLoadInputText(),
-                                                                 PAG::GUI::getInstance().getModelVisualizationType(),
-                                                                 glm::vec3 (PAG::GUI::getInstance().getModelAmbientColor()[0],
-                                                                            PAG::GUI::getInstance().getModelAmbientColor()[1],
-                                                                            PAG::GUI::getInstance().getModelAmbientColor()[2]),
-                                                                 glm::vec3 (PAG::GUI::getInstance().getModelDiffuseColor()[0],
-                                                                            PAG::GUI::getInstance().getModelDiffuseColor()[1],
-                                                                            PAG::GUI::getInstance().getModelDiffuseColor()[2]),
-                                                                 glm::vec3 (PAG::GUI::getInstance().getModelSpecularColor()[0],
-                                                                            PAG::GUI::getInstance().getModelSpecularColor()[1],
-                                                                            PAG::GUI::getInstance().getModelSpecularColor()[2]),
-                                                                 PAG::GUI::getInstance().getModelSpecularExponent());
-
-                    }
-
                 } else {
                     PAG::GUI::getInstance().messageBufferAdd("ERROR: No shader selected.");
                 }

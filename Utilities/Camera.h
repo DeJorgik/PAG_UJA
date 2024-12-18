@@ -35,9 +35,8 @@ namespace PAG {
         void tiltMovement(float angle);
         void dollyCraneMovement(glm::vec3 translate);
         void updateZoom(float zoom);
-        void orbitMovement(float longitude, float latitude);
-
         void addZoom(float zoom);
+        void orbitMovement(float longitude, float latitude);
     };
 
 } // PAG

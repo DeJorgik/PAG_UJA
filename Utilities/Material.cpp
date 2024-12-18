@@ -10,10 +10,6 @@ namespace PAG {
                                                                       diffuse(diffuse), specular(specular),
                                                                       exponent(exponent) {}
 
-    const std::string &Material::getMaterialName() const {
-        return materialName;
-    }
-
     const glm::vec3 &Material::getAmbient() const {
         return ambient;
     }

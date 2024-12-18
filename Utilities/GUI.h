@@ -10,6 +10,8 @@
 #include "../imgui/imfilebrowser.h"
 #include "Model.h"
 #include "Light.h"
+#include "ShaderProgram.h"
+
 
 namespace PAG {
 
@@ -33,7 +35,6 @@ namespace PAG {
         float longitudeAngle;
         float latitudeAngle;
         ImGui::FileBrowser fileBrowserWindow;
-        //PRÁCTICA 6
         int currentModelIndex; //Indice del modelo actual
         int modelTransformSelectedItem;
         PAG::modelTransformType modelTransform;
@@ -93,12 +94,23 @@ namespace PAG {
         void shutDown();
         void newFrame();
         void render();
-        void drawMessage(float posX,float posY,float fontScale,const char *title,const char *text);
-        void drawColorWheel(float posX,float posY,float fontScale,float *col,const char *title,const char *text);
-        const std::string &getShaderLoadInputText() const;
+
+        void drawMessageWindow(float posX, float posY, float fontScale);
+        void drawControlWindow(float posX, float posY, float fontScale,
+                               std::vector<std::pair<PAG::Model, GLuint>> *modelList,
+                               std::vector<Light> *lightList, float *col,int lightCount);
+
         void messageBufferAdd(std::string text);
         std::string getMessageBufferText();
-        void drawCameraControls(float posX, float posY, float fontScale, const char *title);
+        const ImGui::FileBrowser &getFileBrowserWindow() const;
+        void clearModelLoader();
+
+        const std::string &getShaderLoadInputText() const;
+
+        modelVisualizationTypes getEditModelVisualizationType() const;
+        const std::string &getTextureLoadInputText() const;
+        const std::string &getTextureEditLoadInputText() const;
+
         PAG::cameraMovementType getCameraMovement() const;
         float getCameraZoomValue() const;
         bool isDollyForwardPressed() const;
@@ -111,11 +123,7 @@ namespace PAG {
         bool isCraneDownPressed() const;
         float getLongitudeAngle() const;
         float getLatitudeAngle() const;
-        void drawModelLoaderWindow(float posX, float posY, float fontScale, const char *title);
-        const ImGui::FileBrowser &getFileBrowserWindow() const;
-        void clearModelLoader();
-        void drawModelTransformWindow(float posX, float posY, float fontScale, const char *title,
-                                      std::vector<std::pair<PAG::Model, GLuint>> *modelList);
+
         bool isModelTransformApplyPressed() const;
         int getCurrentModelIndex() const;
         modelTransformType getModelTransform() const;
@@ -126,6 +134,7 @@ namespace PAG {
         bool isModelDeletePressed() const;
         void setCurrentModelIndex(int currentModelIndex);
         PAG::modelVisualizationTypes getModelVisualizationType() const;
+
         const float *getModelAmbientColor() const;
         const float *getModelAmbientColorTransform() const;
         const float *getModelDiffuseColor() const;
@@ -134,13 +143,15 @@ namespace PAG {
         const float *getModelDiffuseColorTransform() const;
         const float *getModelSpecularColorTransform() const;
         float getModelSpecularExponentTransform() const;
-        bool isModelVisualizationTypeFillPressedTransform() const;
-
         bool isModelMaterialApplyPressed() const;
+
+        bool isControlBgColor() const;
+        bool isControlZoom() const;
+        bool isControlCameraMouse() const;
+        bool isControlCameraKey() const;
 
         bool isCreateLightPressed() const;
         bool isDeleteLightPressed() const;
-
         lightTypes getCreateLightType() const;
         const float *getLightAmbientColor() const;
         const float *getLightDiffuseColor() const;
@@ -151,42 +162,19 @@ namespace PAG {
         float getLightS() const;
         int getCurrentLightIndex() const;
         void setCurrentLightIndex(int currentLightIndex);
-
         const float *getLightAmbientColorEdit() const;
-
         const float *getLightDiffuseColorEdit() const;
-
         const float *getLightSpecularColorEdit() const;
-
         const glm::vec3 &getLightPositionEdit() const;
-
         const glm::vec3 &getLightDirectionEdit() const;
-
         float getLightGammaEdit() const;
-
         float getLightSEdit() const;
-
         bool isEditLightPressed() const;
 
-
-        void drawMessageWindow(float posX, float posY, float fontScale);
         void drawControlWindow(float posX, float posY, float fontScale,
-                               std::vector<std::pair<PAG::Model, GLuint>> *modelList,
-                               std::vector<Light> *lightList, float *col,int lightCount);
-
-        modelVisualizationTypes getEditModelVisualizationType() const;
-
-        const std::string &getTextureLoadInputText() const;
-
-        const std::string &getTextureEditLoadInputText() const;
-
-        bool isControlBgColor() const;
-
-        bool isControlZoom() const;
-
-        bool isControlCameraMouse() const;
-
-        bool isControlCameraKey() const;
+                               std::vector<std::pair<PAG::Model, PAG::ShaderProgram>> *modelList,
+                               std::vector<Light> *lightList,
+                               float *col, int lightCount);
     };
 } // PAG
 

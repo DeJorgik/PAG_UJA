@@ -14,11 +14,6 @@ namespace PAG {
 
     //Destruir los shaders que cuelgan
     ShaderProgram::~ShaderProgram() {
-        delete vertexShader;
-        delete fragmentShader;
-        vertexShader= nullptr;
-        fragmentShader= nullptr;
-        if (idSP!=0){glDeleteShader(idSP);}
     }
 
     void ShaderProgram::createShaderProgram(std::string shaderProgramName) {
@@ -36,7 +31,14 @@ namespace PAG {
         glAttachShader ( idSP, vertexShader->getId() );
         glAttachShader ( idSP, fragmentShader->getId() );
         glLinkProgram ( idSP );
-        shaderProgramCompileErrorExceptionLauncher(idSP);
+        //shaderProgramCompileErrorExceptionLauncher(idSP);
+    }
+
+    void ShaderProgram::deleteShaderProgram(){
+        delete vertexShader;
+        delete fragmentShader;
+        vertexShader= nullptr;
+        fragmentShader= nullptr;
     }
 
     void ShaderProgram::shaderProgramCompileErrorExceptionLauncher(GLuint shaderProgramId) {
@@ -64,5 +66,13 @@ namespace PAG {
 
     const std::string &ShaderProgram::getName() const {
         return name;
+    }
+
+    ShaderObject *ShaderProgram::getVertexShader() const {
+        return vertexShader;
+    }
+
+    ShaderObject *ShaderProgram::getFragmentShader() const {
+        return fragmentShader;
     }
 }

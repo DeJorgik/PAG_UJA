@@ -5,77 +5,6 @@
 #include "Light.h"
 namespace PAG {
 
-    const std::string &Light::getLightName() const {
-        return lightName;
-    }
-
-    void Light::setLightName(const std::string &lightName) {
-        Light::lightName = lightName;
-    }
-
-    const glm::vec3 &Light::getPos() const {
-        return pos;
-    }
-
-    void Light::setPos(const glm::vec3 &pos) {
-        Light::pos = pos;
-    }
-
-    const glm::vec3 &Light::getD() const {
-        return d;
-    }
-
-    void Light::setD(const glm::vec3 &d) {
-        Light::d = d;
-    }
-
-    float Light::getGamma() const {
-        return gamma;
-    }
-
-    void Light::setGamma(float gamma) {
-        Light::gamma = gamma;
-    }
-
-    float Light::getS() const {
-        return s;
-    }
-
-    void Light::setS(float s) {
-        Light::s = s;
-    }
-
-    const glm::vec3 &Light::getIa() const {
-        return Ia;
-    }
-
-    void Light::setIa(const glm::vec3 &ia) {
-        Ia = ia;
-    }
-
-    const glm::vec3 &Light::getId() const {
-        return Id;
-    }
-
-    void Light::setId(const glm::vec3 &id) {
-        Id = id;
-    }
-
-    const glm::vec3 &Light::getIs() const {
-        return Is;
-    }
-
-    void Light::setIs(const glm::vec3 &is) {
-        Is = is;
-    }
-
-    lightTypes Light::getLightType() const {
-        return lightType;
-    }
-
-    void Light::setLightType(lightTypes lightType) {
-        Light::lightType = lightType;
-    }
 
     /**
      * El constructor lo inicializa a 0, luego se escogen los valores con otras funciones
@@ -152,4 +81,42 @@ namespace PAG {
         gamma = _gamma;
         s = _s;
     }
+
+
+    const std::string &Light::getLightName() const {
+        return lightName;
+    }
+
+    void Light::setLightName(const std::string &lightName) {
+        Light::lightName = lightName;
+    }
+
+    const glm::vec3 &Light::getPos() const {
+        return pos;
+    }
+
+    const glm::vec3 &Light::getD() const {
+        return d;
+    }
+
+    float Light::getGamma() const {
+        return gamma;
+    }
+
+    const glm::vec3 &Light::getIa() const {
+        return Ia;
+    }
+
+    const glm::vec3 &Light::getId() const {
+        return Id;
+    }
+
+    const glm::vec3 &Light::getIs() const {
+        return Is;
+    }
+
+    lightTypes Light::getLightType() const {
+        return lightType;
+    }
+
 }

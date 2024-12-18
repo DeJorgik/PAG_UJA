@@ -15,7 +15,7 @@ namespace PAG {
 
     GUI::GUI() {
         shaderLoadInputText = "";
-        cameraControlSelectedItem = 0;
+        cameraControlSelectedItem = 1;
         cameraZoomValue = 60.f;
         dollyForwardPressed = false;
         dollyBackwardPressed = false;
@@ -94,7 +94,7 @@ namespace PAG {
      * Ventana principal que alberga todos los controles de la aplicación
      */
     void GUI::drawControlWindow(float posX,float posY,float fontScale,
-                                std::vector<std::pair<PAG::Model,GLuint>>* modelList,
+                                std::vector<std::pair<PAG::Model,PAG::ShaderProgram>>* modelList,
                                 std::vector<PAG::Light>* lightList,
                                 float *col,
                                 int lightCount){
