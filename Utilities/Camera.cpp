@@ -141,4 +141,36 @@ namespace PAG {
         }
     }
 
+    void Camera::setCameraPos(const glm::vec3 &cameraPos) {
+        Camera::cameraPos = cameraPos;
+    }
+
+    void Camera::setLookAtPoint(const glm::vec3 &lookAtPoint) {
+        Camera::lookAtPoint = lookAtPoint;
+    }
+
+    void Camera::setUp(const glm::vec3 &up) {
+        Camera::up = up;
+    }
+
+    void Camera::setFovY(float fovY) {
+        Camera::fovY = fovY;
+    }
+
+    void Camera::setZNear(float zNear) {
+        Camera::zNear = zNear;
+    }
+
+    void Camera::setZFar(float zFar) {
+        Camera::zFar = zFar;
+    }
+
+    void Camera::setAspectRatio(float aspectRatio) {
+        Camera::aspectRatio = aspectRatio;
+    }
+
+    void Camera::setY(const glm::vec3 &y) {
+        Y = y;
+    }
+
 } // PAG

@@ -31,7 +31,6 @@ namespace PAG {
         glAttachShader ( idSP, vertexShader->getId() );
         glAttachShader ( idSP, fragmentShader->getId() );
         glLinkProgram ( idSP );
-        //shaderProgramCompileErrorExceptionLauncher(idSP);
     }
 
     void ShaderProgram::deleteShaderProgram(){

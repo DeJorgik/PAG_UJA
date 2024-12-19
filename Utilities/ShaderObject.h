@@ -20,7 +20,6 @@ namespace PAG{
         ~ShaderObject();
         void createShader(std::string shaderName);
         GLuint getId() const;
-
     private:
         std::string loadShader(std::string shaderName);
         void shaderCompileErrorExceptionLaucher(GLuint shaderId);

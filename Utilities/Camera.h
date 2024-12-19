@@ -37,6 +37,15 @@ namespace PAG {
         void updateZoom(float zoom);
         void addZoom(float zoom);
         void orbitMovement(float longitude, float latitude);
+
+        void setCameraPos(const glm::vec3 &cameraPos);
+        void setLookAtPoint(const glm::vec3 &lookAtPoint);
+        void setUp(const glm::vec3 &up);
+        void setFovY(float fovY);
+        void setZNear(float zNear);
+        void setZFar(float zFar);
+        void setAspectRatio(float aspectRatio);
+        void setY(const glm::vec3 &y);
     };
 
 } // PAG

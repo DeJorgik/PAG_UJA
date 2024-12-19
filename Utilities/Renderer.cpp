@@ -39,9 +39,9 @@ namespace PAG {
 
     void Renderer::rendererInit() {
         glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LEQUAL);
         glEnable (GL_MULTISAMPLE);
         glEnable(GL_BLEND); //activar blending
-        glDepthFunc(GL_LEQUAL);
         updateBgColor();
     }
 
@@ -63,7 +63,6 @@ namespace PAG {
             }
         }
     }
-    //TODO: QUE NO SE PUEDE PASAR MAS DE UNA LUZ AMBIENTE
 
     /**
      * Función para dibujar el modelo con su shaderprogram correspondiente
@@ -379,7 +378,7 @@ namespace PAG {
             glUniform3fv(directionLoc, 1,direction);
         }
         if(spotAngleLoc!=-1){
-            float angle = light->getGamma();
+            float angle = glm::radians(light->getGamma());
             glUniform1fv(spotAngleLoc, 1,&angle);
         }
     }
@@ -414,7 +413,8 @@ namespace PAG {
                                            bool craneUp,
                                            bool craneDown,
                                            float orbitLongitude,
-                                           float orbitLatitude){
+                                           float orbitLatitude,
+                                           bool reset){
         switch (movementType) {
             case PAG::cameraMovementType::ZOOM:
                 camera->updateZoom(cameraZoomValue);
@@ -426,7 +426,6 @@ namespace PAG {
                 camera->tiltMovement(tiltAngle);
                 break;
             case PAG::cameraMovementType::DOLLY:
-                //DUDA DOLLY: no deberia moverse en los ejes de la cámara??
                 //Se mueve sobre los ejes de la escena pero entonces hacia delante no es hacia donde mira la cámara
                 if (dollyForward){
                     camera->dollyCraneMovement(glm::vec3(0,0,0.2));
@@ -453,6 +452,14 @@ namespace PAG {
                 camera->orbitMovement(orbitLongitude,
                                       orbitLatitude);
                 break;
+        }
+
+        if (reset) {
+            //Resetear la cámara
+            camera->setCameraPos(glm::vec3(5,5,5));
+            camera->setLookAtPoint(glm::vec3(0,0,0));
+            camera->setFovY(60.f);
+            camera->updateCoordinateSystem();
         }
     }
 

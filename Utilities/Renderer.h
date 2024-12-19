@@ -22,7 +22,6 @@ namespace PAG {
         static Renderer* rederer_instance; //Instancia del Singleton
         Renderer(); //Constructor
         glm::vec3 bg_color; //Color de fondo 0 R, 1 G, 2 B, 3Alpha
-        //ShaderProgram* shaderProgram;
         Camera* camera;
         int viewportWidth = 1; //inicializado a 1 para que no de error en linux
         int viewportHeight = 1;
@@ -40,14 +39,24 @@ namespace PAG {
         bool operator==(const Renderer &rhs) const;
         bool operator!=(const Renderer &rhs) const;
         void getViewportSizes(int width, int height);
+
         Camera *getCamera() const;
         void processUiCameraMovement(PAG::cameraMovementType movementType, float cameraZoomValue, float panAngle,
                                      float tiltAngle,
                                      bool dollyForward, bool dollyBackward, bool dollyLeft, bool dollyRight, bool craneUp,
-                                     bool craneDown, float orbitLongitude, float orbitLatitude);
+                                     bool craneDown, float orbitLongitude, float orbitLatitude,
+                                     bool reset);
         void processMouseCameraMovement(double diffX, double diffY);
-        std::vector<std::pair<PAG::Model, PAG::ShaderProgram>> *getModelList() const;
+        void processMouseCameraZoom(double yoffset);
+        void processKeyCameraMovement(glm::vec3 ammount);
 
+        std::vector<std::pair<PAG::Model, PAG::ShaderProgram>> *getModelList() const;
+        void createModelPair(std::string shaderProgramName, std::string modelName, std::string textureName,
+                             modelVisualizationTypes modelVisualizationType, const glm::vec3 &ambient,
+                             const glm::vec3 &diffuse,
+                             const glm::vec3 &specular, GLfloat exponent);
+
+        void drawModel(std::pair<Model, ShaderProgram> *modelPair, int lightId);
         void deleteModel(int modelId);
 
 
@@ -58,42 +67,21 @@ namespace PAG {
                     float s);
 
         std::vector<PAG::Light> *getLightList() const;
-
         void deleteLight(int lightId);
 
         void processUiModelTransform(int modelId, modelTransformType modelTransformType, glm::vec3 modelTranslate,
                                      glm::vec3 modelRotateAxis, float modelRotateAngle, glm::vec3 modelScale);
-
-
-
         void processUiLightEdit(int lightId, glm::vec3 Ia, glm::vec3 Is, glm::vec3 Id, glm::vec3 pos, glm::vec3 d,
                                 float gamma,
                                 float s);
-
-
-
         void processUiModelMaterial(int modelId, glm::vec3 modelAmbientTransform, glm::vec3 modelDiffuseTransform,
                                     glm::vec3 modelSpecularTransform, float modelExponentTransform,
                                     modelVisualizationTypes modelVisualizationTypes);
 
         void loadTexture(std::string textureName, int idModel);
 
-
-        void processMouseCameraZoom(double yoffset);
-
-        void processKeyCameraMovement(glm::vec3 ammount);
-
-        void createModelPair(std::string shaderProgramName, std::string modelName, std::string textureName,
-                             modelVisualizationTypes modelVisualizationType, const glm::vec3 &ambient,
-                             const glm::vec3 &diffuse,
-                             const glm::vec3 &specular, GLfloat exponent);
-
-        void drawModel(std::pair<Model, ShaderProgram> *modelPair, int lightId);
-
         void setUniformMVandMVP(Model *model, GLuint IdSp);
-
         void setUniformMaterial(Material *material, GLuint IdSp);
-
         void setUniformLight(Light *light, GLuint IdSp);
     };
 

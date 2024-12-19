@@ -51,21 +51,10 @@ namespace PAG {
         Model(std::string filename, modelVisualizationTypes modelVisualizationType);
         virtual ~Model();
 
-        std::vector<GLfloat> *getVertices() const;
         std::vector<GLuint> *getIndices() const;
-        std::vector<GLfloat> *getNormals() const;
-        GLfloat* getVerticesArray();
-        GLfloat* getNormalsArray();
-        GLuint* getIndicesArray();
-
         GLuint getIdVao();
-        GLuint *getIdVaoPointer();
-        GLuint getIdVboPos();
-        GLuint *getIdVboPosPointer();
-        GLuint getIdVboNormals();
-        GLuint *getIdVboNormalsPointer();
         GLuint getIdIbo();
-        GLuint *getIdIboPointer();
+        GLuint * getIdTexture() const;
 
         void setName(const std::string &name);
         std::string *getModelName();
@@ -86,14 +75,7 @@ namespace PAG {
 
         void loadTexture(std::string filename);
 
-        GLfloat * getTextureCoordinatesArray();
-        GLuint getIdVboTextureCoodrinates();
-        GLuint *getIdVboTextureCoodrinatesPointer();
-        std::vector<GLfloat> *getTextureCoodrinates() const;
-        GLuint * getIdTexture() const;
-
         void createTextureOpenGL();
-
         void createVaoOpenGL();
     };
 } // PAG

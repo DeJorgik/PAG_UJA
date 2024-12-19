@@ -9,7 +9,6 @@
 #include <glad/glad.h>
 #include "ShaderObject.h"
 
-//PRÁCTICA 4: práctica que encapsula las funciones relacionadas con los shaders
 namespace PAG{
     class ShaderProgram {
     private:
@@ -20,14 +19,12 @@ namespace PAG{
     public:
         ShaderProgram();
         ~ShaderProgram();
-        //PRÁCICA 3:
+
         void createShaderProgram(std::string shaderProgramName);
         GLuint getIdSp() const;
 
         const std::string &getName() const;
-
         ShaderObject *getVertexShader() const;
-
         ShaderObject *getFragmentShader() const;
 
         void deleteShaderProgram();

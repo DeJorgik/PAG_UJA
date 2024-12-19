@@ -239,7 +239,7 @@ int main()
 
     PAG::Renderer::getInstance().createModelPair("pag09","","",PAG::modelVisualizationTypes::FILL,glm::vec3(1,0,0),glm::vec3(1,0,0),glm::vec3(1,0,0),1);
 
-    //Crear luz ambiente y puntual por defecto
+    //Crear luz ambiente y spot por defecto
     PAG::Renderer::getInstance().createLight(PAG::lightTypes::AMBIENT,
                                              glm::vec3(0.5,0.5,0.5),
                                              glm::vec3(1,1,1),
@@ -248,13 +248,13 @@ int main()
                                              glm::vec3(0,0,0),
                                              1.0f,
                                              1.0f);
-    PAG::Renderer::getInstance().createLight(PAG::lightTypes::POINT,
-                                             glm::vec3(1,1,1),
-                                             glm::vec3(1,1,1),
-                                             glm::vec3(1,1,1),
-                                             glm::vec3(1,1,1),
+    PAG::Renderer::getInstance().createLight(PAG::lightTypes::SPOT,
                                              glm::vec3(0,0,0),
-                                             1.0f,
+                                             glm::vec3(1,1,1),
+                                             glm::vec3(1,1,1),
+                                             glm::vec3(0,2,0),
+                                             glm::vec3(0,-1,0),
+                                             20.0f,
                                              1.0f);
 
     //PAG::Renderer::getInstance().getViewportSizes(width,height);
@@ -275,7 +275,8 @@ int main()
                 PAG::GUI::getInstance().isCraneUpPressed(),
                 PAG::GUI::getInstance().isCraneDownPressed(),
                 PAG::GUI::getInstance().getLongitudeAngle(),
-                PAG::GUI::getInstance().getLatitudeAngle());
+                PAG::GUI::getInstance().getLatitudeAngle(),
+                PAG::GUI::getInstance().isResetCamera());
 
         //Cargar modelos
         if(PAG::GUI::getInstance().getFileBrowserWindow().HasSelected())

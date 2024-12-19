@@ -42,9 +42,10 @@ namespace PAG {
         textureLoadInputText = "";
         textureEditLoadInputText = "";
         controlBgColor = false;
-        controlCameraKey = false;
+        controlCameraKey = true;
         controlCameraMouse = true;
         controlZoom = false;
+        resetCamera = false;
     }
 
     GUI::~GUI() {
@@ -269,7 +270,21 @@ namespace PAG {
                             default:
                                 break;
                         }
-                        createLightPressed = ImGui::Button("Create Light");
+                        bool see = true;
+                        //No se puede añadir más de una luz ambiente
+                        if( createLightType == PAG::lightTypes::AMBIENT){
+                            for (int i = 0; i < lightList->size(); ++i) {
+                                if (lightList->at(i).getLightType() == PAG::lightTypes::AMBIENT){
+                                    see = false;
+                                }
+                            }
+                        }
+
+                        if (see){
+                            createLightPressed = ImGui::Button("Create Light");
+                        } else {
+                            ImGui::Text("Unable to add more than one ambient light.");
+                        };
                         ImGui::TreePop();
                     }
                     if(ImGui::TreeNode("Light Edit")){
@@ -392,6 +407,9 @@ namespace PAG {
                         default:
                             break;
                     }
+
+                    resetCamera = ImGui::Button("Reset Camera");
+
                     ImGui::EndTabItem();
                 }
 
@@ -718,6 +736,10 @@ namespace PAG {
 
     bool GUI::isControlCameraKey() const {
         return controlCameraKey;
+    }
+
+    bool GUI::isResetCamera() const {
+        return resetCamera;
     }
 
 

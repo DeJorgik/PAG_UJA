@@ -327,3 +327,167 @@ PAG::Model *-- PAG::Material : contiene
 PAG::ShaderProgram *-- PAG::ShaderObject : contiene 2
 PAG::Model ..> Assimp : usa
 ````
+
+## PRÁCTICA 9
+
+En esta práctica se realiza la implementación de las Texturas. La clase Modelo contiene una serie de atributos y funciones para cargar texturas mediante la librería lodepng y luego cargarlas usando OpenGl. Esto incluye, entre otros atributos, un nuevo VBO para almacenar las coordenadas de textura que se obtienen con la librería Assimp. Para poder dibujar los modelos con texturas, se ha añadido una nueva subrutina al shader *pag09* para obtener o bien el color difuso o bien el color de la textura en la coordenada de textura correspondiente.
+
+Atributos de las texturas:
+- Nombre de la textura: **textureName**
+- Dimensiones de la textura: **textureWidth, textureHeight**.
+- Id de la textura: **idTexture**
+
+Se han relizado algunos cambios estructurales respecto a la práctica anterior. Ahora, la propia clase Model se encarga de realizar la creación de VBOs, IBOs y VAOs. Además, ahora el Renderer almacena en *modelList* una lista de pares de modelos con sus shader programs asociados en lugar de guardar sólo los modelos con el id del shader program.
+
+### Instrucciones
+En la pestaña de añadir o editar modelo se puede elegir el tipo de visualización de este, cuando se elige el modo *Texture* aparece una entrada de texto para añadir el nombre de la textura almacenada en */Textures* en formato *.png*.
+
+### UML
+
+````plantuml
+class PAG::Renderer{
+static Renderer* rederer_instance
+glm::vec3 bg_color
+Camera* camera
+int viewportWidth
+int viewportHeight
+std::vector<std::pair<PAG::Model,PAG::ShaderProgram>>* modelList
+std::vector<PAG::Light>* lightList
+}
+class PAG::GUI{
+std::string shaderLoadInputText
+std::stringstream messageBuffer
+int cameraControlSelectedItem
+PAG::cameraMovementType cameraMovement
+float cameraZoomValue
+bool dollyForwardPressed
+bool dollyBackwardPressed
+bool dollyLeftPressed
+bool dollyRightPressed
+float panAngle
+float tiltAngle
+bool craneUpPressed
+bool craneDownPressed
+float longitudeAngle
+float latitudeAngle
+ImGui::FileBrowser fileBrowserWindow
+int currentModelIndex
+int modelTransformSelectedItem
+PAG::modelTransformType modelTransform
+glm::vec3 modelTranslate
+glm::vec3 modelRotateAxis
+float modelRotateAngle
+glm::vec3 modelScale
+bool modelTransformApplyPressed
+bool modelMaterialApplyPressed
+bool modelDeletePressed
+float modelAmbientColor[3]
+float modelDiffuseColor[3]
+float modelSpecularColor[3]
+float modelSpecularExponent
+float modelAmbientColorTransform[3]
+float modelDiffuseColorTransform[3]
+float modelSpecularColorTransform[3]
+float modelSpecularExponentTransform
+int createLightSelectedItem
+PAG::lightTypes createLightType
+float lightAmbientColor[3]
+float lightDiffuseColor[3]
+float lightSpecularColor[3]
+glm::vec3 lightPosition
+glm::vec3 lightDirection
+float lightGamma
+float lightS
+int currentLightIndex
+bool createLightPressed
+bool deleteLightPressed
+float lightAmbientColorEdit[3]
+float lightDiffuseColorEdit[3]
+float lightSpecularColorEdit[3]
+glm::vec3 lightPositionEdit
+glm::vec3 lightDirectionEdit
+float lightGammaEdit
+float lightSEdit
+bool editLightPressed
+int createModelVisualizationTypeIndex
+int editModelVisualizationTypeIndex
+std::string textureLoadInputText
+std::string textureEditLoadInputText
+bool controlBgColor
+bool controlZoom
+bool controlCameraMouse
+bool controlCameraKey
+bool resetCamera
+}
+class PAG::ShaderProgram{
+ std::string name
+        GLuint idSP
+PAG::ShaderObject* vertexShader
+PAG::ShaderObject* fragmentShader
+}
+class PAG::ShaderObject{
+        GLuint id
+        shaderType type
+}
+class PAG::Camera{
+glm::vec3 u
+        glm::vec3 v
+        glm::vec3 n
+        glm::vec3 Y
+        glm::vec3 cameraPos
+        glm::vec3 lookAtPoint
+        glm::vec3 up
+        float fovY
+        float zNear
+        float zFar
+        float aspectRatio
+}
+class PAG::Model{
+std::string name        
+modelVisualizationTypes modelVisualizationType
+        int vertexCount
+        std::vector<GLfloat> *vertices
+        std::vector<GLuint> *indices
+        std::vector<GLfloat> *normals
+        glm::mat4 modelMatrix
+        GLuint idVAO
+        GLuint idVBO_pos
+        GLuint idVBO_normals
+        GLuint idVBO_materialColors
+        GLuint idIBO
+        Material* material
+        std::string textureName
+        std::vector<unsigned char> texturePixels
+        unsigned textureWidth
+        unsigned textureHeight
+        GLuint *idTexture
+}
+class PAG::Material{
+std::string materialName
+        glm::vec3 ambient
+        glm::vec3 diffuse
+        glm::vec3 specular
+        GLfloat exponent
+}
+class PAG::Light{
+std::string lightName;
+        lightTypes lightType
+        glm::vec3 Ia
+        glm::vec3 Id
+        glm::vec3 Is
+        glm::vec3 pos
+        glm::vec3 d
+        float gamma
+        float s
+}
+
+PAG::GUI - PAG::Renderer : se comunican por el main
+
+PAG::Renderer *-- PAG::ShaderProgram : contiene
+PAG::Renderer *-- PAG::Camera : contiene
+PAG::Renderer *-- PAG::Model : contiene varios
+PAG::Renderer *-- PAG::Light : contiene varias
+PAG::Model *-- PAG::Material : contiene
+
+PAG::ShaderProgram *-- PAG::ShaderObject : contiene 2
+````

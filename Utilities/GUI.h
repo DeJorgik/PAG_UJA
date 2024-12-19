@@ -86,6 +86,7 @@ namespace PAG {
         bool controlZoom;
         bool controlCameraMouse;
         bool controlCameraKey;
+        bool resetCamera;
 
     public:
         virtual ~GUI();
@@ -149,6 +150,7 @@ namespace PAG {
         bool isControlZoom() const;
         bool isControlCameraMouse() const;
         bool isControlCameraKey() const;
+        bool isResetCamera() const;
 
         bool isCreateLightPressed() const;
         bool isDeleteLightPressed() const;
