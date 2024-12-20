@@ -379,16 +379,10 @@ namespace PAG {
         }
         if(directionLoc!=-1){
             float direction[3];
-            if(light->getLightType()==lightTypes::SPOT){
-                glm::vec3 visionDirection = glm::vec3(v*glm::vec4(light->getD(),1.0));//pasar a espacio de vision
+                glm::vec3 visionDirection = glm::vec3(v*glm::vec4(light->getD(),0.0));//pasar a espacio de vision
                 direction[0]=visionDirection.x;
                 direction[1]=visionDirection.y;
                 direction[2]=visionDirection.z;
-            } else {
-                direction[0]=light->getD().x;
-                direction[1]=light->getD().y;
-                direction[2]=light->getD().z;
-            }
             glUniform3fv(directionLoc, 1,direction);
         }
         if(spotAngleLoc!=-1){
