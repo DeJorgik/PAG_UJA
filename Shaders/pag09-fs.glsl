@@ -1,13 +1,11 @@
 // FRAGMENT SHADER
 #version 410
 
-//Pongo aquí esto para no calcular pi cada vez que lo necesite
-#define PI radians(180)
-
 //Datos VS
 in vec3 pos;
 in vec3 normal;
 in vec2 textureCoordinate;
+in vec3 worldpos;
 
 //Reflexión Material
 uniform vec3 Ka;
@@ -28,6 +26,7 @@ uniform float spotAngle;
 
 out vec4 fragColor;
 
+const float PI = 3.1459;
 
 //Una subrutina con dos implementaciones que devuelve el color de la superficie
 //puede ser la del material o la de la textura
@@ -56,7 +55,7 @@ vec4 ambientLight()
 
 subroutine ( getColor )
 vec4 pointLight ()
-{ 
+{
   vec3 n = normalize (normal);
   vec3 l = normalize (lightPos-pos);
   vec3 v = normalize (-pos);
@@ -73,7 +72,7 @@ vec4 directionLight ()
 
   vec3 n = normalize (normal);
   vec3 l = -lightDir;
-  vec3 v = normalize (-pos);
+  vec3 v = normalize (-lightPos);
   vec3 r = reflect (-l,n);
 
   vec3 diffuse = (Id*getDiffuseColorMethod()*max(dot(l,n),0.0));
@@ -84,16 +83,14 @@ vec4 directionLight ()
 
 subroutine ( getColor )
 vec4 spotLight ()
-{ 
-  vec3 l = normalize (lightPos-pos);
-  vec3 d = lightDir;
-  float cosGamma = cos(spotAngle*180.0/PI);
-  float spotFactor = 1.0;
+{
+  vec3 l = normalize(lightPos-pos);
+  vec3 d = normalize(lightDir);
+  float cosGamma = cos(spotAngle);
+  float spotFactor = dot(-l,d) >= cosGamma ? 1.0 : 0.0;
 
-  if(cos(dot(-l,d))<cosGamma){ spotFactor=0.0; }
-
-  vec3 n = normalize (normal);
-  vec3 v = normalize (-pos);
+  vec3 n = normalize(normal);
+  vec3 v = normalize(-pos);
   vec3 r = reflect(-l,n);
 
   vec3 diffuse = (Id*getDiffuseColorMethod()*max(dot(l,n),0.0));

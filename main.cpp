@@ -9,11 +9,8 @@
 #include "Utilities/Renderer.h"
 #include "Utilities/GUI.h"
 
-//PRÁCTICA 1: variable global del modo de cambiar de fondo
 int mode = -1; //Modo, rojo, verde, azul
-//PRÁCTICA 2 buffer con el texto que aparecerá por patalla
 
-//PRÁCTICA 5 variables para la dimensión del viewport
 int width = 1024;
 int height = 576;
 
@@ -67,9 +64,8 @@ void key_callback(GLFWwindow *window, int key, int action, int mods){
     if (key==GLFW_KEY_ESCAPE && action==GLFW_PRESS){ //cuando la tecla escape hace la acción presionar
         glfwSetWindowShouldClose(window, GLFW_TRUE);//se cierra a vetana
     }
-    //PRACTICA 1
-    //Elige el modo según la última tecla que toca
 
+    //Elige el modo según la última tecla que toca
     switch (key) {
         case GLFW_KEY_R:
             mode=0;
@@ -141,7 +137,6 @@ void mouse_callback(GLFWwindow *window, int button, int action, int mods){
 void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
     if(mouseCameraCtr && PAG::GUI::getInstance().isControlCameraMouse()){ //funciona si está seleccionado
-
         //Diferencia de posiciones
         double diffX = xpos-mousePosX;
         double diffY = ypos-mousePosY;
@@ -160,7 +155,6 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
  * @param yoffset
  */
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset){
-    //PRACTICA 1
     //Depende de la tecla pulsada cambia un valor u otro
     if (mode!=-1 && PAG::GUI::getInstance().isControlBgColor()){
         PAG::Renderer::getInstance().addBgColor(mode,yoffset);//Suma el yoffset actual para que sea gradual
@@ -232,7 +226,6 @@ int main()
     PAG::Renderer::getInstance().rendererInit(); //inicializar opengl
     PAG::Renderer::getInstance().getViewportSizes(width,height); //capturar las dimensiones iniciales
 
-    //PRACTICA 2: Inicializar IMGUI
     PAG::GUI::getInstance().guiInit(window);
 
     //Crear shader program y cargar modelo
@@ -254,7 +247,7 @@ int main()
                                              glm::vec3(1,1,1),
                                              glm::vec3(0,2,0),
                                              glm::vec3(0,-1,0),
-                                             20.0f,
+                                             60.0f,
                                              1.0f);
 
     //PAG::Renderer::getInstance().getViewportSizes(width,height);

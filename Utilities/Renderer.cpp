@@ -307,8 +307,8 @@ namespace PAG {
     {
         GLint mvLoc = glGetUniformLocation(IdSp, "mModelView");
         GLint mvpLoc = glGetUniformLocation(IdSp, "mModelViewProj");
-        glm::mat4 p = camera->calculateProjectionMatrix();
         glm::mat4 v = camera->calculateViewMatrix();
+        glm::mat4 p = camera->calculateProjectionMatrix();
         glm::mat4 mv = v*model->getModelMatrix();
         glm::mat4 mvp = p*v*model->getModelMatrix();
         glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mv));
@@ -357,6 +357,9 @@ namespace PAG {
         GLint directionLoc = glGetUniformLocation(IdSp, "lightDir");
         GLint spotAngleLoc = glGetUniformLocation(IdSp, "spotAngle");
 
+        //Matriz de visión
+        glm::mat4 v = camera->calculateViewMatrix();
+
         if(ambientLoc!=-1){
             float ambientColor[] = {light->getIa().x, light->getIa().y, light->getIa().z};
             glUniform3fv(ambientLoc, 1,ambientColor);
@@ -370,11 +373,22 @@ namespace PAG {
             glUniform3fv(specularLoc, 1,specularColor);
         }
         if(positionLoc!=-1){
-            float position[] = {light->getPos().x, light->getPos().y, light->getPos().z};
+            glm::vec3 visionPosition = glm::vec3(v*glm::vec4(light->getPos(),1.0));//pasar a espacio de vision
+            float position[] = {visionPosition.x, visionPosition.y, visionPosition.z};
             glUniform3fv(positionLoc, 1,position);
         }
         if(directionLoc!=-1){
-            float direction[] = {light->getD().x, light->getD().y, light->getD().z};
+            float direction[3];
+            if(light->getLightType()==lightTypes::SPOT){
+                glm::vec3 visionDirection = glm::vec3(v*glm::vec4(light->getD(),1.0));//pasar a espacio de vision
+                direction[0]=visionDirection.x;
+                direction[1]=visionDirection.y;
+                direction[2]=visionDirection.z;
+            } else {
+                direction[0]=light->getD().x;
+                direction[1]=light->getD().y;
+                direction[2]=light->getD().z;
+            }
             glUniform3fv(directionLoc, 1,direction);
         }
         if(spotAngleLoc!=-1){

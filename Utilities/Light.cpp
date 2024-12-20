@@ -10,6 +10,7 @@ namespace PAG {
      * El constructor lo inicializa a 0, luego se escogen los valores con otras funciones
      */
     Light::Light() {
+        /*
         lightName="";
         lightType=lightTypes::AMBIENT;//Por defecto es ambiente
         Ia = glm::vec3(0,0,0);
@@ -18,7 +19,7 @@ namespace PAG {
         pos = glm::vec3(0,0,0);
         d = glm::vec3(0,0,0);
         gamma = 0;
-        s = 0;
+        s = 0;*/
     }
 
     void Light::setAmbientLight(std::string _lightName, glm::vec3 _Ia){

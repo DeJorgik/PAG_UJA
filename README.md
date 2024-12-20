@@ -337,7 +337,7 @@ Atributos de las texturas:
 - Dimensiones de la textura: **textureWidth, textureHeight**.
 - Id de la textura: **idTexture**
 
-Se han relizado algunos cambios estructurales respecto a la práctica anterior. Ahora, la propia clase Model se encarga de realizar la creación de VBOs, IBOs y VAOs. Además, ahora el Renderer almacena en *modelList* una lista de pares de modelos con sus shader programs asociados en lugar de guardar sólo los modelos con el id del shader program.
+Se han relizado algunos cambios estructurales respecto a la práctica anterior. Ahora, la propia clase Model se encarga de realizar la creación de VBOs, IBOs y VAOs. Además, ahora el Renderer almacena en *modelList* una lista de pares de modelos con sus shader programs asociados en lugar de guardar sólo los modelos con el id del shader program. Se ha habilitado una nueva pestaña para activar los controles de la cámara por teclado y ratón. 
 
 ### Instrucciones
 En la pestaña de añadir o editar modelo se puede elegir el tipo de visualización de este, cuando se elige el modo *Texture* aparece una entrada de texto para añadir el nombre de la textura almacenada en */Textures* en formato *.png*.
