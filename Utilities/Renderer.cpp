@@ -124,13 +124,21 @@ namespace PAG {
 
         //Texturas
         // Asignamos el muestreador del shader program a la unidad de textura 0
-        GLint samplerPos = glGetUniformLocation ( modelPair->second.getIdSp(), "sampler" );
-        glUniform1i ( samplerPos, 0 );
+        GLint samplerPosTexture = glGetUniformLocation ( modelPair->second.getIdSp(), "samplerTexture" );
+        glUniform1i ( samplerPosTexture, 0);
+        //Otro muestreador para el sampler del normalmap
+        GLint samplerPosNormalMap = glGetUniformLocation ( modelPair->second.getIdSp(), "samplerNormalMap" );
+        glUniform1i ( samplerPosNormalMap, 1);
 
         //Activar unidad de textura si se necesita
         if(modelPair->first.getModelVisualizationType()==PAG::modelVisualizationTypes::TEXTURED){
             glActiveTexture ( GL_TEXTURE0 );
             glBindTexture ( GL_TEXTURE_2D, *modelPair->first.getIdTexture() );
+        } else if (modelPair->first.getModelVisualizationType()==PAG::modelVisualizationTypes::TEXTURED_AND_NORMAL){
+            glActiveTexture ( GL_TEXTURE0 );
+            glBindTexture ( GL_TEXTURE_2D, *modelPair->first.getIdTexture() );
+            glActiveTexture ( GL_TEXTURE1 );
+            glBindTexture ( GL_TEXTURE_2D, *modelPair->first.getIdNormalMap() );
         }
 
         //Dibujar los modelos de la lista
@@ -170,7 +178,7 @@ namespace PAG {
      * Crea el triangulo por defecto si nose le pasa nombre de modelo
      */
     void Renderer::createModelPair(std::string shaderProgramName,
-                               std::string modelName, std::string textureName,
+                               std::string modelName, std::string textureName, std::string normalMapName,
                                modelVisualizationTypes modelVisualizationType,
                                const glm::vec3 &ambient, const glm::vec3 &diffuse,const glm::vec3 &specular,
                                GLfloat exponent) {
@@ -203,6 +211,9 @@ namespace PAG {
         //Aplicar textura
         if(modelVisualizationType==PAG::modelVisualizationTypes::TEXTURED){
             model.loadTexture(textureName); //cargar textura
+        } else if (modelVisualizationType==PAG::modelVisualizationTypes::TEXTURED_AND_NORMAL){
+            model.loadTexture(textureName);
+            model.loadNormalMap(normalMapName); //cargar normal map
         }
     }
 

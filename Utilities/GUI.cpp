@@ -112,13 +112,16 @@ namespace PAG {
                         ImGui::InputText ( "##", &shaderLoadInputText, ImGuiInputTextFlags_AutoSelectAll );
                         ImGui::SeparatorText("Visualization Type");
                         ImGui::RadioButton("Texture", &createModelVisualizationTypeIndex, 0); ImGui::SameLine();
+                        ImGui::RadioButton("Texture and Normal Map", &createModelVisualizationTypeIndex, 3); ImGui::SameLine();
                         ImGui::RadioButton("Material", &createModelVisualizationTypeIndex, 1); ImGui::SameLine();
                         ImGui::RadioButton("Wireframe", &createModelVisualizationTypeIndex, 2);
 
                         switch (createModelVisualizationTypeIndex) {
                             case 0:
                                 ImGui::Text("Textures are stored in the ../Textures/ folder.");
+                                ImGui::SeparatorText("Texture");
                                 ImGui::InputText ( "###", &textureLoadInputText, ImGuiInputTextFlags_AutoSelectAll );
+                                ImGui::SeparatorText("Material");
                                 ImGui::ColorEdit3("Specular Color",modelSpecularColor);
                                 ImGui::InputFloat("Specular Exponent", &modelSpecularExponent);
                                 break;
@@ -126,6 +129,16 @@ namespace PAG {
                                 ImGui::SeparatorText("Material");
                                 ImGui::ColorEdit3("Ambient Color",modelAmbientColor);
                                 ImGui::ColorEdit3("Diffuse Color",modelDiffuseColor);
+                                ImGui::ColorEdit3("Specular Color",modelSpecularColor);
+                                ImGui::InputFloat("Specular Exponent", &modelSpecularExponent);
+                                break;
+                            case 3:
+                                ImGui::Text("Textures are stored in the ../Textures/ folder.");
+                                ImGui::SeparatorText("Texture");
+                                ImGui::InputText ( "###", &textureLoadInputText, ImGuiInputTextFlags_AutoSelectAll);
+                                ImGui::SeparatorText("Normal Map");
+                                ImGui::InputText (  " ", &normalMapLoadInputText, ImGuiInputTextFlags_AutoSelectAll);
+                                ImGui::SeparatorText("Material");
                                 ImGui::ColorEdit3("Specular Color",modelSpecularColor);
                                 ImGui::InputFloat("Specular Exponent", &modelSpecularExponent);
                                 break;
@@ -195,12 +208,15 @@ namespace PAG {
 
                         ImGui::SeparatorText("Visualization Type");
                         ImGui::RadioButton("Texture", &editModelVisualizationTypeIndex, 0); ImGui::SameLine();
+                        ImGui::RadioButton("Texture and Normal Map", &editModelVisualizationTypeIndex, 3); ImGui::SameLine();
                         ImGui::RadioButton("Material", &editModelVisualizationTypeIndex, 1); ImGui::SameLine();
                         ImGui::RadioButton("Wireframe", &editModelVisualizationTypeIndex, 2);
                         switch (editModelVisualizationTypeIndex) {
                             case 0:
                                 ImGui::Text("Textures are stored in the ../Textures/ folder.");
+                                ImGui::SeparatorText("Texture");
                                 ImGui::InputText ( "###", &textureEditLoadInputText, ImGuiInputTextFlags_AutoSelectAll );
+                                ImGui::SeparatorText("Material");
                                 ImGui::ColorEdit3("Specular Color",modelSpecularColorTransform);
                                 ImGui::InputFloat("Specular Exponent", &modelSpecularExponentTransform);
                                 break;
@@ -208,6 +224,16 @@ namespace PAG {
                                 ImGui::SeparatorText("Material Edit");
                                 ImGui::ColorEdit3("Ambient Color",modelAmbientColorTransform);
                                 ImGui::ColorEdit3("Diffuse Color",modelDiffuseColorTransform);
+                                ImGui::ColorEdit3("Specular Color",modelSpecularColorTransform);
+                                ImGui::InputFloat("Specular Exponent", &modelSpecularExponentTransform);
+                                break;
+                            case 3:
+                                ImGui::Text("Textures are stored in the ../Textures/ folder.");
+                                ImGui::SeparatorText("Texture");
+                                ImGui::InputText ( "###", &textureEditLoadInputText, ImGuiInputTextFlags_AutoSelectAll);
+                                ImGui::SeparatorText("Normal Map");
+                                ImGui::InputText (  " ", &normalMapEditLoadInputText, ImGuiInputTextFlags_AutoSelectAll);
+                                ImGui::SeparatorText("Material");
                                 ImGui::ColorEdit3("Specular Color",modelSpecularColorTransform);
                                 ImGui::InputFloat("Specular Exponent", &modelSpecularExponentTransform);
                                 break;
@@ -740,6 +766,14 @@ namespace PAG {
 
     bool GUI::isResetCamera() const {
         return resetCamera;
+    }
+
+    const std::string &GUI::getNormalMapLoadInputText() const {
+        return normalMapLoadInputText;
+    }
+
+    const std::string &GUI::getNormalMapEditLoadInputText() const {
+        return normalMapEditLoadInputText;
     }
 
 

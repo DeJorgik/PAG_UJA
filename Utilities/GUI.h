@@ -81,13 +81,15 @@ namespace PAG {
         //Texturas
         std::string textureLoadInputText; //Texto con el nombre del shader
         std::string textureEditLoadInputText;
+        //NormalMap
+        std::string normalMapLoadInputText;
+        std::string normalMapEditLoadInputText;
         //Variables para controlar con el ratón y el teclado
         bool controlBgColor;
         bool controlZoom;
         bool controlCameraMouse;
         bool controlCameraKey;
         bool resetCamera;
-
     public:
         virtual ~GUI();
         static GUI& getInstance();
@@ -111,6 +113,8 @@ namespace PAG {
         modelVisualizationTypes getEditModelVisualizationType() const;
         const std::string &getTextureLoadInputText() const;
         const std::string &getTextureEditLoadInputText() const;
+        const std::string &getNormalMapLoadInputText() const;
+        const std::string &getNormalMapEditLoadInputText() const;
 
         PAG::cameraMovementType getCameraMovement() const;
         float getCameraZoomValue() const;

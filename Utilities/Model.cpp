@@ -16,6 +16,7 @@ namespace PAG {
         normals = nullptr;
         textureCoordinates = nullptr;
         idTexture = nullptr;
+        idNormalMap = nullptr;
     }
 
     void Model::drawDefaultTriangle(){
@@ -65,7 +66,10 @@ namespace PAG {
             drawDefaultTriangle();
         }else {
             Assimp::Importer importer;
-            const aiScene* assimpScene = importer.ReadFile ( filename, aiProcess_JoinIdenticalVertices | aiProcess_Triangulate | aiProcess_GenSmoothNormals);
+            const aiScene* assimpScene = importer.ReadFile ( filename, aiProcess_JoinIdenticalVertices
+                                                                            | aiProcess_Triangulate
+                                                                            | aiProcess_GenSmoothNormals
+                                                                            | aiProcess_CalcTangentSpace);
 
             if (!assimpScene) {
                 //Sistema de seguridad
@@ -122,6 +126,17 @@ namespace PAG {
                 textureCoordinates->push_back(0);
                 textureCoordinates->push_back(0);
             }
+            //Pocesar tangentes y bitangentes
+            if (mesh->mTangents){
+                aiVector3D tangent = mesh->mTangents[i];
+                tangents->push_back(tangent.x);
+                tangents->push_back(tangent.y);
+                tangents->push_back(tangent.z);
+                aiVector3D bitangent = mesh->mBitangents[i];
+                bitangents->push_back(bitangent.x);
+                bitangents->push_back(bitangent.y);
+                bitangents->push_back(bitangent.z);
+            }
         }
 
         //Procesar indices
@@ -134,6 +149,10 @@ namespace PAG {
         }
     }
 
+    /**
+     * Carga las texturas utilizado la librería assimp
+     * @param filename
+     */
     void Model::loadTexture(std::string filename){
 
         if(filename!=textureName){
@@ -172,6 +191,48 @@ namespace PAG {
         }
     }
 
+    /**
+     * Lo mismo pero con normal map
+     * @param filename
+     */
+    void Model::loadNormalMap(std::string filename){
+
+        if(filename!=normalMapName){
+            normalMapName = filename;
+            //Decodificar
+            unsigned error = lodepng::decode (normalMapPixels,
+                                              normalMapWidth,normalMapHeight,
+                                              "../Textures/"+filename+".png");
+            if (error){
+                throw std::runtime_error("ERROR: ../Textures/"+filename+".png cannot be loaded.");
+            }
+
+            //variables auxiliares
+            unsigned char *texturePtr = &normalMapPixels[0];
+            int textureColorComponents = 4;
+            int widthIncrement = normalMapWidth * textureColorComponents; // Ancho en bytes
+            unsigned char* top = nullptr;
+            unsigned char* bot = nullptr;
+            unsigned char temp = 0;
+
+            //Cargar textura y dar la vuelta
+            for (int i = 0; i < normalMapHeight / 2; i++){
+                top = texturePtr + i * widthIncrement;
+                bot = texturePtr + (normalMapHeight - i - 1) * widthIncrement;
+                for (int j = 0; j < widthIncrement; j++){
+                    temp = *top;
+                    *top = *bot;
+                    *bot = temp;
+                    ++top;
+                    ++bot;
+                }
+            }
+
+            //Crear textura en OpenGL
+            createNormalMapOpenGL();
+        }
+    }
+
     //FUNCIONES OPENGL
 
     /**
@@ -205,6 +266,20 @@ namespace PAG {
         glVertexAttribPointer(2,2,GL_FLOAT,GL_FALSE,2*sizeof(GLfloat),nullptr);
         glEnableVertexAttribArray(2);
 
+        //VBO Tangentes
+        glGenBuffers(1, &idVBO_tangents);
+        glBindBuffer(GL_ARRAY_BUFFER, idVBO_tangents);
+        glBufferData(GL_ARRAY_BUFFER, tangents->size() * sizeof(GLfloat), tangents->data(), GL_STATIC_DRAW);
+        glVertexAttribPointer(3,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),nullptr);
+        glEnableVertexAttribArray(3);
+
+        //VBO Bitangentes
+        glGenBuffers(1, &idVBO_bitangents);
+        glBindBuffer(GL_ARRAY_BUFFER, idVBO_bitangents);
+        glBufferData(GL_ARRAY_BUFFER, bitangents->size() * sizeof(GLfloat), bitangents->data(), GL_STATIC_DRAW);
+        glVertexAttribPointer(4,3,GL_FLOAT,GL_FALSE,3*sizeof(GLfloat),nullptr);
+        glEnableVertexAttribArray(4);
+
         //Generar IBO
         glGenBuffers(1, &idIBO);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,idIBO);
@@ -217,8 +292,8 @@ namespace PAG {
     void Model::createTextureOpenGL(){
         //Cargar textura en openGL
         glGenTextures(1,idTexture);
-
         glBindTexture(GL_TEXTURE_2D,*idTexture);
+
         // Cómo resolver la minificación.
         glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
         // Cómo resolver la magnificación.
@@ -235,7 +310,34 @@ namespace PAG {
                        texturePixels.data());
 
         //Generar mipmap finalmente
-        glGenerateMipmap( GL_TEXTURE_2D);
+        glGenerateMipmap(*idTexture);
+    }
+
+    /**
+     * Similar pero para mapas de normales
+     */
+    void Model::createNormalMapOpenGL(){
+        //Cargar textura en openGL
+        glGenTextures(1,idNormalMap);
+        glBindTexture(GL_TEXTURE_2D,*idNormalMap);
+
+        // Cómo resolver la minificación.
+        glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+        // Cómo resolver la magnificación.
+        glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR );
+        // Cómo pasar de coordenadas de textura a coordenadas en el espacio de la textura en horizontal
+        glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+        // Cómo pasar de coordenadas de textura a coordenadas en el espacio de la textura en vertical
+        glTexParameteri ( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+        // Transferimos la información de la imagen. En este caso, la imagen está guardada en std::vector<unsigned char> _pixels;
+        glTexImage2D ( GL_TEXTURE_2D, 0, GL_RGBA,
+                       normalMapWidth,
+                       normalMapHeight,
+                       0, GL_RGBA, GL_UNSIGNED_BYTE,
+                       normalMapPixels.data());
+
+        //Generar mipmap finalmente
+        glGenerateMipmap(*idNormalMap);
     }
 
     //TRANSFORMACIONES MODELADO
@@ -306,6 +408,10 @@ namespace PAG {
 
     GLuint * Model::getIdTexture() const {
         return idTexture;
+    }
+
+    GLuint *Model::getIdNormalMap() const {
+        return idNormalMap;
     }
 
 } // PAG

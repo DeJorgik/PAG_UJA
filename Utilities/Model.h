@@ -23,7 +23,7 @@ namespace PAG {
     enum modelTransformType{TRANSLATE,ROTATE,SCALE};
 
     //Tipo de visualización del modelo
-    enum modelVisualizationTypes{WIREFRAME,FILL,TEXTURED};
+    enum modelVisualizationTypes{WIREFRAME,FILL,TEXTURED,TEXTURED_AND_NORMAL};
 
     class Model {
     private:
@@ -34,17 +34,23 @@ namespace PAG {
         std::vector<GLuint> *indices;
         std::vector<GLfloat> *normals;
         std::vector<GLfloat> *textureCoordinates;
+        std::vector<GLfloat> *tangents;
+        std::vector<GLfloat> *bitangents;
         glm::mat4 modelMatrix;
         GLuint idVAO = 0;
         GLuint idVBO_pos = 0;
         GLuint idVBO_normals = 0;
         GLuint idVBO_textureCoordinates = 0;
+        GLuint idVBO_tangents = 0;
+        GLuint idVBO_bitangents = 0;
         GLuint idIBO = 0;
         Material* material;
         std::string textureName = "";
-        std::vector<unsigned char> texturePixels;
-        unsigned textureWidth, textureHeight;
+        std::string normalMapName = "";
+        std::vector<unsigned char> texturePixels, normalMapPixels;
+        unsigned textureWidth, textureHeight, normalMapWidth, normalMapHeight;
         GLuint *idTexture = nullptr;
+        GLuint *idNormalMap = nullptr;
         void drawDefaultTriangle();
     public:
 
@@ -55,6 +61,7 @@ namespace PAG {
         GLuint getIdVao();
         GLuint getIdIbo();
         GLuint * getIdTexture() const;
+        GLuint *getIdNormalMap() const;
 
         void setName(const std::string &name);
         std::string *getModelName();
@@ -77,6 +84,10 @@ namespace PAG {
 
         void createTextureOpenGL();
         void createVaoOpenGL();
+
+        void createNormalMapOpenGL();
+
+        void loadNormalMap(std::string filename);
     };
 } // PAG
 

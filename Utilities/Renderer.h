@@ -52,9 +52,9 @@ namespace PAG {
 
         std::vector<std::pair<PAG::Model, PAG::ShaderProgram>> *getModelList() const;
         void createModelPair(std::string shaderProgramName, std::string modelName, std::string textureName,
-                             modelVisualizationTypes modelVisualizationType, const glm::vec3 &ambient,
-                             const glm::vec3 &diffuse,
-                             const glm::vec3 &specular, GLfloat exponent);
+                             std::string normalMapName, modelVisualizationTypes modelVisualizationType,
+                             const glm::vec3 &ambient, const glm::vec3 &diffuse, const glm::vec3 &specular,
+                             GLfloat exponent);
 
         void drawModel(std::pair<Model, ShaderProgram> *modelPair, int lightId);
         void deleteModel(int modelId);
