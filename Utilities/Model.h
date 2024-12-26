@@ -49,8 +49,8 @@ namespace PAG {
         std::string normalMapName = "";
         std::vector<unsigned char> texturePixels, normalMapPixels;
         unsigned textureWidth, textureHeight, normalMapWidth, normalMapHeight;
-        GLuint *idTexture = nullptr;
-        GLuint *idNormalMap = nullptr;
+        GLuint *idTexture = 0;
+        GLuint *idNormalMap = 0;
         void drawDefaultTriangle();
     public:
 

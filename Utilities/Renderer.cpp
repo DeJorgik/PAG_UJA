@@ -85,35 +85,57 @@ namespace PAG {
         int indexLightSubroutine = glGetSubroutineUniformLocation(modelPair->second.getIdSp(),GL_FRAGMENT_SHADER, "getColorMethod");
 
         //Elegir subrutina de textura
-        if(modelPair->first.getModelVisualizationType()==PAG::modelVisualizationTypes::TEXTURED){
+        if(modelPair->first.getModelVisualizationType()==PAG::modelVisualizationTypes::TEXTURED
+        ||modelPair->first.getModelVisualizationType()==PAG::modelVisualizationTypes::TEXTURED_AND_NORMAL){
             subroutineIndex[indexTexSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "textureColor");
         } else {
             subroutineIndex[indexTexSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "materialColor");
         }
 
         //Elegir subrutina de luz
-        if(modelPair->first.getModelVisualizationType()!=PAG::modelVisualizationTypes::WIREFRAME){
-            glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-            //Dentro del modo de FILL hay que elegir una de las subrutinas segun el tipo de luz
-            switch (lightList->at(lightId).getLightType()) {
-                case PAG::lightTypes::AMBIENT:
-                    subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "ambientLight");
-                    break;
-                case PAG::lightTypes::DIRECTION:
-                    subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "directionLight");
-                    break;
-                case PAG::lightTypes::POINT:
-                    subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "pointLight");
-                    break;
-                case PAG::lightTypes::SPOT:
-                    subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "spotLight");
-                    break;
-                default:
-                    break;
-            }
-        } else{
-            glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-            subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "wireframe");
+        switch(modelPair->first.getModelVisualizationType()){
+            case PAG::modelVisualizationTypes::WIREFRAME:
+                glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+                subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "wireframe");
+                break;
+            case PAG::modelVisualizationTypes::TEXTURED_AND_NORMAL:
+                glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+                switch (lightList->at(lightId).getLightType()) {
+                    case PAG::lightTypes::AMBIENT:
+                        subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "ambientLightNormalMap");
+                        break;
+                    case PAG::lightTypes::DIRECTION:
+                        subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "directionLightNormalMap");
+                        break;
+                    case PAG::lightTypes::POINT:
+                        subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "pointLightNormalMap");
+                        break;
+                    case PAG::lightTypes::SPOT:
+                        subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "spotLightNormalMap");
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            default:
+                glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+                switch (lightList->at(lightId).getLightType()) {
+                    case PAG::lightTypes::AMBIENT:
+                        subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "ambientLight");
+                        break;
+                    case PAG::lightTypes::DIRECTION:
+                        subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "directionLight");
+                        break;
+                    case PAG::lightTypes::POINT:
+                        subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "pointLight");
+                        break;
+                    case PAG::lightTypes::SPOT:
+                        subroutineIndex[indexLightSubroutine] = glGetSubroutineIndex(modelPair->second.getIdSp(), GL_FRAGMENT_SHADER, "spotLight");
+                        break;
+                    default:
+                        break;
+                }
+                break;
         }
 
         glUniformSubroutinesuiv ( GL_FRAGMENT_SHADER, 2, subroutineIndex );
@@ -121,14 +143,7 @@ namespace PAG {
         setUniformMVandMVP(&modelPair->first,modelPair->second.getIdSp()); //Enviar MV y MVP al shader
         setUniformLight(&lightList->at(lightId),modelPair->second.getIdSp()); //Enviar datos de la luz
         setUniformMaterial(modelPair->first.getMaterial(),modelPair->second.getIdSp());//Enviar datos del material
-
-        //Texturas
-        // Asignamos el muestreador del shader program a la unidad de textura 0
-        GLint samplerPosTexture = glGetUniformLocation ( modelPair->second.getIdSp(), "samplerTexture" );
-        glUniform1i ( samplerPosTexture, 0);
-        //Otro muestreador para el sampler del normalmap
-        GLint samplerPosNormalMap = glGetUniformLocation ( modelPair->second.getIdSp(), "samplerNormalMap" );
-        glUniform1i ( samplerPosNormalMap, 1);
+        setUniformTextures(&lightList->at(lightId),modelPair->second.getIdSp());
 
         //Activar unidad de textura si se necesita
         if(modelPair->first.getModelVisualizationType()==PAG::modelVisualizationTypes::TEXTURED){
@@ -318,12 +333,15 @@ namespace PAG {
     {
         GLint mvLoc = glGetUniformLocation(IdSp, "mModelView");
         GLint mvpLoc = glGetUniformLocation(IdSp, "mModelViewProj");
+        GLint mvLocIT = glGetUniformLocation(IdSp,"mModelViewIT");
         glm::mat4 v = camera->calculateViewMatrix();
         glm::mat4 p = camera->calculateProjectionMatrix();
         glm::mat4 mv = v*model->getModelMatrix();
         glm::mat4 mvp = p*v*model->getModelMatrix();
+        glm::mat4 mvIT = glm::transpose(glm::inverse(mv));
         glUniformMatrix4fv(mvLoc, 1, GL_FALSE, glm::value_ptr(mv));
         glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, glm::value_ptr(mvp));
+        glUniformMatrix4fv(mvLocIT, 1, GL_FALSE, glm::value_ptr(mvIT));
     }
 
     /**
@@ -399,6 +417,33 @@ namespace PAG {
         if(spotAngleLoc!=-1){
             float angle = glm::radians(light->getGamma());
             glUniform1fv(spotAngleLoc, 1,&angle);
+        }
+    }
+
+    /**
+     * Función que pasa los uniforms necesarios para las texturas y el normalMapping
+     * @param IdSp
+     */
+    void Renderer::setUniformTextures(PAG::Light* light,GLuint IdSp){
+
+        //Matriz de visión
+        glm::mat4 v = camera->calculateViewMatrix();
+
+        //Información de la Luz
+        GLint positionLoc = glGetUniformLocation(IdSp, "vLightPos");
+        GLint directionLoc = glGetUniformLocation(IdSp, "vLightDir");
+        if(positionLoc!=-1){
+            glm::vec3 visionPosition = glm::vec3(v*glm::vec4(light->getPos(),1.0));//pasar a espacio de vision
+            float position[] = {visionPosition.x, visionPosition.y, visionPosition.z};
+            glUniform3fv(positionLoc, 1,position);
+        }
+        if(directionLoc!=-1){
+            float direction[3];
+            glm::vec3 visionDirection = glm::vec3(v*glm::vec4(light->getD(),0.0));//pasar a espacio de vision
+            direction[0]=visionDirection.x;
+            direction[1]=visionDirection.y;
+            direction[2]=visionDirection.z;
+            glUniform3fv(directionLoc, 1,direction);
         }
     }
 

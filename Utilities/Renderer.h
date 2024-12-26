@@ -83,6 +83,8 @@ namespace PAG {
         void setUniformMVandMVP(Model *model, GLuint IdSp);
         void setUniformMaterial(Material *material, GLuint IdSp);
         void setUniformLight(Light *light, GLuint IdSp);
+
+        void setUniformTextures(Light *light, GLuint IdSp);
     };
 
 } // PAG

@@ -228,14 +228,6 @@ int main()
 
     PAG::GUI::getInstance().guiInit(window);
 
-    //Crear shader program y cargar modelo
-/*
-    try {
-        PAG::Renderer::getInstance().createModelPair("pag09","","",PAG::modelVisualizationTypes::FILL,glm::vec3(1,0,0),glm::vec3(1,0,0),glm::vec3(1,0,0),1);
-    } catch(std::exception &e){
-        PAG::GUI::getInstance().messageBufferAdd(e.what());
-    }
-
     //Crear luz ambiente y spot por defecto
     PAG::Renderer::getInstance().createLight(PAG::lightTypes::AMBIENT,
                                              glm::vec3(0.5,0.5,0.5),
@@ -245,14 +237,6 @@ int main()
                                              glm::vec3(0,0,0),
                                              1.0f,
                                              1.0f);
-    PAG::Renderer::getInstance().createLight(PAG::lightTypes::SPOT,
-                                             glm::vec3(0,0,0),
-                                             glm::vec3(1,1,1),
-                                             glm::vec3(1,1,1),
-                                             glm::vec3(0,2,0),
-                                             glm::vec3(0,-1,0),
-                                             60.0f,
-                                             1.0f); */
 
     //PAG::Renderer::getInstance().getViewportSizes(width,height);
 

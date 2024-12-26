@@ -607,6 +607,9 @@ namespace PAG {
             case 2:
                 return modelVisualizationTypes::WIREFRAME;
                 break;
+            case 3:
+                return modelVisualizationTypes::TEXTURED_AND_NORMAL;
+                break;
         }
     }
 
@@ -620,6 +623,9 @@ namespace PAG {
                 break;
             case 2:
                 return modelVisualizationTypes::WIREFRAME;
+                break;
+            case 3:
+                return modelVisualizationTypes::TEXTURED_AND_NORMAL;
                 break;
         }
     }

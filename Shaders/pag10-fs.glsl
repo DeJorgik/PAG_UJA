@@ -5,7 +5,10 @@
 in vec3 pos;
 in vec3 normal;
 in vec2 textureCoordinate;
-in vec3 worldpos;
+//Datos de entrada en espacio de la tangente
+in vec3 posTg;
+in vec3 lightPosTg;
+in vec3 lightDirTg;
 
 //Reflexión Material
 uniform vec3 Ka;
@@ -14,7 +17,10 @@ uniform vec3 Ks;
 uniform float exponent; //EL EXPONENTE SPECULAR ES DEL MATERIAL
 
 //Textura
-uniform sampler2D sampler;
+uniform sampler2D samplerTexture;
+
+//Normal mapping
+uniform sampler2D samplerNormalMap;
 
 //Valores iluminación
 uniform vec3 Ia;
@@ -40,7 +46,7 @@ vec3 materialColor()
 
 subroutine ( getDiffuseColor )
 vec3 textureColor()
-{ return texture2D(sampler,textureCoordinate.xy).rgb;
+{ return texture2D(samplerTexture,textureCoordinate.xy).rgb;
 }
 
 //Una subrutina para multiplicar cada tipo de luz
@@ -59,6 +65,24 @@ vec4 pointLight ()
   vec3 n = normalize (normal);
   vec3 l = normalize (lightPos-pos);
   vec3 v = normalize (-pos);
+  vec3 r = reflect (-l,n);
+
+  vec3 diffuse = (Id*getDiffuseColorMethod()*max(dot(l,n),0.0));
+  vec3 specular = (Is*Ks*pow(max(dot(r,v),0.0),exponent));
+  return vec4 (diffuse+specular, 1.0);
+}
+
+//Una nueva implementación para cada pero con normal mapping
+
+subroutine ( getColor )
+vec4 pointLightNormalMap ()
+{
+  //Pillo normal desde la textura
+  vec4 normalBM = 2 * (texture(samplerNormalMap, textureCoordinate) - 0.5);
+
+  vec3 n = normalize (normalBM.rgb);
+  vec3 l = normalize (lightPosTg-posTg);
+  vec3 v = normalize (-posTg);
   vec3 r = reflect (-l,n);
 
   vec3 diffuse = (Id*getDiffuseColorMethod()*max(dot(l,n),0.0));

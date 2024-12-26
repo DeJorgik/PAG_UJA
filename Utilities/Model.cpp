@@ -86,12 +86,15 @@ namespace PAG {
             indices = new std::vector<GLuint>();
             normals = new std::vector<GLfloat>();
             textureCoordinates = new std::vector<GLfloat>();
+            tangents = new std::vector<GLfloat>();
+            bitangents = new std::vector<GLfloat>();
 
             //Procesar la escena para guardar vertices y normales
             sceneProcess(assimpScene);
 
             //Crear id de textura
             idTexture = new GLuint();
+            idNormalMap = new GLuint();
         }
     }
 
@@ -310,7 +313,7 @@ namespace PAG {
                        texturePixels.data());
 
         //Generar mipmap finalmente
-        glGenerateMipmap(*idTexture);
+        glGenerateMipmap(GL_TEXTURE_2D);
     }
 
     /**
@@ -337,7 +340,7 @@ namespace PAG {
                        normalMapPixels.data());
 
         //Generar mipmap finalmente
-        glGenerateMipmap(*idNormalMap);
+        glGenerateMipmap(GL_TEXTURE_2D);
     }
 
     //TRANSFORMACIONES MODELADO
